@@ -3,38 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sudoku Generator and Solver</title>
+    <title>Sudoku Challenge</title>
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+            --grid-border-color: #34495e;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 0;
-            padding: 20px;
+            min-height: 100vh;
         }
-        table {
-            border-collapse: collapse;
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
             margin-bottom: 20px;
-            border: 3px solid #000;
         }
-        td {
+        .controls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button, select {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover, select:hover {
+            background-color: #2980b9;
+        }
+        select {
+            background-color: var(--secondary-color);
+        }
+        select:hover {
+            background-color: #27ae60;
+        }
+        #sudokuGrid {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+        #sudokuGrid td {
             width: 40px;
             height: 40px;
             text-align: center;
-            border: 1px solid #000;
+            border: 1px solid var(--grid-border-color);
             font-size: 18px;
         }
-        td:nth-child(3n) {
-            border-right: 3px solid #000;
+        #sudokuGrid tr:nth-child(3n) td {
+            border-bottom: 2px solid var(--grid-border-color);
         }
-        tr:nth-child(3n) td {
-            border-bottom: 3px solid #000;
-        }
-        button, select {
-            margin: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
+        #sudokuGrid td:nth-child(3n) {
+            border-right: 2px solid var(--grid-border-color);
         }
         input {
             width: 100%;
@@ -44,49 +83,64 @@
             font-size: 18px;
             padding: 0;
             box-sizing: border-box;
-        }
-        input::-webkit-inner-spin-button, 
-        input::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
+            background-color: transparent;
         }
         .fixed {
             font-weight: bold;
+            color: var(--text-color);
         }
         .user-input {
-            color: #666;
+            color: var(--primary-color);
         }
         .incorrect {
-            color: red;
+            color: #e74c3c;
         }
         .revealed {
-            color: darkblue;
+            color: var(--secondary-color);
         }
         #message {
             font-size: 18px;
             font-weight: bold;
             margin-top: 20px;
+            text-align: center;
+            color: var(--secondary-color);
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            #sudokuGrid td {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+            button, select {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1 id="title">Sudoku Generator and Solver</h1>
-    <div>
-        <select id="languageSelect" onchange="changeLanguage(this.value)">
-            <option value="en">English</option>
-            <option value="de">Deutsch</option>
-            <option value="fr">Français</option>
-            <option value="sv">Svenska</option>
-            <option value="sk">Slovenčina</option>
-            <option value="it">Italiano</option>
-        </select>
-        <button id="easyButton" onclick="generateSudoku('easy')">Easy</button>
-        <button id="mediumButton" onclick="generateSudoku('medium')">Medium</button>
-        <button id="hardButton" onclick="generateSudoku('hard')">Hard</button>
-        <button id="checkButton" onclick="toggleCheck()">Start Checking</button>
+    <div class="container">
+        <h1 id="title">Sudoku Challenge</h1>
+        <div class="controls">
+            <select id="languageSelect" onchange="changeLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+                <option value="fr">Français</option>
+                <option value="sv">Svenska</option>
+                <option value="sk">Slovenčina</option>
+                <option value="it">Italiano</option>
+            </select>
+            <button id="easyButton" onclick="generateSudoku('easy')">Easy</button>
+            <button id="mediumButton" onclick="generateSudoku('medium')">Medium</button>
+            <button id="hardButton" onclick="generateSudoku('hard')">Hard</button>
+            <button id="checkButton" onclick="toggleCheck()">Start Checking</button>
+        </div>
+        <table id="sudokuGrid"></table>
+        <div id="message"></div>
     </div>
-    <table id="sudokuGrid"></table>
-    <div id="message"></div>
 
     <script>
         let originalPuzzle;
@@ -96,7 +150,7 @@
 
         const translations = {
             en: {
-                title: "Sudoku Generator and Solver",
+                title: "Sudoku Challenge",
                 easy: "Easy",
                 medium: "Medium",
                 hard: "Hard",
@@ -105,7 +159,7 @@
                 congratulations: "Congratulations! You solved the Sudoku puzzle!"
             },
             de: {
-                title: "Sudoku-Generator und -Löser",
+                title: "Sudoku-Herausforderung",
                 easy: "Einfach",
                 medium: "Mittel",
                 hard: "Schwer",
@@ -114,7 +168,7 @@
                 congratulations: "Glückwunsch! Sie haben das Sudoku-Rätsel gelöst!"
             },
             fr: {
-                title: "Générateur et Solveur de Sudoku",
+                title: "Défi Sudoku",
                 easy: "Facile",
                 medium: "Moyen",
                 hard: "Difficile",
@@ -123,7 +177,7 @@
                 congratulations: "Félicitations ! Vous avez résolu le puzzle Sudoku !"
             },
             sv: {
-                title: "Sudoku Generator och Lösare",
+                title: "Sudoku Utmaning",
                 easy: "Lätt",
                 medium: "Medel",
                 hard: "Svår",
@@ -132,7 +186,7 @@
                 congratulations: "Grattis! Du har löst Sudoku-pusslet!"
             },
             sk: {
-                title: "Generátor a Riešiteľ Sudoku",
+                title: "Sudoku Výzva",
                 easy: "Ľahké",
                 medium: "Stredné",
                 hard: "Ťažké",
@@ -141,7 +195,7 @@
                 congratulations: "Blahoželáme! Vyriešili ste Sudoku hlavolam!"
             },
             it: {
-                title: "Generatore e Risolutore di Sudoku",
+                title: "Sfida Sudoku",
                 easy: "Facile",
                 medium: "Medio",
                 hard: "Difficile",
@@ -320,7 +374,6 @@
             }
         }
 
-        // Set initial language based on browser preference
         function setInitialLanguage() {
             const browserLang = navigator.language.split('-')[0];
             const supportedLangs = Object.keys(translations);
@@ -329,7 +382,6 @@
             changeLanguage(currentLanguage);
         }
 
-        // Initialize
         setInitialLanguage();
         generateSudoku('easy');
     </script>
