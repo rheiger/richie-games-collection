@@ -133,9 +133,15 @@
                 <option value="en">English</option>
                 <option value="de">Deutsch</option>
                 <option value="fr">Français</option>
+                <option value="it">Italiano</option>
                 <option value="sv">Svenska</option>
                 <option value="sk">Slovenčina</option>
-                <option value="it">Italiano</option>
+                <option value="es">Español</option>
+                <option value="pt">Português</option>
+                <option value="no">Norsk</option>
+                <option value="fi">Suomi</option>
+                <option value="pl">Polski</option>
+                <option value="cs">Čeština</option>
             </select>
             <button id="easyButton" onclick="generateSudoku('easy')">Easy</button>
             <button id="mediumButton" onclick="generateSudoku('medium')">Medium</button>
@@ -188,6 +194,17 @@
                 hideSolution: "Masquer la solution",
                 congratulations: "Félicitations ! Vous avez résolu le puzzle Sudoku !"
             },
+            it: {
+                title: "Sfida Sudoku",
+                easy: "Facile",
+                medium: "Medio",
+                hard: "Difficile",
+                startChecking: "Inizia il controllo",
+                stopChecking: "Ferma il controllo",
+                showSolution: "Mostra soluzione",
+                hideSolution: "Nascondi soluzione",
+                congratulations: "Congratulazioni! Hai risolto il puzzle Sudoku!"
+            },
             sv: {
                 title: "Sudoku Utmaning",
                 easy: "Lätt",
@@ -210,16 +227,71 @@
                 hideSolution: "Skryť riešenie",
                 congratulations: "Blahoželáme! Vyriešili ste Sudoku hlavolam!"
             },
-            it: {
-                title: "Sfida Sudoku",
-                easy: "Facile",
+            es: {
+                title: "Desafío Sudoku",
+                easy: "Fácil",
                 medium: "Medio",
-                hard: "Difficile",
-                startChecking: "Inizia il controllo",
-                stopChecking: "Ferma il controllo",
-                showSolution: "Mostra soluzione",
-                hideSolution: "Nascondi soluzione",
-                congratulations: "Congratulazioni! Hai risolto il puzzle Sudoku!"
+                hard: "Difícil",
+                startChecking: "Comenzar verificación",
+                stopChecking: "Detener verificación",
+                showSolution: "Mostrar solución",
+                hideSolution: "Ocultar solución",
+                congratulations: "¡Felicidades! ¡Has resuelto el puzzle Sudoku!"
+            },
+            pt: {
+                title: "Desafio Sudoku",
+                easy: "Fácil",
+                medium: "Médio",
+                hard: "Difícil",
+                startChecking: "Iniciar verificação",
+                stopChecking: "Parar verificação",
+                showSolution: "Mostrar solução",
+                hideSolution: "Ocultar solução",
+                congratulations: "Parabéns! Você resolveu o quebra-cabeça Sudoku!"
+            },
+            no: {
+                title: "Sudoku Utfordring",
+                easy: "Lett",
+                medium: "Middels",
+                hard: "Vanskelig",
+                startChecking: "Begynn å sjekke",
+                stopChecking: "Stopp sjekk",
+                showSolution: "Vis løsning",
+                hideSolution: "Skjul løsning",
+                congratulations: "Gratulerer! Du løste Sudoku-puslespillet!"
+            },
+            fi: {
+                title: "Sudoku Haaste",
+                easy: "Helppo",
+                medium: "Keskitaso",
+                hard: "Vaikea",
+                startChecking: "Aloita tarkistus",
+                stopChecking: "Lopeta tarkistus",
+                showSolution: "Näytä ratkaisu",
+                hideSolution: "Piilota ratkaisu",
+                congratulations: "Onnittelut! Ratkaisit Sudoku-pulman!"
+            },
+            pl: {
+                title: "Wyzwanie Sudoku",
+                easy: "Łatwe",
+                medium: "Średnie",
+                hard: "Trudne",
+                startChecking: "Rozpocznij sprawdzanie",
+                stopChecking: "Zatrzymaj sprawdzanie",
+                showSolution: "Pokaż rozwiązanie",
+                hideSolution: "Ukryj rozwiązanie",
+                congratulations: "Gratulacje! Rozwiązałeś Sudoku!"
+            },
+            cs: {
+                title: "Sudoku Výzva",
+                easy: "Lehké",
+                medium: "Střední",
+                hard: "Těžké",
+                startChecking: "Začít kontrolu",
+                stopChecking: "Zastavit kontrolu",
+                showSolution: "Zobrazit řešení",
+                hideSolution: "Skrýt řešení",
+                congratulations: "Gratulujeme! Vyřešili jste Sudoku!"
             }
         };
 
@@ -238,26 +310,28 @@
 
         function generateSudoku(difficulty) {
             const grid = Array(9).fill().map(() => Array(9).fill(0));
-            const difficultyLevels = { easy: 35, medium: 30, hard: 25 };
+            const difficultyLevels = { easy: 45, medium: 30, hard: 20 }; // Increased number of cells for easier puzzles
             const cellsToFill = difficultyLevels[difficulty];
-
+        
             for (let i = 0; i < 9; i += 3) {
                 fillBox(grid, i, i);
             }
-
+        
             solveSudoku(grid);
             solution = JSON.parse(JSON.stringify(grid));
-
+        
             const puzzle = JSON.parse(JSON.stringify(grid));
             const positions = Array(81).fill().map((_, i) => i);
             shuffleArray(positions);
+        
+            // Clear cells to create the puzzle
             for (let i = 0; i < 81 - cellsToFill; i++) {
                 const pos = positions[i];
                 const row = Math.floor(pos / 9);
                 const col = pos % 9;
                 puzzle[row][col] = 0;
             }
-    
+        
             originalPuzzle = JSON.parse(JSON.stringify(puzzle));
             displaySudoku(puzzle);
             document.getElementById('message').textContent = '';
@@ -266,7 +340,7 @@
             document.getElementById('checkButton').textContent = translations[currentLanguage].startChecking;
             document.getElementById('toggleSolutionButton').textContent = translations[currentLanguage].showSolution;
         }
-    
+
         function fillBox(grid, row, col) {
             const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
             shuffleArray(nums);
