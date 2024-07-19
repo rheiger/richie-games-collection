@@ -11,6 +11,7 @@
             --background-color: #ecf0f1;
             --text-color: #2c3e50;
             --grid-border-color: #34495e;
+            --solution-color: #bdc3c7; /* Light gray color for solution */
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -98,6 +99,9 @@
         .revealed {
             color: var(--secondary-color);
         }
+        .solution {
+            color: var(--solution-color);
+        }
         #message {
             font-size: 18px;
             font-weight: bold;
@@ -137,6 +141,7 @@
             <button id="mediumButton" onclick="generateSudoku('medium')">Medium</button>
             <button id="hardButton" onclick="generateSudoku('hard')">Hard</button>
             <button id="checkButton" onclick="toggleCheck()">Start Checking</button>
+            <button id="toggleSolutionButton" onclick="toggleSolution()">Show Solution</button>
         </div>
         <table id="sudokuGrid"></table>
         <div id="message"></div>
@@ -146,6 +151,7 @@
         let originalPuzzle;
         let solution;
         let isChecking = false;
+        let isShowingSolution = false;
         let currentLanguage = 'en';
 
         const translations = {
@@ -156,6 +162,8 @@
                 hard: "Hard",
                 startChecking: "Start Checking",
                 stopChecking: "Stop Checking",
+                showSolution: "Show Solution",
+                hideSolution: "Hide Solution",
                 congratulations: "Congratulations! You solved the Sudoku puzzle!"
             },
             de: {
@@ -165,6 +173,8 @@
                 hard: "Schwer",
                 startChecking: "Prüfung starten",
                 stopChecking: "Prüfung beenden",
+                showSolution: "Lösung anzeigen",
+                hideSolution: "Lösung ausblenden",
                 congratulations: "Glückwunsch! Sie haben das Sudoku-Rätsel gelöst!"
             },
             fr: {
@@ -174,6 +184,8 @@
                 hard: "Difficile",
                 startChecking: "Commencer la vérification",
                 stopChecking: "Arrêter la vérification",
+                showSolution: "Afficher la solution",
+                hideSolution: "Masquer la solution",
                 congratulations: "Félicitations ! Vous avez résolu le puzzle Sudoku !"
             },
             sv: {
@@ -183,6 +195,8 @@
                 hard: "Svår",
                 startChecking: "Börja kontrollera",
                 stopChecking: "Sluta kontrollera",
+                showSolution: "Visa lösning",
+                hideSolution: "Dölj lösning",
                 congratulations: "Grattis! Du har löst Sudoku-pusslet!"
             },
             sk: {
@@ -192,6 +206,8 @@
                 hard: "Ťažké",
                 startChecking: "Začať kontrolu",
                 stopChecking: "Zastaviť kontrolu",
+                showSolution: "Zobraziť riešenie",
+                hideSolution: "Skryť riešenie",
                 congratulations: "Blahoželáme! Vyriešili ste Sudoku hlavolam!"
             },
             it: {
@@ -201,6 +217,8 @@
                 hard: "Difficile",
                 startChecking: "Inizia il controllo",
                 stopChecking: "Ferma il controllo",
+                showSolution: "Mostra soluzione",
+                hideSolution: "Nascondi soluzione",
                 congratulations: "Congratulazioni! Hai risolto il puzzle Sudoku!"
             }
         };
@@ -212,6 +230,7 @@
             document.getElementById('mediumButton').textContent = translations[lang].medium;
             document.getElementById('hardButton').textContent = translations[lang].hard;
             document.getElementById('checkButton').textContent = isChecking ? translations[lang].stopChecking : translations[lang].startChecking;
+            document.getElementById('toggleSolutionButton').textContent = isShowingSolution ? translations[lang].hideSolution : translations[lang].showSolution;
             if (document.getElementById('message').textContent) {
                 document.getElementById('message').textContent = translations[lang].congratulations;
             }
@@ -232,21 +251,22 @@
             const puzzle = JSON.parse(JSON.stringify(grid));
             const positions = Array(81).fill().map((_, i) => i);
             shuffleArray(positions);
-
             for (let i = 0; i < 81 - cellsToFill; i++) {
                 const pos = positions[i];
                 const row = Math.floor(pos / 9);
                 const col = pos % 9;
                 puzzle[row][col] = 0;
             }
-
+    
             originalPuzzle = JSON.parse(JSON.stringify(puzzle));
             displaySudoku(puzzle);
             document.getElementById('message').textContent = '';
             isChecking = false;
+            isShowingSolution = false;
             document.getElementById('checkButton').textContent = translations[currentLanguage].startChecking;
+            document.getElementById('toggleSolutionButton').textContent = translations[currentLanguage].showSolution;
         }
-
+    
         function fillBox(grid, row, col) {
             const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
             shuffleArray(nums);
@@ -256,11 +276,11 @@
                 }
             }
         }
-
+    
         function solveSudoku(grid) {
             const emptyCell = findEmptyCell(grid);
             if (!emptyCell) return true;
-
+    
             const [row, col] = emptyCell;
             for (let num = 1; num <= 9; num++) {
                 if (isValid(grid, row, col, num)) {
@@ -271,7 +291,7 @@
             }
             return false;
         }
-
+    
         function findEmptyCell(grid) {
             for (let row = 0; row < 9; row++) {
                 for (let col = 0; col < 9; col++) {
@@ -280,13 +300,13 @@
             }
             return null;
         }
-
+    
         function isValid(grid, row, col, num) {
             for (let i = 0; i < 9; i++) {
                 if (grid[row][i] === num) return false;
                 if (grid[i][col] === num) return false;
             }
-
+    
             const boxRow = Math.floor(row / 3) * 3;
             const boxCol = Math.floor(col / 3) * 3;
             for (let i = 0; i < 3; i++) {
@@ -294,17 +314,17 @@
                     if (grid[boxRow + i][boxCol + j] === num) return false;
                 }
             }
-
+    
             return true;
         }
-
+    
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
         }
-
+    
         function displaySudoku(puzzle) {
             const table = document.getElementById('sudokuGrid');
             table.innerHTML = '';
@@ -331,12 +351,13 @@
                                 this.classList.remove('revealed');
                             }
                             if (isChecking) checkSolution();
-                        });                        cell.appendChild(input);
+                        });
+                        cell.appendChild(input);
                     }
                 }
             }
         }
-
+    
         function toggleCheck() {
             isChecking = !isChecking;
             document.getElementById('checkButton').textContent = isChecking ? 
@@ -344,37 +365,47 @@
                 translations[currentLanguage].startChecking;
             checkSolution();
         }
-
+    
         function checkSolution() {
-            let isComplete = true;
             const inputs = document.querySelectorAll('#sudokuGrid input');
             inputs.forEach((input, index) => {
                 const row = Math.floor(index / 9);
                 const col = index % 9;
-                const value = parseInt(input.value) || 0;
+                const value = parseInt(input.value, 10);
                 
-                if (value === 0) {
-                    isComplete = false;
+                if (!value || value < 1 || value > 9) {
                     input.classList.remove('incorrect');
                 } else if (value !== solution[row][col]) {
-                    if (isChecking) {
-                        input.classList.add('incorrect');
-                    } else {
-                        input.classList.remove('incorrect');
-                    }
-                    isComplete = false;
+                    input.classList.add('incorrect');
                 } else {
                     input.classList.remove('incorrect');
                 }
             });
-
-            if (isComplete) {
-                document.getElementById('message').textContent = translations[currentLanguage].congratulations;
-            } else {
-                document.getElementById('message').textContent = '';
-            }
         }
-
+    
+        function toggleSolution() {
+            isShowingSolution = !isShowingSolution;
+            const inputs = document.querySelectorAll('#sudokuGrid input');
+            inputs.forEach((input, index) => {
+                const row = Math.floor(index / 9);
+                const col = index % 9;
+                if (isShowingSolution) {
+                    if (!input.value) {
+                        input.value = solution[row][col];
+                        input.classList.add('solution');
+                    }
+                } else {
+                    if (input.classList.contains('solution')) {
+                        input.value = '';
+                        input.classList.remove('solution');
+                    }
+                }
+            });
+            document.getElementById('toggleSolutionButton').textContent = isShowingSolution ? 
+                translations[currentLanguage].hideSolution : 
+                translations[currentLanguage].showSolution;
+        }
+    
         function setInitialLanguage() {
             const browserLang = navigator.language.split('-')[0];
             const supportedLangs = Object.keys(translations);
@@ -382,7 +413,7 @@
             document.getElementById('languageSelect').value = currentLanguage;
             changeLanguage(currentLanguage);
         }
-
+    
         setInitialLanguage();
         generateSudoku('easy');
     </script>
