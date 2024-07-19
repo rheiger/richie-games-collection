@@ -317,11 +317,13 @@
                         cell.classList.add('fixed');
                     } else {
                         const input = document.createElement('input');
-                        input.type = 'text';
+                        input.type = 'tel';  // Changed to 'tel' for numeric keyboard
+                        input.inputMode = 'numeric';  // Ensures numeric keyboard on all devices
+                        input.pattern = '[0-9]';  // Allows only digits 1-9
                         input.maxLength = 1;
                         input.classList.add('user-input');
                         input.addEventListener('input', function() {
-                            if (this.value === '?') {
+                            if (this.value === '?' || this.value === '0') {
                                 this.value = solution[i][j];
                                 this.classList.add('revealed');
                             } else {
@@ -329,8 +331,7 @@
                                 this.classList.remove('revealed');
                             }
                             if (isChecking) checkSolution();
-                        });
-                        cell.appendChild(input);
+                        });                        cell.appendChild(input);
                     }
                 }
             }
