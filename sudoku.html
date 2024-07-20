@@ -108,6 +108,7 @@
             border: none;
             outline: none;
             background-color: transparent;
+            color: #000; /* Default color for all inputs */
         }
         #sudoku-board input.given {
             font-weight: bold;
@@ -117,21 +118,21 @@
             color: #999; /* Light grey color */
             font-style: italic;
         }
-        #sudoku-board tr:nth-child(3n) {
-            border-bottom: 2px solid var(--text-color);
-        }
-        #sudoku-board td:nth-child(3n) {
-            border-right: 2px solid var(--text-color);
-        }
         #sudoku-board input.incorrect {
-            color: #e74c3c;
+            color: #e74c3c !important; /* Use !important to ensure this overrides other styles */
         }
         #sudoku-board input.hint {
             color: var(--secondary-color);
             font-style: italic;
         }
         #sudoku-board input.user-entered {
-            color: #000; /* or any color you prefer for user-entered values */
+            color: #000; /* Black color for user-entered values */
+        }    
+        #sudoku-board tr:nth-child(3n) {
+            border-bottom: 2px solid var(--text-color);
+        }
+        #sudoku-board td:nth-child(3n) {
+            border-right: 2px solid var(--text-color);
         }
         #message {
             text-align: center;
@@ -575,13 +576,14 @@
                 this.classList.remove('hint', 'solution');
                 this.classList.add('user-entered');
                 
+                let isCorrect = true;
                 if (isChecking) {
-                    checkCell(this);
+                    isCorrect = checkCell(this);
                 }
                 checkCompletion();
         
-                // Only advance to next cell if a new value was entered
-                if (this.value !== originalValue) {
+                // Advance to next cell only if not checking or if the entry is correct
+                if (!isChecking || isCorrect) {
                     setTimeout(() => focusNextEmptyCell(this), 0);
                 }
             } else {
@@ -589,7 +591,7 @@
                 this.classList.remove('hint', 'solution', 'user-entered');
             }
         }
-
+        
         function focusNextEmptyCell(currentCell) {
             const inputs = Array.from(document.querySelectorAll('#sudoku-board input:not(.given):not(.hint)'));
             const currentIndex = inputs.indexOf(currentCell);
@@ -607,7 +609,7 @@
                 }
             }
         }
-        
+
         function handleFocus(e) {
             this.dataset.previousValue = this.value;
             if (this.readOnly) {
@@ -689,10 +691,13 @@
 
             if (value === 0) {
                 input.classList.remove('incorrect');
+                return true;
             } else if (value !== currentSolution[row][col]) {
                 input.classList.add('incorrect');
+                return false;
             } else {
                 input.classList.remove('incorrect');
+                return true;
             }
         }
 
