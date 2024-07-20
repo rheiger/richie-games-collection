@@ -4,51 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudoku Challenge</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='5' y='5' width='90' height='90' fill='%23f0f0f0' stroke='%23333' stroke-width='2'/><line x1='35' y1='5' x2='35' y2='95' stroke='%23333' stroke-width='2'/><line x1='65' y1='5' x2='65' y2='95' stroke='%23333' stroke-width='2'/><line x1='5' y1='35' x2='95' y2='35' stroke='%23333' stroke-width='2'/><line x1='5' y1='65' x2='95' y2='65' stroke='%23333' stroke-width='2'/><text x='50' y='62' font-family='Arial, sans-serif' font-size='40' fill='%233366cc' text-anchor='middle'>5</text></svg>">
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
         }
         .container {
             background-color: white;
-            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 20px;
             max-width: 500px;
-            width: 100%;
-            box-sizing: border-box;
+            width: 95%;
         }
         #title {
             text-align: center;
-            cursor: pointer;
-            font-size: 1.5em;
+            color: var(--primary-color);
             margin-top: 0;
+            cursor: pointer;
         }
         .controls {
             display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
             flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
         }
         select, button {
-            padding: 5px 10px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: white;
             cursor: pointer;
-            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        select:hover, button:hover {
+            background-color: #2980b9;
         }
         #sudoku-board {
             border-collapse: collapse;
             margin: 0 auto;
-            max-width: 100%;
         }
         #sudoku-board td {
-            border: 1px solid #ccc;
+            border: 1px solid #bdc3c7;
             padding: 0;
         }
         #sudoku-board input {
@@ -58,49 +70,73 @@
             font-size: 1.2em;
             border: none;
             outline: none;
-            padding: 0;
-            box-sizing: border-box;
+            background-color: transparent;
         }
         #sudoku-board input.given {
             font-weight: bold;
-            background-color: #f0f0f0;
+            color: var(--primary-color);
         }
         #sudoku-board tr:nth-child(3n) {
-            border-bottom: 2px solid #000;
+            border-bottom: 2px solid var(--text-color);
         }
         #sudoku-board td:nth-child(3n) {
-            border-right: 2px solid #000;
+            border-right: 2px solid var(--text-color);
         }
         #sudoku-board input.incorrect {
-            color: red;
-        }
-        #sudoku-board input.solution {
-            color: grey;
+            color: #e74c3c;
         }
         #sudoku-board input.hint {
-            color: blue;
+            color: var(--secondary-color);
             font-style: italic;
         }
         #message {
             text-align: center;
             margin-top: 20px;
             font-weight: bold;
+            color: var(--secondary-color);
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .congratulations {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transform: rotate(-15deg);
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        .congratulations h2 {
+            color: var(--primary-color);
+            margin-top: 0;
         }
         @media (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
             .controls {
-                flex-direction: column;
-                align-items: center;
+                flex-direction: row;
             }
             select, button {
-                width: 100%;
-                max-width: 200px;
+                flex: 1 1 auto;
+                font-size: 0.9em;
             }
             #sudoku-board input {
-                width: 100%;
-                height: 100%;
+                width: 30px;
+                height: 30px;
                 font-size: 1em;
             }
         }
@@ -111,18 +147,18 @@
         <h1 id="title" data-i18n="title">Sudoku Challenge</h1>
         <div class="controls">
             <select id="languageSelect" onchange="changeLanguage(this.value)">
-                <option value="en">English</option>
-                <option value="de">Deutsch</option>
-                <option value="fr">Français</option>
-                <option value="it">Italiano</option>
-                <option value="sv">Svenska</option>
-                <option value="sk">Slovenčina</option>
-                <option value="es">Español</option>
-                <option value="pt">Português</option>
-                <option value="no">Norsk</option>
-                <option value="fi">Suomi</option>
-                <option value="pl">Polski</option>
-                <option value="cs">Čeština</option>
+                <option value="en">🌐</option>
+                <option value="de">DE</option>
+                <option value="fr">FR</option>
+                <option value="it">IT</option>
+                <option value="sv">SV</option>
+                <option value="sk">SK</option>
+                <option value="es">ES</option>
+                <option value="pt">PT</option>
+                <option value="no">NO</option>
+                <option value="fi">FI</option>
+                <option value="pl">PL</option>
+                <option value="cs">CS</option>
             </select>
             <select id="difficultySelect" data-i18n="difficulty">
                 <option value="trivial" data-i18n="trivial">Trivial</option>
@@ -135,10 +171,15 @@
             <button id="new-game" data-i18n="newGame">New Game</button>
             <button id="toggle-checking" data-i18n="startChecking">Start Checking</button>
         </div>
-        <div id="message"></div>
         <table id="sudoku-board"></table>
+        <div id="message"></div>
     </div>
-
+    <div class="overlay">
+        <div class="congratulations">
+            <h2 data-i18n="congratulations">Congratulations!</h2>
+            <p data-i18n="puzzleSolved">You solved the puzzle!</p>
+        </div>
+    </div>
     <script>
         let currentPuzzle = [];
         let currentSolution = [];
@@ -552,10 +593,18 @@
             }
         }
 
+        function showCongratulations() {
+            const overlay = document.querySelector('.overlay');
+            overlay.classList.add('show');
+            setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 3000);
+        }
+
         function checkCompletion() {
             const inputs = document.querySelectorAll('#sudoku-board input');
             let isComplete = true;
-
+            
             inputs.forEach(input => {
                 const row = parseInt(input.dataset.row);
                 const col = parseInt(input.dataset.col);
@@ -567,9 +616,7 @@
             });
 
             if (isComplete) {
-                document.getElementById('message').textContent = translations[currentLanguage].congratulations;
-            } else {
-                document.getElementById('message').textContent = '';
+                showCongratulations();
             }
         }
 
