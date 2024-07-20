@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudoku Challenge</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='5' y='5' width='90' height='90' fill='%23f0f0f0' stroke='%23333' stroke-width='2'/><line x1='35' y1='5' x2='35' y2='95' stroke='%23333' stroke-width='2'/><line x1='65' y1='5' x2='65' y2='95' stroke='%23333' stroke-width='2'/><line x1='5' y1='35' x2='95' y2='35' stroke='%23333' stroke-width='2'/><line x1='5' y1='65' x2='95' y2='65' stroke='%23333' stroke-width='2'/><text x='50' y='62' font-family='Arial, sans-serif' font-size='40' fill='%233366cc' text-anchor='middle'>5</text></svg>">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -129,7 +130,7 @@
                 <option value="medium" data-i18n="medium">Medium</option>
                 <option value="hard" data-i18n="hard">Hard</option>
                 <option value="expert" data-i18n="expert">Expert</option>
-                <option value="maximum" data-i18n="maximum">Max difficulty</option>
+                <option value="ultimate" data-i18n="ultimate">Ultimate</option>
             </select>
             <button id="new-game" data-i18n="newGame">New Game</button>
             <button id="toggle-checking" data-i18n="startChecking">Start Checking</button>
@@ -155,7 +156,7 @@
                 medium: "Medium",
                 hard: "Hard",
                 expert: "Expert",
-                maximum: "Max difficulty",
+                ultimate: "Ultimate",
                 newGame: "New Game",
                 startChecking: "Start Checking",
                 stopChecking: "Stop Checking",
@@ -169,7 +170,7 @@
                 medium: "Mittel",
                 hard: "Schwer",
                 expert: "Experte",
-                maximum: "Max difficulty",
+                ultimate: "Ultimativ",
                 newGame: "Neues Spiel",
                 startChecking: "Prüfung starten",
                 stopChecking: "Prüfung beenden",
@@ -183,7 +184,7 @@
                 medium: "Moyen",
                 hard: "Difficile",
                 expert: "Expert",
-                maximum: "Max difficulty",
+                ultimate: "Ultime",
                 newGame: "Nouvelle Partie",
                 startChecking: "Commencer la vérification",
                 stopChecking: "Arrêter la vérification",
@@ -197,7 +198,7 @@
                 medium: "Medio",
                 hard: "Difficile",
                 expert: "Esperto",
-                maximum: "Max difficulty",
+                ultimate: "Ultimo",
                 newGame: "Nuova Partita",
                 startChecking: "Inizia controllo",
                 stopChecking: "Ferma controllo",
@@ -211,7 +212,7 @@
                 medium: "Medel",
                 hard: "Svår",
                 expert: "Expert",
-                maximum: "Max difficulty",
+                ultimate: "Ultimat",
                 newGame: "Nytt spel",
                 startChecking: "Börja kontrollera",
                 stopChecking: "Sluta kontrollera",
@@ -225,7 +226,7 @@
                 medium: "Stredné",
                 hard: "Ťažké",
                 expert: "Expert",
-                maximum: "Max difficulty",
+                ultimate: "Konečný",
                 newGame: "Nová hra",
                 startChecking: "Začať kontrolu",
                 stopChecking: "Zastaviť kontrolu",
@@ -239,7 +240,7 @@
                 medium: "Medio",
                 hard: "Difícil",
                 expert: "Experto",
-                maximum: "Max difficulty",
+                ultimate: "Definitivo",
                 newGame: "Nuevo Juego",
                 startChecking: "Comenzar verificación",
                 stopChecking: "Detener verificación",
@@ -253,7 +254,7 @@
                 medium: "Médio",
                 hard: "Difícil",
                 expert: "Especialista",
-                maximum: "Max difficulty",
+                ultimate: "Definitivo",
                 newGame: "Novo Jogo",
                 startChecking: "Iniciar verificação",
                 stopChecking: "Parar verificação",
@@ -267,7 +268,7 @@
                 medium: "Middels",
                 hard: "Vanskelig",
                 expert: "Ekspert",
-                maximum: "Max difficulty",
+                ultimate: "Ultimat",
                 newGame: "Nytt spill",
                 startChecking: "Start sjekking",
                 stopChecking: "Stopp sjekking",
@@ -281,7 +282,7 @@
                 medium: "Keskitaso",
                 hard: "Vaikea",
                 expert: "Asiantuntija",
-                maximum: "Max difficulty",
+                ultimate: "Viimeinen",
                 newGame: "Uusi peli",
                 startChecking: "Aloita tarkistus",
                 stopChecking: "Lopeta tarkistus",
@@ -295,7 +296,7 @@
                 medium: "Średni",
                 hard: "Trudny",
                 expert: "Ekspert",
-                maximum: "Max difficulty",
+                ultimate: "Ostateczny",
                 newGame: "Nowa gra",
                 startChecking: "Rozpocznij sprawdzanie",
                 stopChecking: "Zatrzymaj sprawdzanie",
@@ -308,8 +309,8 @@
                 easy: "Lehké",
                 medium: "Střední",
                 hard: "Těžké",
-                expert: "Expert",
-                maximum: "Max difficulty",
+                expert: "Konečný",
+                ultimate: "Max difficulty",
                 newGame: "Nová hra",
                 startChecking: "Začít kontrolu",
                 stopChecking: "Zastavit kontrolu",
@@ -340,14 +341,14 @@
 
         function generateSudoku(difficulty) {
             const board = Array(9).fill().map(() => Array(9).fill(0));
-
+            
             function isValid(board, row, col, num) {
                 for (let x = 0; x < 9; x++) {
                     if (board[row][x] === num || board[x][col] === num) {
                         return false;
                     }
                 }
-
+                
                 let boxRow = Math.floor(row / 3) * 3;
                 let boxCol = Math.floor(col / 3) * 3;
                 for (let i = 0; i < 3; i++) {
@@ -357,10 +358,10 @@
                         }
                     }
                 }
-
+                
                 return true;
             }
-
+            
             function fillBoard(board) {
                 for (let row = 0; row < 9; row++) {
                     for (let col = 0; col < 9; col++) {
@@ -384,31 +385,75 @@
                 }
                 return true;
             }
-
+            
             fillBoard(board);
-
+            
             const solution = board.map(row => [...row]);
-
+            
+            function hasUniqueSolution(board) {
+                const emptyCell = findEmptyCell(board);
+                if (!emptyCell) return true;
+                
+                const [row, col] = emptyCell;
+                let solutionCount = 0;
+                
+                for (let num = 1; num <= 9; num++) {
+                    if (isValid(board, row, col, num)) {
+                        board[row][col] = num;
+                        if (hasUniqueSolution(board)) {
+                            solutionCount++;
+                        }
+                        if (solutionCount > 1) {
+                            board[row][col] = 0;
+                            return false;
+                        }
+                        board[row][col] = 0;
+                    }
+                }
+                
+                return solutionCount === 1;
+            }
+            
+            function findEmptyCell(board) {
+                for (let row = 0; row < 9; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        if (board[row][col] === 0) {
+                            return [row, col];
+                        }
+                    }
+                }
+                return null;
+            }
+            
             let cellsToRemove;
             switch (difficulty) {
                 case 'trivial': cellsToRemove = 20; break;
                 case 'easy': cellsToRemove = 30; break;
                 case 'medium': cellsToRemove = 40; break;
                 case 'hard': cellsToRemove = 50; break;
-                case 'expert': cellsToRemove = 58; break;
-                case 'maximum': cellsToRemove = 64; break;
+                case 'expert': cellsToRemove = 60; break;
+                case 'ultimate': cellsToRemove = 62; break;
                 default: cellsToRemove = 40;
             }
-
-            while (cellsToRemove > 0) {
-                let row = Math.floor(Math.random() * 9);
-                let col = Math.floor(Math.random() * 9);
+            
+            const cellsToTry = [...Array(81)].map((_, i) => [Math.floor(i / 9), i % 9]);
+            while (cellsToRemove > 0 && cellsToTry.length > 0) {
+                const index = Math.floor(Math.random() * cellsToTry.length);
+                const [row, col] = cellsToTry.splice(index, 1)[0];
+                
                 if (board[row][col] !== 0) {
+                    const temp = board[row][col];
                     board[row][col] = 0;
-                    cellsToRemove--;
+                    
+                    const boardCopy = board.map(row => [...row]);
+                    if (hasUniqueSolution(boardCopy)) {
+                        cellsToRemove--;
+                    } else {
+                        board[row][col] = temp;
+                    }
                 }
             }
-
+            
             return { puzzle: board, solution: solution };
         }
 
