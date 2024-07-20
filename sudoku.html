@@ -113,6 +113,10 @@
             font-weight: bold;
             color: var(--primary-color);
         }
+        #sudoku-board input.solution {
+            color: #999; /* Light grey color */
+            font-style: italic;
+        }
         #sudoku-board tr:nth-child(3n) {
             border-bottom: 2px solid var(--text-color);
         }
@@ -610,25 +614,55 @@
         }
     
         function checkCompletion() {
+            const board = Array(9).fill().map(() => Array(9).fill(0));
             const inputs = document.querySelectorAll('#sudoku-board input');
             let isComplete = true;
-            
+        
+            // Fill the board array with current values
             inputs.forEach(input => {
                 const row = parseInt(input.dataset.row);
                 const col = parseInt(input.dataset.col);
                 const value = parseInt(input.value) || 0;
-    
-                if (value !== currentSolution[row][col]) {
-                    isComplete = false;
-                }
+                board[row][col] = value;
+                if (value === 0) isComplete = false;
             });
-    
-            if (isComplete) {
-                showCongratulations();
+        
+            // If not all cells are filled, don't show congratulations
+            if (!isComplete) return;
+        
+            // Check rows
+            for (let row = 0; row < 9; row++) {
+                if (!isValidSet(board[row])) return;
             }
+        
+            // Check columns
+            for (let col = 0; col < 9; col++) {
+                const column = board.map(row => row[col]);
+                if (!isValidSet(column)) return;
+            }
+        
+            // Check 3x3 sub-grids
+            for (let i = 0; i < 9; i += 3) {
+                for (let j = 0; j < 9; j += 3) {
+                    const subGrid = [];
+                    for (let x = 0; x < 3; x++) {
+                        for (let y = 0; y < 3; y++) {
+                            subGrid.push(board[i + x][j + y]);
+                        }
+                    }
+                    if (!isValidSet(subGrid)) return;
+                }
+            }
+        
+            // If we've made it this far, the puzzle is solved correctly
+            showCongratulations();
         }
-    
-
+        
+        function isValidSet(arr) {
+            const set = new Set(arr);
+            return set.size === 9 && !set.has(0);
+        }
+        
         function toggleSolution() {
             isSolutionVisible = !isSolutionVisible;
             const inputs = document.querySelectorAll('#sudoku-board input:not(.given)');
