@@ -512,7 +512,7 @@
         function displaySudoku(puzzle) {
             const board = document.getElementById('sudoku-board');
             board.innerHTML = '';
-
+        
             for (let i = 0; i < 9; i++) {
                 const row = document.createElement('tr');
                 for (let j = 0; j < 9; j++) {
@@ -524,48 +524,92 @@
                     input.maxLength = 1;
                     input.dataset.row = i;
                     input.dataset.col = j;
-
+        
                     if (puzzle[i][j] !== 0) {
                         input.value = puzzle[i][j];
                         input.readOnly = true;
                         input.classList.add('given');
+                        input.tabIndex = -1; // Prevent tabbing to filled cells
                     } else {
-                        input.addEventListener('input', function(e) {
-                            if (this.dataset.previousValue && this.dataset.previousValue !== '') {
-                                e.preventDefault();
-                                this.value = this.dataset.previousValue;
-                                return;
-                            }
-                        
-                            if (this.value === '?' || this.value === '0') {
-                                showHint(this);
-                                e.preventDefault();
-                            } else {
-                                this.value = this.value.replace(/[^1-9]/g, '');
-                                if (this.value !== '') {
-                                    // Store the new value as previous value
-                                    this.dataset.previousValue = this.value;
-                                }
-                                this.classList.remove('hint', 'solution');
-                                if (isChecking) {
-                                    checkCell(this);
-                                }
-                                checkCompletion();
-                            }
-                        });
-                        input.addEventListener('focus', function() {
-                            this.dataset.previousValue = this.value;
-                        });
+                        input.tabIndex = 0; // Allow tabbing to empty cells
                     }
-
+        
+                    input.addEventListener('input', handleInput);
+                    input.addEventListener('focus', handleFocus);
+                    input.addEventListener('mousedown', handleMouseDown);
+        
                     cell.appendChild(input);
                     row.appendChild(cell);
                 }
                 board.appendChild(row);
             }
-
+        
             resizeSudokuBoard();
         }
+        
+        function handleInput(e) {
+            if (this.readOnly) {
+                e.preventDefault();
+                return;
+            }
+        
+            if (this.dataset.previousValue && this.dataset.previousValue !== '') {
+                e.preventDefault();
+                this.value = this.dataset.previousValue;
+                return;
+            }
+        
+            if (this.value === '?' || this.value === '0') {
+                showHint(this);
+                this.readOnly = true; // Once we cheat on a cell we are no longer allowed to revisit this cell
+                this.tabIndex = -1; // Prevent further tabbing to this cell
+                e.preventDefault();
+            } else {
+                this.value = this.value.replace(/[^1-9]/g, '');
+                if (this.value !== '') {
+                    this.dataset.previousValue = this.value;
+                }
+                this.classList.remove('hint', 'solution');
+                if (isChecking) {
+                    checkCell(this);
+                }
+                checkCompletion();
+            }
+        }
+        
+        function handleFocus(e) {
+            this.dataset.previousValue = this.value;
+            if (this.readOnly) {
+                e.preventDefault();
+                this.blur();
+                focusNextEmptyCell(this);
+            }
+        }
+        
+        function handleMouseDown(e) {
+            if (this.readOnly) {
+                e.preventDefault();
+            }
+        }
+        
+        function focusNextEmptyCell(currentCell) {
+            const inputs = Array.from(document.querySelectorAll('#sudoku-board input'));
+            const currentIndex = inputs.indexOf(currentCell);
+            for (let i = currentIndex + 1; i < inputs.length; i++) {
+                if (!inputs[i].readOnly) {
+                    inputs[i].focus();
+                    return;
+                }
+            }
+            // If no empty cell found after current, loop back to beginning
+            for (let i = 0; i < currentIndex; i++) {
+                if (!inputs[i].readOnly) {
+                    inputs[i].focus();
+                    return;
+                }
+            }
+        }
+        
 
         function resizeSudokuBoard() {
             const container = document.querySelector('.container');
