@@ -26,74 +26,25 @@
             background-color: white;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            padding: 20px;
-            max-width: 500px;
-            width: 95%;
+            padding: 10px;
+            max-width: 95vw;
+            width: 100%;
+            box-sizing: border-box;
         }
         #title {
             text-align: center;
             color: var(--primary-color);
             margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.5em;
             cursor: pointer;
         }
         .controls {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 5px;
             justify-content: center;
-            margin-bottom: 20px;
-        }
-        select, button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 5px;
-            background-color: var(--primary-color);
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        select:hover, button:hover {
-            background-color: #2980b9;
-        }
-        #sudoku-board {
-            border-collapse: collapse;
-            margin: 0 auto;
-        }
-        #sudoku-board td {
-            border: 1px solid #bdc3c7;
-            padding: 0;
-        }
-        #sudoku-board input {
-            width: 40px;
-            height: 40px;
-            text-align: center;
-            font-size: 1.2em;
-            border: none;
-            outline: none;
-            background-color: transparent;
-        }
-        #sudoku-board input.given {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        #sudoku-board tr:nth-child(3n) {
-            border-bottom: 2px solid var(--text-color);
-        }
-        #sudoku-board td:nth-child(3n) {
-            border-right: 2px solid var(--text-color);
-        }
-        #sudoku-board input.incorrect {
-            color: #e74c3c;
-        }
-        #sudoku-board input.hint {
-            color: var(--secondary-color);
-            font-style: italic;
-        }
-        #message {
-            text-align: center;
-            margin-top: 20px;
-            font-weight: bold;
-            color: var(--secondary-color);
+            margin-bottom: 10px;
         }
         .overlay {
             position: fixed;
@@ -121,10 +72,65 @@
             text-align: center;
             transform: rotate(-15deg);
             box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            max-width: 80%;
         }
         .congratulations h2 {
             color: var(--primary-color);
             margin-top: 0;
+        }    
+        select, button {
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 0.9em;
+        }
+        select:hover, button:hover {
+            background-color: #2980b9;
+        }
+        #sudoku-board {
+            border-collapse: collapse;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+        #sudoku-board td {
+            border: 1px solid #bdc3c7;
+            padding: 0;
+        }
+        #sudoku-board input {
+            width: calc(min(10vw, 40px));
+            height: calc(min(10vw, 40px));
+            text-align: center;
+            font-size: calc(min(5vw, 1.2em));
+            border: none;
+            outline: none;
+            background-color: transparent;
+        }
+        #sudoku-board input.given {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        #sudoku-board tr:nth-child(3n) {
+            border-bottom: 2px solid var(--text-color);
+        }
+        #sudoku-board td:nth-child(3n) {
+            border-right: 2px solid var(--text-color);
+        }
+        #sudoku-board input.incorrect {
+            color: #e74c3c;
+        }
+        #sudoku-board input.hint {
+            color: var(--secondary-color);
+            font-style: italic;
+        }
+        #message {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            color: var(--secondary-color);
         }
         @media (max-width: 600px) {
             .controls {
@@ -132,12 +138,13 @@
             }
             select, button {
                 flex: 1 1 auto;
-                font-size: 0.9em;
+                font-size: 0.8em;
+                padding: 6px;
             }
             #sudoku-board input {
-                width: 30px;
-                height: 30px;
-                font-size: 1em;
+                width: calc(min(9vw, 30px));
+                height: calc(min(9vw, 30px));
+                font-size: calc(min(4.5vw, 1em));
             }
         }
     </style>
@@ -574,6 +581,7 @@
             currentSolution = solution;
             displaySudoku(puzzle);
             document.getElementById('message').textContent = '';
+            document.querySelector('.overlay').classList.remove('show');
             isChecking = false;
             isSolutionVisible = false;
             updateCheckingButtonText();
@@ -600,7 +608,7 @@
                 overlay.classList.remove('show');
             }, 3000);
         }
-
+    
         function checkCompletion() {
             const inputs = document.querySelectorAll('#sudoku-board input');
             let isComplete = true;
@@ -609,16 +617,17 @@
                 const row = parseInt(input.dataset.row);
                 const col = parseInt(input.dataset.col);
                 const value = parseInt(input.value) || 0;
-
+    
                 if (value !== currentSolution[row][col]) {
                     isComplete = false;
                 }
             });
-
+    
             if (isComplete) {
                 showCongratulations();
             }
         }
+    
 
         function toggleSolution() {
             isSolutionVisible = !isSolutionVisible;
