@@ -531,17 +531,30 @@
                         input.classList.add('given');
                     } else {
                         input.addEventListener('input', function(e) {
+                            if (this.dataset.previousValue && this.dataset.previousValue !== '') {
+                                e.preventDefault();
+                                this.value = this.dataset.previousValue;
+                                return;
+                            }
+                        
                             if (this.value === '?' || this.value === '0') {
                                 showHint(this);
                                 e.preventDefault();
                             } else {
                                 this.value = this.value.replace(/[^1-9]/g, '');
+                                if (this.value !== '') {
+                                    // Store the new value as previous value
+                                    this.dataset.previousValue = this.value;
+                                }
                                 this.classList.remove('hint', 'solution');
                                 if (isChecking) {
                                     checkCell(this);
                                 }
                                 checkCompletion();
                             }
+                        });
+                        input.addEventListener('focus', function() {
+                            this.dataset.previousValue = this.value;
                         });
                     }
 
@@ -575,6 +588,7 @@
             const row = parseInt(input.dataset.row);
             const col = parseInt(input.dataset.col);
             input.value = currentSolution[row][col];
+            input.dataset.previousValue = input.value;
             input.classList.add('hint');
         }
 
