@@ -10,7 +10,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
         }
@@ -19,10 +19,15 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            box-sizing: border-box;
         }
         #title {
             text-align: center;
             cursor: pointer;
+            font-size: 1.5em;
+            margin-top: 0;
         }
         .controls {
             display: flex;
@@ -34,10 +39,12 @@
         select, button {
             padding: 5px 10px;
             cursor: pointer;
+            font-size: 1em;
         }
         #sudoku-board {
             border-collapse: collapse;
             margin: 0 auto;
+            max-width: 100%;
         }
         #sudoku-board td {
             border: 1px solid #ccc;
@@ -47,9 +54,11 @@
             width: 40px;
             height: 40px;
             text-align: center;
-            font-size: 18px;
+            font-size: 1.2em;
             border: none;
             outline: none;
+            padding: 0;
+            box-sizing: border-box;
         }
         #sudoku-board input.given {
             font-weight: bold;
@@ -67,10 +76,32 @@
         #sudoku-board input.solution {
             color: grey;
         }
+        #sudoku-board input.hint {
+            color: blue;
+            font-style: italic;
+        }
         #message {
             text-align: center;
             margin-top: 20px;
             font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            select, button {
+                width: 100%;
+                max-width: 200px;
+            }
+            #sudoku-board input {
+                width: 100%;
+                height: 100%;
+                font-size: 1em;
+            }
         }
     </style>
 </head>
@@ -103,7 +134,7 @@
             <button id="toggle-checking" data-i18n="startChecking">Start Checking</button>
         </div>
         <div id="message"></div>
-        <!-- The Sudoku board will be inserted here by JavaScript -->
+        <table id="sudoku-board"></table>
     </div>
 
     <script>
@@ -272,7 +303,7 @@
                 congratulations: "Blahopřejeme! Vyřešili jste hádanku!"
             }
         };
-        
+
         function changeLanguage(lang) {
             currentLanguage = lang;
             document.querySelectorAll('[data-i18n]').forEach(element => {
@@ -368,26 +399,17 @@
         }
 
         function displaySudoku(puzzle) {
-            const container = document.querySelector('.container');
-            if (!container) {
-                console.error('Container element not found');
-                return;
-            }
-
-            let board = container.querySelector('#sudoku-board');
-            if (board) {
-                board.remove();
-            }
-
-            board = document.createElement('table');
-            board.id = 'sudoku-board';
+            const board = document.getElementById('sudoku-board');
+            board.innerHTML = '';
 
             for (let i = 0; i < 9; i++) {
                 const row = document.createElement('tr');
                 for (let j = 0; j < 9; j++) {
                     const cell = document.createElement('td');
                     const input = document.createElement('input');
-                    input.type = 'text';
+                    input.type = 'tel';
+                    input.inputMode = 'numeric';
+                    input.pattern = '[0-9]';
                     input.maxLength = 1;
                     input.dataset.row = i;
                     input.dataset.col = j;
@@ -397,10 +419,10 @@
                         input.readOnly = true;
                         input.classList.add('given');
                     } else {
-                        // ... (keep the existing displaySudoku function, but update the input event listener)
-                        input.addEventListener('input', function () {
+                        input.addEventListener('input', function(e) {
                             if (this.value === '?' || this.value === '0') {
                                 showHint(this);
+                                e.preventDefault();
                             } else {
                                 this.value = this.value.replace(/[^1-9]/g, '');
                                 this.classList.remove('hint', 'solution');
@@ -408,25 +430,41 @@
                                     checkCell(this);
                                 }
                                 checkCompletion();
-                                if (isSolutionVisible) {
-                                    const row = parseInt(this.dataset.row);
-                                    const col = parseInt(this.dataset.col);
-                                    const currentValue = parseInt(this.value) || 0;
-                                    const solutionValue = currentSolution[row][col];
-                                    if (currentValue !== solutionValue) {
-                                        this.value = solutionValue;
-                                        this.classList.add('solution');
-                                    }
-                                }
                             }
                         });
                     }
+
                     cell.appendChild(input);
                     row.appendChild(cell);
                 }
                 board.appendChild(row);
             }
-            container.appendChild(board);
+
+            resizeSudokuBoard();
+        }
+
+        function resizeSudokuBoard() {
+            const container = document.querySelector('.container');
+            const board = document.getElementById('sudoku-board');
+            const availableWidth = Math.min(container.clientWidth - 40, 500); // 40px for container padding, max 500px
+            const cellSize = Math.floor(availableWidth / 9);
+
+            board.style.width = `${cellSize * 9}px`;
+            board.style.height = `${cellSize * 9}px`;
+
+            const inputs = board.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.style.width = `${cellSize}px`;
+                input.style.height = `${cellSize}px`;
+                input.style.fontSize = `${cellSize * 0.6}px`;
+            });
+        }
+
+        function showHint(input) {
+            const row = parseInt(input.dataset.row);
+            const col = parseInt(input.dataset.col);
+            input.value = currentSolution[row][col];
+            input.classList.add('hint');
         }
 
         function newGame() {
@@ -498,7 +536,9 @@
                 }
             });
         }
-        
+
+        window.addEventListener('resize', resizeSudokuBoard);
+
         document.addEventListener('DOMContentLoaded', () => {
             const difficultySelect = document.getElementById('difficultySelect');
             const newGameButton = document.getElementById('new-game');
@@ -524,6 +564,7 @@
 
             changeLanguage('en');
             newGame();
+            resizeSudokuBoard();
         });
     </script>
 </body>
