@@ -5,129 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudoku Challenge</title>
     <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --background-color: #ecf0f1;
-            --text-color: #2c3e50;
-            --grid-border-color: #34495e;
-            --solution-color: #bdc3c7; /* Light gray color for solution */
-        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            font-family: Arial, sans-serif;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
         }
         .container {
-            max-width: 600px;
-            width: 100%;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        h1 {
+        #title {
             text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 20px;
+            cursor: pointer;
         }
         .controls {
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
-        button, select {
-            padding: 10px 15px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            background-color: var(--primary-color);
-            color: white;
+        select, button {
+            padding: 5px 10px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
-        button:hover, select:hover {
-            background-color: #2980b9;
-        }
-        select {
-            background-color: var(--secondary-color);
-        }
-        select:hover {
-            background-color: #27ae60;
-        }
-        #sudokuGrid {
+        #sudoku-board {
             border-collapse: collapse;
             margin: 0 auto;
         }
-        #sudokuGrid td {
+        #sudoku-board td {
+            border: 1px solid #ccc;
+            padding: 0;
+        }
+        #sudoku-board input {
             width: 40px;
             height: 40px;
             text-align: center;
-            border: 1px solid var(--grid-border-color);
             font-size: 18px;
-        }
-        #sudokuGrid tr:nth-child(3n) td {
-            border-bottom: 2px solid var(--grid-border-color);
-        }
-        #sudokuGrid td:nth-child(3n) {
-            border-right: 2px solid var(--grid-border-color);
-        }
-        input {
-            width: 100%;
-            height: 100%;
             border: none;
-            text-align: center;
-            font-size: 18px;
-            padding: 0;
-            box-sizing: border-box;
-            background-color: transparent;
+            outline: none;
         }
-        .fixed {
+        #sudoku-board input.given {
             font-weight: bold;
-            color: var(--text-color);
+            background-color: #f0f0f0;
         }
-        .user-input {
-            color: var(--primary-color);
+        #sudoku-board tr:nth-child(3n) {
+            border-bottom: 2px solid #000;
         }
-        .incorrect {
-            color: #e74c3c;
+        #sudoku-board td:nth-child(3n) {
+            border-right: 2px solid #000;
         }
-        .revealed {
-            color: var(--secondary-color);
+        #sudoku-board input.incorrect {
+            color: red;
         }
-        .solution {
-            color: var(--solution-color);
+        #sudoku-board input.solution {
+            color: grey;
         }
         #message {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 20px;
             text-align: center;
-            color: var(--secondary-color);
-        }
-        @media (max-width: 480px) {
-            .container {
-                padding: 10px;
-            }
-            #sudokuGrid td {
-                width: 30px;
-                height: 30px;
-                font-size: 16px;
-            }
-            button, select {
-                padding: 8px 12px;
-                font-size: 14px;
-            }
+            margin-top: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 id="title">Sudoku Challenge</h1>
+        <h1 id="title" data-i18n="title">Sudoku Challenge</h1>
         <div class="controls">
             <select id="languageSelect" onchange="changeLanguage(this.value)">
                 <option value="en">English</option>
@@ -143,329 +92,402 @@
                 <option value="pl">Polski</option>
                 <option value="cs">Čeština</option>
             </select>
-            <button id="easyButton" onclick="generateSudoku('easy')">Easy</button>
-            <button id="mediumButton" onclick="generateSudoku('medium')">Medium</button>
-            <button id="hardButton" onclick="generateSudoku('hard')">Hard</button>
-            <button id="checkButton" onclick="toggleCheck()">Start Checking</button>
-            <button id="toggleSolutionButton" onclick="toggleSolution()">Show Solution</button>
+            <select id="difficultySelect" data-i18n="difficulty">
+                <option value="trivial" data-i18n="trivial">Trivial</option>
+                <option value="easy" data-i18n="easy">Easy</option>
+                <option value="medium" data-i18n="medium">Medium</option>
+                <option value="hard" data-i18n="hard">Hard</option>
+                <option value="expert" data-i18n="expert">Expert</option>
+            </select>
+            <button id="new-game" data-i18n="newGame">New Game</button>
+            <button id="toggle-checking" data-i18n="startChecking">Start Checking</button>
         </div>
-        <table id="sudokuGrid"></table>
         <div id="message"></div>
+        <!-- The Sudoku board will be inserted here by JavaScript -->
     </div>
 
     <script>
-        let originalPuzzle;
-        let solution;
+        let currentPuzzle = [];
+        let currentSolution = [];
         let isChecking = false;
-        let isShowingSolution = false;
+        let isSolutionVisible = false;
         let currentLanguage = 'en';
+        let currentDifficulty = 'easy';
 
         const translations = {
             en: {
                 title: "Sudoku Challenge",
+                difficulty: "Difficulty",
+                trivial: "Trivial",
                 easy: "Easy",
                 medium: "Medium",
                 hard: "Hard",
+                expert: "Expert",
+                newGame: "New Game",
                 startChecking: "Start Checking",
                 stopChecking: "Stop Checking",
-                showSolution: "Show Solution",
-                hideSolution: "Hide Solution",
-                congratulations: "Congratulations! You solved the Sudoku puzzle!"
+                congratulations: "Congratulations! You solved the puzzle!"
             },
             de: {
                 title: "Sudoku-Herausforderung",
-                easy: "Einfach",
+                difficulty: "Schwierigkeitsgrad",
+                trivial: "Trivial",
+                easy: "Leicht",
                 medium: "Mittel",
                 hard: "Schwer",
+                expert: "Experte",
+                newGame: "Neues Spiel",
                 startChecking: "Prüfung starten",
                 stopChecking: "Prüfung beenden",
-                showSolution: "Lösung anzeigen",
-                hideSolution: "Lösung ausblenden",
-                congratulations: "Glückwunsch! Sie haben das Sudoku-Rätsel gelöst!"
+                congratulations: "Glückwunsch! Du hast das Puzzle gelöst!"
             },
             fr: {
                 title: "Défi Sudoku",
+                difficulty: "Difficulté",
+                trivial: "Trivial",
                 easy: "Facile",
                 medium: "Moyen",
                 hard: "Difficile",
+                expert: "Expert",
+                newGame: "Nouvelle Partie",
                 startChecking: "Commencer la vérification",
                 stopChecking: "Arrêter la vérification",
-                showSolution: "Afficher la solution",
-                hideSolution: "Masquer la solution",
-                congratulations: "Félicitations ! Vous avez résolu le puzzle Sudoku !"
+                congratulations: "Félicitations ! Vous avez résolu le puzzle !"
             },
             it: {
                 title: "Sfida Sudoku",
+                difficulty: "Difficoltà",
+                trivial: "Banale",
                 easy: "Facile",
                 medium: "Medio",
                 hard: "Difficile",
-                startChecking: "Inizia il controllo",
-                stopChecking: "Ferma il controllo",
-                showSolution: "Mostra soluzione",
-                hideSolution: "Nascondi soluzione",
-                congratulations: "Congratulazioni! Hai risolto il puzzle Sudoku!"
+                expert: "Esperto",
+                newGame: "Nuova Partita",
+                startChecking: "Inizia controllo",
+                stopChecking: "Ferma controllo",
+                congratulations: "Congratulazioni! Hai risolto il puzzle!"
             },
             sv: {
-                title: "Sudoku Utmaning",
+                title: "Sudoku-utmaning",
+                difficulty: "Svårighetsgrad",
+                trivial: "Trivialt",
                 easy: "Lätt",
                 medium: "Medel",
                 hard: "Svår",
+                expert: "Expert",
+                newGame: "Nytt spel",
                 startChecking: "Börja kontrollera",
                 stopChecking: "Sluta kontrollera",
-                showSolution: "Visa lösning",
-                hideSolution: "Dölj lösning",
-                congratulations: "Grattis! Du har löst Sudoku-pusslet!"
+                congratulations: "Grattis! Du löste pusslet!"
             },
             sk: {
-                title: "Sudoku Výzva",
+                title: "Sudoku výzva",
+                difficulty: "Obtiažnosť",
+                trivial: "Triviálne",
                 easy: "Ľahké",
                 medium: "Stredné",
                 hard: "Ťažké",
+                expert: "Expert",
+                newGame: "Nová hra",
                 startChecking: "Začať kontrolu",
                 stopChecking: "Zastaviť kontrolu",
-                showSolution: "Zobraziť riešenie",
-                hideSolution: "Skryť riešenie",
-                congratulations: "Blahoželáme! Vyriešili ste Sudoku hlavolam!"
+                congratulations: "Blahoželáme! Vyriešili ste hlavolam!"
             },
             es: {
                 title: "Desafío Sudoku",
+                difficulty: "Dificultad",
+                trivial: "Trivial",
                 easy: "Fácil",
                 medium: "Medio",
                 hard: "Difícil",
+                expert: "Experto",
+                newGame: "Nuevo Juego",
                 startChecking: "Comenzar verificación",
                 stopChecking: "Detener verificación",
-                showSolution: "Mostrar solución",
-                hideSolution: "Ocultar solución",
-                congratulations: "¡Felicidades! ¡Has resuelto el puzzle Sudoku!"
+                congratulations: "¡Felicidades! ¡Has resuelto el rompecabezas!"
             },
             pt: {
                 title: "Desafio Sudoku",
+                difficulty: "Dificuldade",
+                trivial: "Trivial",
                 easy: "Fácil",
                 medium: "Médio",
                 hard: "Difícil",
+                expert: "Especialista",
+                newGame: "Novo Jogo",
                 startChecking: "Iniciar verificação",
                 stopChecking: "Parar verificação",
-                showSolution: "Mostrar solução",
-                hideSolution: "Ocultar solução",
-                congratulations: "Parabéns! Você resolveu o quebra-cabeça Sudoku!"
+                congratulations: "Parabéns! Você resolveu o quebra-cabeça!"
             },
             no: {
-                title: "Sudoku Utfordring",
+                title: "Sudoku-utfordring",
+                difficulty: "Vanskelighetsgrad",
+                trivial: "Triviell",
                 easy: "Lett",
                 medium: "Middels",
                 hard: "Vanskelig",
-                startChecking: "Begynn å sjekke",
-                stopChecking: "Stopp sjekk",
-                showSolution: "Vis løsning",
-                hideSolution: "Skjul løsning",
-                congratulations: "Gratulerer! Du løste Sudoku-puslespillet!"
+                expert: "Ekspert",
+                newGame: "Nytt spill",
+                startChecking: "Start sjekking",
+                stopChecking: "Stopp sjekking",
+                congratulations: "Gratulerer! Du løste puslespillet!"
             },
             fi: {
-                title: "Sudoku Haaste",
+                title: "Sudoku-haaste",
+                difficulty: "Vaikeustaso",
+                trivial: "Triviaali",
                 easy: "Helppo",
                 medium: "Keskitaso",
                 hard: "Vaikea",
+                expert: "Asiantuntija",
+                newGame: "Uusi peli",
                 startChecking: "Aloita tarkistus",
                 stopChecking: "Lopeta tarkistus",
-                showSolution: "Näytä ratkaisu",
-                hideSolution: "Piilota ratkaisu",
-                congratulations: "Onnittelut! Ratkaisit Sudoku-pulman!"
+                congratulations: "Onnittelut! Ratkaisit pelin!"
             },
             pl: {
                 title: "Wyzwanie Sudoku",
-                easy: "Łatwe",
-                medium: "Średnie",
-                hard: "Trudne",
+                difficulty: "Poziom trudności",
+                trivial: "Trywialny",
+                easy: "Łatwy",
+                medium: "Średni",
+                hard: "Trudny",
+                expert: "Ekspert",
+                newGame: "Nowa gra",
                 startChecking: "Rozpocznij sprawdzanie",
                 stopChecking: "Zatrzymaj sprawdzanie",
-                showSolution: "Pokaż rozwiązanie",
-                hideSolution: "Ukryj rozwiązanie",
-                congratulations: "Gratulacje! Rozwiązałeś Sudoku!"
+                congratulations: "Gratulacje! Rozwiązałeś łamigłówkę!"
             },
             cs: {
-                title: "Sudoku Výzva",
+                title: "Sudoku výzva",
+                difficulty: "Obtížnost",
+                trivial: "Triviální",
                 easy: "Lehké",
                 medium: "Střední",
                 hard: "Těžké",
+                expert: "Expert",
+                newGame: "Nová hra",
                 startChecking: "Začít kontrolu",
                 stopChecking: "Zastavit kontrolu",
-                showSolution: "Zobrazit řešení",
-                hideSolution: "Skrýt řešení",
-                congratulations: "Gratulujeme! Vyřešili jste Sudoku!"
+                congratulations: "Blahopřejeme! Vyřešili jste hádanku!"
             }
         };
-
+        
         function changeLanguage(lang) {
             currentLanguage = lang;
-            document.getElementById('title').textContent = translations[lang].title;
-            document.getElementById('easyButton').textContent = translations[lang].easy;
-            document.getElementById('mediumButton').textContent = translations[lang].medium;
-            document.getElementById('hardButton').textContent = translations[lang].hard;
-            document.getElementById('checkButton').textContent = isChecking ? translations[lang].stopChecking : translations[lang].startChecking;
-            document.getElementById('toggleSolutionButton').textContent = isShowingSolution ? translations[lang].hideSolution : translations[lang].showSolution;
-            if (document.getElementById('message').textContent) {
-                document.getElementById('message').textContent = translations[lang].congratulations;
-            }
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (element.tagName === 'SELECT') {
+                    element.querySelectorAll('option').forEach(option => {
+                        const optionKey = option.getAttribute('data-i18n');
+                        option.textContent = translations[lang][optionKey];
+                    });
+                } else {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            updateCheckingButtonText();
+        }
+
+        function updateCheckingButtonText() {
+            const button = document.getElementById('toggle-checking');
+            button.textContent = translations[currentLanguage][isChecking ? 'stopChecking' : 'startChecking'];
         }
 
         function generateSudoku(difficulty) {
-            const grid = Array(9).fill().map(() => Array(9).fill(0));
-            const difficultyLevels = { easy: 45, medium: 30, hard: 20 }; // Increased number of cells for easier puzzles
-            const cellsToFill = difficultyLevels[difficulty];
-        
-            for (let i = 0; i < 9; i += 3) {
-                fillBox(grid, i, i);
+            const board = Array(9).fill().map(() => Array(9).fill(0));
+
+            function isValid(board, row, col, num) {
+                for (let x = 0; x < 9; x++) {
+                    if (board[row][x] === num || board[x][col] === num) {
+                        return false;
+                    }
+                }
+
+                let boxRow = Math.floor(row / 3) * 3;
+                let boxCol = Math.floor(col / 3) * 3;
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        if (board[boxRow + i][boxCol + j] === num) {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
             }
-        
-            solveSudoku(grid);
-            solution = JSON.parse(JSON.stringify(grid));
-        
-            const puzzle = JSON.parse(JSON.stringify(grid));
-            const positions = Array(81).fill().map((_, i) => i);
-            shuffleArray(positions);
-        
-            // Clear cells to create the puzzle
-            for (let i = 0; i < 81 - cellsToFill; i++) {
-                const pos = positions[i];
-                const row = Math.floor(pos / 9);
-                const col = pos % 9;
-                puzzle[row][col] = 0;
+
+            function fillBoard(board) {
+                for (let row = 0; row < 9; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        if (board[row][col] === 0) {
+                            let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+                            while (numbers.length > 0) {
+                                let index = Math.floor(Math.random() * numbers.length);
+                                let num = numbers[index];
+                                numbers.splice(index, 1);
+                                if (isValid(board, row, col, num)) {
+                                    board[row][col] = num;
+                                    if (fillBoard(board)) {
+                                        return true;
+                                    }
+                                    board[row][col] = 0;
+                                }
+                            }
+                            return false;
+                        }
+                    }
+                }
+                return true;
             }
-        
-            originalPuzzle = JSON.parse(JSON.stringify(puzzle));
+
+            fillBoard(board);
+
+            const solution = board.map(row => [...row]);
+
+            let cellsToRemove;
+            switch (difficulty) {
+                case 'trivial': cellsToRemove = 20; break;
+                case 'easy': cellsToRemove = 40; break;
+                case 'medium': cellsToRemove = 50; break;
+                case 'hard': cellsToRemove = 60; break;
+                case 'expert': cellsToRemove = 70; break;
+                default: cellsToRemove = 40;
+            }
+
+            while (cellsToRemove > 0) {
+                let row = Math.floor(Math.random() * 9);
+                let col = Math.floor(Math.random() * 9);
+                if (board[row][col] !== 0) {
+                    board[row][col] = 0;
+                    cellsToRemove--;
+                }
+            }
+
+            return { puzzle: board, solution: solution };
+        }
+
+        function displaySudoku(puzzle) {
+            const container = document.querySelector('.container');
+            if (!container) {
+                console.error('Container element not found');
+                return;
+            }
+
+            let board = container.querySelector('#sudoku-board');
+            if (board) {
+                board.remove();
+            }
+
+            board = document.createElement('table');
+            board.id = 'sudoku-board';
+
+            for (let i = 0; i < 9; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < 9; j++) {
+                    const cell = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.maxLength = 1;
+                    input.dataset.row = i;
+                    input.dataset.col = j;
+
+                    if (puzzle[i][j] !== 0) {
+                        input.value = puzzle[i][j];
+                        input.readOnly = true;
+                        input.classList.add('given');
+                    } else {
+                        // ... (keep the existing displaySudoku function, but update the input event listener)
+                        input.addEventListener('input', function () {
+                            if (this.value === '?' || this.value === '0') {
+                                showHint(this);
+                            } else {
+                                this.value = this.value.replace(/[^1-9]/g, '');
+                                this.classList.remove('hint', 'solution');
+                                if (isChecking) {
+                                    checkCell(this);
+                                }
+                                checkCompletion();
+                                if (isSolutionVisible) {
+                                    const row = parseInt(this.dataset.row);
+                                    const col = parseInt(this.dataset.col);
+                                    const currentValue = parseInt(this.value) || 0;
+                                    const solutionValue = currentSolution[row][col];
+                                    if (currentValue !== solutionValue) {
+                                        this.value = solutionValue;
+                                        this.classList.add('solution');
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    cell.appendChild(input);
+                    row.appendChild(cell);
+                }
+                board.appendChild(row);
+            }
+            container.appendChild(board);
+        }
+
+        function newGame() {
+            currentDifficulty = document.getElementById('difficultySelect').value;
+            const { puzzle, solution } = generateSudoku(currentDifficulty);
+            currentPuzzle = puzzle;
+            currentSolution = solution;
             displaySudoku(puzzle);
             document.getElementById('message').textContent = '';
             isChecking = false;
-            isShowingSolution = false;
-            document.getElementById('checkButton').textContent = translations[currentLanguage].startChecking;
-            document.getElementById('toggleSolutionButton').textContent = translations[currentLanguage].showSolution;
+            isSolutionVisible = false;
+            updateCheckingButtonText();
         }
 
-        function fillBox(grid, row, col) {
-            const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-            shuffleArray(nums);
-            for (let i = 0; i < 3; i++) {
-                for (let j = 0; j < 3; j++) {
-                    grid[row + i][col + j] = nums.pop();
-                }
+        function checkCell(input) {
+            const row = parseInt(input.dataset.row);
+            const col = parseInt(input.dataset.col);
+            const value = parseInt(input.value) || 0;
+
+            if (value === 0) {
+                input.classList.remove('incorrect');
+            } else if (value !== currentSolution[row][col]) {
+                input.classList.add('incorrect');
+            } else {
+                input.classList.remove('incorrect');
             }
         }
-    
-        function solveSudoku(grid) {
-            const emptyCell = findEmptyCell(grid);
-            if (!emptyCell) return true;
-    
-            const [row, col] = emptyCell;
-            for (let num = 1; num <= 9; num++) {
-                if (isValid(grid, row, col, num)) {
-                    grid[row][col] = num;
-                    if (solveSudoku(grid)) return true;
-                    grid[row][col] = 0;
-                }
-            }
-            return false;
-        }
-    
-        function findEmptyCell(grid) {
-            for (let row = 0; row < 9; row++) {
-                for (let col = 0; col < 9; col++) {
-                    if (grid[row][col] === 0) return [row, col];
-                }
-            }
-            return null;
-        }
-    
-        function isValid(grid, row, col, num) {
-            for (let i = 0; i < 9; i++) {
-                if (grid[row][i] === num) return false;
-                if (grid[i][col] === num) return false;
-            }
-    
-            const boxRow = Math.floor(row / 3) * 3;
-            const boxCol = Math.floor(col / 3) * 3;
-            for (let i = 0; i < 3; i++) {
-                for (let j = 0; j < 3; j++) {
-                    if (grid[boxRow + i][boxCol + j] === num) return false;
-                }
-            }
-    
-            return true;
-        }
-    
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-    
-        function displaySudoku(puzzle) {
-            const table = document.getElementById('sudokuGrid');
-            table.innerHTML = '';
-            for (let i = 0; i < 9; i++) {
-                const row = table.insertRow();
-                for (let j = 0; j < 9; j++) {
-                    const cell = row.insertCell();
-                    if (puzzle[i][j] !== 0) {
-                        cell.textContent = puzzle[i][j];
-                        cell.classList.add('fixed');
-                    } else {
-                        const input = document.createElement('input');
-                        input.type = 'tel';  // Changed to 'tel' for numeric keyboard
-                        input.inputMode = 'numeric';  // Ensures numeric keyboard on all devices
-                        input.pattern = '[0-9]';  // Allows only digits 1-9
-                        input.maxLength = 1;
-                        input.classList.add('user-input');
-                        input.addEventListener('input', function() {
-                            if (this.value === '?' || this.value === '0') {
-                                this.value = solution[i][j];
-                                this.classList.add('revealed');
-                            } else {
-                                this.value = this.value.replace(/[^1-9]/g, '').slice(0, 1);
-                                this.classList.remove('revealed');
-                            }
-                            if (isChecking) checkSolution();
-                        });
-                        cell.appendChild(input);
-                    }
-                }
-            }
-        }
-    
-        function toggleCheck() {
-            isChecking = !isChecking;
-            document.getElementById('checkButton').textContent = isChecking ? 
-                translations[currentLanguage].stopChecking : 
-                translations[currentLanguage].startChecking;
-            checkSolution();
-        }
-    
-        function checkSolution() {
-            const inputs = document.querySelectorAll('#sudokuGrid input');
-            inputs.forEach((input, index) => {
-                const row = Math.floor(index / 9);
-                const col = index % 9;
-                const value = parseInt(input.value, 10);
-                
-                if (!value || value < 1 || value > 9) {
-                    input.classList.remove('incorrect');
-                } else if (value !== solution[row][col]) {
-                    input.classList.add('incorrect');
-                } else {
-                    input.classList.remove('incorrect');
+
+        function checkCompletion() {
+            const inputs = document.querySelectorAll('#sudoku-board input');
+            let isComplete = true;
+
+            inputs.forEach(input => {
+                const row = parseInt(input.dataset.row);
+                const col = parseInt(input.dataset.col);
+                const value = parseInt(input.value) || 0;
+
+                if (value !== currentSolution[row][col]) {
+                    isComplete = false;
                 }
             });
+
+            if (isComplete) {
+                document.getElementById('message').textContent = translations[currentLanguage].congratulations;
+            } else {
+                document.getElementById('message').textContent = '';
+            }
         }
-    
+
         function toggleSolution() {
-            isShowingSolution = !isShowingSolution;
-            const inputs = document.querySelectorAll('#sudokuGrid input');
-            inputs.forEach((input, index) => {
-                const row = Math.floor(index / 9);
-                const col = index % 9;
-                if (isShowingSolution) {
-                    if (!input.value) {
-                        input.value = solution[row][col];
+            isSolutionVisible = !isSolutionVisible;
+            const inputs = document.querySelectorAll('#sudoku-board input:not(.given)');
+            inputs.forEach(input => {
+                const row = parseInt(input.dataset.row);
+                const col = parseInt(input.dataset.col);
+                const currentValue = parseInt(input.value) || 0;
+                const solutionValue = currentSolution[row][col];
+
+                if (isSolutionVisible) {
+                    if (currentValue !== solutionValue) {
+                        input.value = solutionValue;
                         input.classList.add('solution');
                     }
                 } else {
@@ -475,21 +497,34 @@
                     }
                 }
             });
-            document.getElementById('toggleSolutionButton').textContent = isShowingSolution ? 
-                translations[currentLanguage].hideSolution : 
-                translations[currentLanguage].showSolution;
         }
-    
-        function setInitialLanguage() {
-            const browserLang = navigator.language.split('-')[0];
-            const supportedLangs = Object.keys(translations);
-            currentLanguage = supportedLangs.includes(browserLang) ? browserLang : 'en';
-            document.getElementById('languageSelect').value = currentLanguage;
-            changeLanguage(currentLanguage);
-        }
-    
-        setInitialLanguage();
-        generateSudoku('easy');
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const difficultySelect = document.getElementById('difficultySelect');
+            const newGameButton = document.getElementById('new-game');
+            const toggleCheckingButton = document.getElementById('toggle-checking');
+            const title = document.getElementById('title');
+
+            difficultySelect.addEventListener('change', newGame);
+            newGameButton.addEventListener('click', newGame);
+
+            toggleCheckingButton.addEventListener('click', function() {
+                isChecking = !isChecking;
+                updateCheckingButtonText();
+                if (isChecking) {
+                    document.querySelectorAll('#sudoku-board input').forEach(checkCell);
+                } else {
+                    document.querySelectorAll('#sudoku-board input').forEach(input => {
+                        input.classList.remove('incorrect');
+                    });
+                }
+            });
+
+            title.addEventListener('click', toggleSolution);
+
+            changeLanguage('en');
+            newGame();
+        });
     </script>
 </body>
 </html>
