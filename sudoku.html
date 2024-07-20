@@ -561,22 +561,50 @@
         
             if (this.value === '?' || this.value === '0') {
                 showHint(this);
-                this.readOnly = true; // Once we cheat on a cell we are no longer allowed to revisit this cell
-                this.tabIndex = -1; // Prevent further tabbing to this cell
                 e.preventDefault();
             } else {
+                const originalValue = this.value;
                 this.value = this.value.replace(/[^1-9]/g, '');
-                if (this.value !== '') {
+                
+                if (this.value !== '' && this.value === originalValue) {  // Check if input is a valid digit
                     this.dataset.previousValue = this.value;
+                    this.readOnly = true;
+                    this.tabIndex = -1;
+                    this.classList.remove('hint', 'solution');
+                    
+                    if (isChecking) {
+                        checkCell(this);
+                    }
+                    checkCompletion();
+                    
+                    // Advance to next empty cell
+                    setTimeout(() => focusNextEmptyCell(this), 0);
+                } else if (this.value === '') {
+                    // If the input was cleared, remove previousValue
+                    delete this.dataset.previousValue;
+                    this.readOnly = false;
+                    this.tabIndex = 0;
                 }
-                this.classList.remove('hint', 'solution');
-                if (isChecking) {
-                    checkCell(this);
-                }
-                checkCompletion();
             }
         }
         
+        function focusNextEmptyCell(currentCell) {
+            const inputs = Array.from(document.querySelectorAll('#sudoku-board input'));
+            const currentIndex = inputs.indexOf(currentCell);
+            for (let i = currentIndex + 1; i < inputs.length; i++) {
+                if (!inputs[i].readOnly) {
+                    inputs[i].focus();
+                    return;
+                }
+            }
+            // If no empty cell found after current, loop back to beginning
+            for (let i = 0; i < currentIndex; i++) {
+                if (!inputs[i].readOnly) {
+                    inputs[i].focus();
+                    return;
+                }
+            }
+        }        
         function handleFocus(e) {
             this.dataset.previousValue = this.value;
             if (this.readOnly) {
