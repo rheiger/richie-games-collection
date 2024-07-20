@@ -130,6 +130,9 @@
             color: var(--secondary-color);
             font-style: italic;
         }
+        #sudoku-board input.user-entered {
+            color: #000; /* or any color you prefer for user-entered values */
+        }
         #message {
             text-align: center;
             margin-top: 10px;
@@ -548,68 +551,63 @@
         }
         
         function handleInput(e) {
-            if (this.readOnly) {
+            // Prevent changes to given values
+            if (this.classList.contains('given')) {
                 e.preventDefault();
                 return;
             }
         
-            if (this.dataset.previousValue && this.dataset.previousValue !== '') {
-                e.preventDefault();
-                this.value = this.dataset.previousValue;
-                return;
-            }
-        
+            // Handle hint requests
             if (this.value === '?' || this.value === '0') {
                 showHint(this);
-                this.readOnly = true;
-                this.tabIndex = -1;
                 e.preventDefault();
                 checkCompletion();
-                    
-                // Advance to next empty cell
                 setTimeout(() => focusNextEmptyCell(this), 0);
-        } else {
-                const originalValue = this.value;
-                this.value = this.value.replace(/[^1-9]/g, '');
+                return;
+            }
+        
+            // Handle digit input
+            const originalValue = this.value;
+            this.value = this.value.replace(/[^1-9]/g, '');
+        
+            if (this.value !== '') {
+                // Valid digit entered
+                this.classList.remove('hint', 'solution');
+                this.classList.add('user-entered');
                 
-                if (this.value !== '' && this.value === originalValue) {  // Check if input is a valid digit
-                    this.dataset.previousValue = this.value;
-                    this.classList.remove('hint', 'solution');
-                    
-                    if (isChecking) {
-                        checkCell(this);
-                    }
-                    checkCompletion();
-                    
-                    // Advance to next empty cell
-                    setTimeout(() => focusNextEmptyCell(this), 0);
-                } else if (this.value === '') {
-                    // If the input was cleared, remove previousValue
-                    delete this.dataset.previousValue;
-                    this.readOnly = false;
-                    this.tabIndex = 0;
+                if (isChecking) {
+                    checkCell(this);
                 }
+                checkCompletion();
+        
+                // Only advance to next cell if a new value was entered
+                if (this.value !== originalValue) {
+                    setTimeout(() => focusNextEmptyCell(this), 0);
+                }
+            } else {
+                // Input was cleared
+                this.classList.remove('hint', 'solution', 'user-entered');
             }
         }
-                        
+
         function focusNextEmptyCell(currentCell) {
-            const inputs = Array.from(document.querySelectorAll('#sudoku-board input'));
+            const inputs = Array.from(document.querySelectorAll('#sudoku-board input:not(.given):not(.hint)'));
             const currentIndex = inputs.indexOf(currentCell);
             for (let i = currentIndex + 1; i < inputs.length; i++) {
-                if (!inputs[i].readOnly) {
+                if (inputs[i].value === '') {
                     inputs[i].focus();
                     return;
                 }
             }
             // If no empty cell found after current, loop back to beginning
             for (let i = 0; i < currentIndex; i++) {
-                if (!inputs[i].readOnly) {
+                if (inputs[i].value === '') {
                     inputs[i].focus();
                     return;
                 }
             }
         }
-            
+        
         function handleFocus(e) {
             this.dataset.previousValue = this.value;
             if (this.readOnly) {
@@ -665,8 +663,10 @@
             const row = parseInt(input.dataset.row);
             const col = parseInt(input.dataset.col);
             input.value = currentSolution[row][col];
-            input.dataset.previousValue = input.value;
             input.classList.add('hint');
+            input.classList.remove('user-entered');
+            input.readOnly = true;
+            input.tabIndex = -1;
         }
 
         function newGame() {
