@@ -530,12 +530,16 @@
                     input.dataset.col = j;
         
                     if (puzzle[i][j] !== 0) {
+                        // This is a given number in the initial puzzle
                         input.value = puzzle[i][j];
                         input.readOnly = true;
                         input.classList.add('given');
-                        input.tabIndex = -1; // Prevent tabbing to filled cells
+                        input.tabIndex = -1;
                     } else {
-                        input.tabIndex = 0; // Allow tabbing to empty cells
+                        // This is an empty cell for user input
+                        input.value = '';
+                        input.readOnly = false;
+                        input.tabIndex = 0;
                     }
         
                     input.addEventListener('input', handleInput);
@@ -549,6 +553,20 @@
             }
         
             resizeSudokuBoard();
+        }
+        
+        function handleFocus(e) {
+            if (this.value && !this.readOnly) {
+                setTimeout(() => {
+                    this.select();
+                }, 0);
+            }
+        }
+        
+        function handleMouseDown(e) {
+            if (this.readOnly) {
+                e.preventDefault();
+            }
         }
         
         function handleInput(e) {
@@ -591,7 +609,7 @@
                 this.classList.remove('hint', 'solution', 'user-entered');
             }
         }
-        
+
         function focusNextEmptyCell(currentCell) {
             const inputs = Array.from(document.querySelectorAll('#sudoku-board input:not(.given):not(.hint)'));
             const currentIndex = inputs.indexOf(currentCell);
@@ -609,7 +627,7 @@
                 }
             }
         }
-
+/*
         function handleFocus(e) {
             this.dataset.previousValue = this.value;
             if (this.readOnly) {
@@ -624,7 +642,7 @@
                 e.preventDefault();
             }
         }
-        
+*/
         function focusNextEmptyCell(currentCell) {
             const inputs = Array.from(document.querySelectorAll('#sudoku-board input'));
             const currentIndex = inputs.indexOf(currentCell);
