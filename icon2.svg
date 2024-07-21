@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="90" fill="#bbccff" stroke="#777777" stroke-width="2"/>
+
+  <!-- Sudoku grid -->
+  <rect x="35" y="35" width="130" height="130" fill="#ecf0f1" stroke="#333" stroke-width="2"/>
+  <line x1="78" y1="35" x2="78" y2="165" stroke="#333" stroke-width="2"/>
+  <line x1="122" y1="35" x2="122" y2="165" stroke="#333" stroke-width="2"/>
+  <line x1="35" y1="78" x2="165" y2="78" stroke="#333" stroke-width="2"/>
+  <line x1="35" y1="122" x2="165" y2="122" stroke="#333" stroke-width="2"/>
+  <text x="100" y="112" font-family="Arial, sans-serif" font-size="40" fill="#3366cc" text-anchor="middle">5</text>
+
+  <!-- Text in a circular path -->
+  <path id="circleTextPath" d="M 100, 100 m -90, 0 a 90,90 0 1,1 180,0 a 90,90 0 1,1 -180,0" fill="none"/>
+  <text font-size="12" fill="#2980b9" stroke="#000" stroke-width="0.3">
+    <textPath href="#circleTextPath" startOffset="15%">
+      Richie's Sudoku Game
+    </textPath>
+  </text>
+</svg>
