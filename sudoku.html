@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,9 @@
             --secondary-color: #2ecc71;
             --background-color: #ecf0f1;
             --text-color: #34495e;
+            --grid-border-color: #34495e;
         }
+        
         body {
             font-family: 'Arial', sans-serif;
             background-color: var(--background-color);
@@ -22,6 +25,23 @@
             align-items: center;
             min-height: 100vh;
         }
+        
+        input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: calc(2.5vw);
+            padding: 0;
+            box-sizing: border-box;
+            background-color: transparent;
+        }
+        
+        .fixed {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
         .container {
             background-color: white;
             border-radius: 10px;
@@ -31,6 +51,7 @@
             width: 100%;
             box-sizing: border-box;
         }
+        
         #title {
             text-align: center;
             color: var(--primary-color);
@@ -39,6 +60,7 @@
             font-size: 1.5em;
             cursor: pointer;
         }
+        
         .controls {
             display: flex;
             flex-wrap: wrap;
@@ -46,6 +68,7 @@
             justify-content: center;
             margin-bottom: 10px;
         }
+        
         .overlay {
             position: fixed;
             top: 0;
@@ -61,10 +84,12 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
+        
         .overlay.show {
             opacity: 1;
             pointer-events: auto;
         }
+        
         .congratulations {
             background-color: white;
             padding: 20px;
@@ -74,10 +99,12 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.2);
             max-width: 80%;
         }
+        
         .congratulations h2 {
             color: var(--primary-color);
             margin-top: 0;
         }    
+        
         select, button {
             padding: 8px;
             border: none;
@@ -88,75 +115,113 @@
             transition: background-color 0.3s ease;
             font-size: 0.9em;
         }
+        
         select:hover, button:hover {
             background-color: #2980b9;
         }
+        
         #sudoku-board {
             border-collapse: collapse;
             margin: 0 auto;
+            width: 100%;
             max-width: 100%;
         }
+        
         #sudoku-board td {
-            border: 1px solid #bdc3c7;
-            padding: 0;
-        }
-        #sudoku-board input {
-            width: calc(min(10vw, 40px));
-            height: calc(min(10vw, 40px));
+            width: 40px; /* Fixed width for desktop view */
+            height: 40px; /* Fixed height for desktop view */
             text-align: center;
-            font-size: calc(min(5vw, 1.2em));
+            border: 1px solid var(--grid-border-color);
+            font-size: 18px; /* Font size for desktop view */
+            box-sizing: border-box;
+        }
+        
+        #sudoku-board tr:nth-child(3n+1) td {
+            border-top: 2px solid var(--grid-border-color);
+        }
+        
+        #sudoku-board td:nth-child(3n+1) {
+            border-left: 2px solid var(--grid-border-color);
+        }
+        
+        #sudoku-board td {
+            border-right: 1px solid var(--grid-border-color);
+            border-bottom: 1px solid var(--grid-border-color);
+        }
+        
+        #sudoku-board td:last-child {
+            border-right: 2px solid var(--grid-border-color);
+        }
+        
+        #sudoku-board tr:last-child td {
+            border-bottom: 2px solid var(--grid-border-color);
+        }
+        
+        #sudoku-board input {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 18px;
             border: none;
             outline: none;
             background-color: transparent;
             color: #000; /* Default color for all inputs */
         }
+        
         #sudoku-board input.given {
             font-weight: bold;
             color: var(--primary-color);
         }
+        
         #sudoku-board input.solution {
             color: #999; /* Light grey color */
             font-style: italic;
         }
+        
         #sudoku-board input.incorrect {
             color: #e74c3c !important; /* Use !important to ensure this overrides other styles */
         }
+        
         #sudoku-board input.hint {
             color: var(--secondary-color);
             font-style: italic;
         }
+        
         #sudoku-board input.user-entered {
             color: #000; /* Black color for user-entered values */
         }    
-        #sudoku-board tr:nth-child(3n) {
-            border-bottom: 2px solid var(--text-color);
-        }
-        #sudoku-board td:nth-child(3n) {
-            border-right: 2px solid var(--text-color);
-        }
+        
         #message {
             text-align: center;
             margin-top: 10px;
             font-weight: bold;
             color: var(--secondary-color);
         }
+        
         @media (max-width: 600px) {
             .controls {
                 flex-direction: row;
+            }
+            .container {
+                padding: 10px;
             }
             select, button {
                 flex: 1 1 auto;
                 font-size: 0.8em;
                 padding: 6px;
             }
+            #sudoku-board td {
+                width: calc(100vw / 9);
+                height: calc(100vw / 9);
+                font-size: calc(4.5vw);
+            }
             #sudoku-board input {
-                width: calc(min(9vw, 30px));
-                height: calc(min(9vw, 30px));
-                font-size: calc(min(4.5vw, 1em));
+                font-size: calc(4.5vw);
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1 id="title" data-i18n="title">Sudoku Challenge</h1>
@@ -397,14 +462,14 @@
 
         function generateSudoku(difficulty) {
             const board = Array(9).fill().map(() => Array(9).fill(0));
-            
+
             function isValid(board, row, col, num) {
                 for (let x = 0; x < 9; x++) {
                     if (board[row][x] === num || board[x][col] === num) {
                         return false;
                     }
                 }
-                
+
                 let boxRow = Math.floor(row / 3) * 3;
                 let boxCol = Math.floor(col / 3) * 3;
                 for (let i = 0; i < 3; i++) {
@@ -414,10 +479,10 @@
                         }
                     }
                 }
-                
+
                 return true;
             }
-            
+
             function fillBoard(board) {
                 for (let row = 0; row < 9; row++) {
                     for (let col = 0; col < 9; col++) {
@@ -441,18 +506,18 @@
                 }
                 return true;
             }
-            
+
             fillBoard(board);
-            
+
             const solution = board.map(row => [...row]);
-            
+
             function hasUniqueSolution(board) {
                 const emptyCell = findEmptyCell(board);
                 if (!emptyCell) return true;
-                
+
                 const [row, col] = emptyCell;
                 let solutionCount = 0;
-                
+
                 for (let num = 1; num <= 9; num++) {
                     if (isValid(board, row, col, num)) {
                         board[row][col] = num;
@@ -466,10 +531,10 @@
                         board[row][col] = 0;
                     }
                 }
-                
+
                 return solutionCount === 1;
             }
-            
+
             function findEmptyCell(board) {
                 for (let row = 0; row < 9; row++) {
                     for (let col = 0; col < 9; col++) {
@@ -480,7 +545,7 @@
                 }
                 return null;
             }
-            
+
             let cellsToRemove;
             switch (difficulty) {
                 case 'trivial': cellsToRemove = 20; break;
@@ -491,16 +556,16 @@
                 case 'ultimate': cellsToRemove = 62; break;
                 default: cellsToRemove = 40;
             }
-            
+
             const cellsToTry = [...Array(81)].map((_, i) => [Math.floor(i / 9), i % 9]);
             while (cellsToRemove > 0 && cellsToTry.length > 0) {
                 const index = Math.floor(Math.random() * cellsToTry.length);
                 const [row, col] = cellsToTry.splice(index, 1)[0];
-                
+
                 if (board[row][col] !== 0) {
                     const temp = board[row][col];
                     board[row][col] = 0;
-                    
+
                     const boardCopy = board.map(row => [...row]);
                     if (hasUniqueSolution(boardCopy)) {
                         cellsToRemove--;
@@ -509,14 +574,14 @@
                     }
                 }
             }
-            
+
             return { puzzle: board, solution: solution };
         }
 
         function displaySudoku(puzzle) {
             const board = document.getElementById('sudoku-board');
             board.innerHTML = '';
-        
+
             for (let i = 0; i < 9; i++) {
                 const row = document.createElement('tr');
                 for (let j = 0; j < 9; j++) {
@@ -528,7 +593,7 @@
                     input.maxLength = 1;
                     input.dataset.row = i;
                     input.dataset.col = j;
-        
+
                     if (puzzle[i][j] !== 0) {
                         // This is a given number in the initial puzzle
                         input.value = puzzle[i][j];
@@ -541,20 +606,20 @@
                         input.readOnly = false;
                         input.tabIndex = 0;
                     }
-        
+
                     input.addEventListener('input', handleInput);
                     input.addEventListener('focus', handleFocus);
                     input.addEventListener('mousedown', handleMouseDown);
-        
+
                     cell.appendChild(input);
                     row.appendChild(cell);
                 }
                 board.appendChild(row);
             }
-        
+
             resizeSudokuBoard();
         }
-        
+
         function handleFocus(e) {
             if (this.value && !this.readOnly) {
                 setTimeout(() => {
@@ -562,20 +627,20 @@
                 }, 0);
             }
         }
-        
+
         function handleMouseDown(e) {
             if (this.readOnly) {
                 e.preventDefault();
             }
         }
-        
+
         function handleInput(e) {
             // Prevent changes to given values
             if (this.classList.contains('given')) {
                 e.preventDefault();
                 return;
             }
-        
+
             // Handle hint requests
             if (this.value === '?' || this.value === '0') {
                 showHint(this);
@@ -584,22 +649,22 @@
                 setTimeout(() => focusNextEmptyCell(this), 0);
                 return;
             }
-        
+
             // Handle digit input
             const originalValue = this.value;
             this.value = this.value.replace(/[^1-9]/g, '');
-        
+
             if (this.value !== '') {
                 // Valid digit entered
                 this.classList.remove('hint', 'solution');
                 this.classList.add('user-entered');
-                
+
                 let isCorrect = true;
                 if (isChecking) {
                     isCorrect = checkCell(this);
                 }
                 checkCompletion();
-        
+
                 // Advance to next cell only if not checking or if the entry is correct
                 if (!isChecking || isCorrect) {
                     setTimeout(() => focusNextEmptyCell(this), 0);
@@ -627,22 +692,7 @@
                 }
             }
         }
-/*
-        function handleFocus(e) {
-            this.dataset.previousValue = this.value;
-            if (this.readOnly) {
-                e.preventDefault();
-                this.blur();
-                focusNextEmptyCell(this);
-            }
-        }
-        
-        function handleMouseDown(e) {
-            if (this.readOnly) {
-                e.preventDefault();
-            }
-        }
-*/
+
         function focusNextEmptyCell(currentCell) {
             const inputs = Array.from(document.querySelectorAll('#sudoku-board input'));
             const currentIndex = inputs.indexOf(currentCell);
@@ -660,7 +710,6 @@
                 }
             }
         }
-        
 
         function resizeSudokuBoard() {
             const container = document.querySelector('.container');
@@ -726,12 +775,12 @@
                 overlay.classList.remove('show');
             }, 3000);
         }
-    
+
         function checkCompletion() {
             const board = Array(9).fill().map(() => Array(9).fill(0));
             const inputs = document.querySelectorAll('#sudoku-board input');
             let isComplete = true;
-        
+
             // Fill the board array with current values
             inputs.forEach(input => {
                 const row = parseInt(input.dataset.row);
@@ -740,21 +789,21 @@
                 board[row][col] = value;
                 if (value === 0) isComplete = false;
             });
-        
+
             // If not all cells are filled, don't show congratulations
             if (!isComplete) return;
-        
+
             // Check rows
             for (let row = 0; row < 9; row++) {
                 if (!isValidSet(board[row])) return;
             }
-        
+
             // Check columns
             for (let col = 0; col < 9; col++) {
                 const column = board.map(row => row[col]);
                 if (!isValidSet(column)) return;
             }
-        
+
             // Check 3x3 sub-grids
             for (let i = 0; i < 9; i += 3) {
                 for (let j = 0; j < 9; j += 3) {
@@ -767,16 +816,16 @@
                     if (!isValidSet(subGrid)) return;
                 }
             }
-        
+
             // If we've made it this far, the puzzle is solved correctly
             showCongratulations();
         }
-        
+
         function isValidSet(arr) {
             const set = new Set(arr);
             return set.size === 9 && !set.has(0);
         }
-        
+
         function toggleSolution() {
             isSolutionVisible = !isSolutionVisible;
             const inputs = document.querySelectorAll('#sudoku-board input:not(.given)');
@@ -811,7 +860,7 @@
             difficultySelect.addEventListener('change', newGame);
             newGameButton.addEventListener('click', newGame);
 
-            toggleCheckingButton.addEventListener('click', function() {
+            toggleCheckingButton.addEventListener('click', function () {
                 isChecking = !isChecking;
                 updateCheckingButtonText();
                 if (isChecking) {
@@ -831,4 +880,5 @@
         });
     </script>
 </body>
+
 </html>
