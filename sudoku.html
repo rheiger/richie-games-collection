@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudoku Challenge</title>
+    <link rel="manifest" href="manifest.json">
     <style>
         :root {
             --primary-color: #3498db;
@@ -294,6 +295,11 @@
         </div>
     </div>
     <script>
+        if('serviceWorker' in navigator){
+            navigator.serviceWorker.register('/service-worker.js')
+            .then((reg) => console.log('Service Worker registered', reg))
+            .catch((err) => console.log('Service Worker not registered', err));
+        }
         let currentPuzzle = [];
         let currentSolution = [];
         let isChecking = false;
@@ -603,7 +609,7 @@
                 case 'easy': cellsToRemove = 30; break;
                 case 'medium': cellsToRemove = 40; break;
                 case 'hard': cellsToRemove = 50; break;
-                case 'expert': cellsToRemove = 60; break;
+                case 'expert': cellsToRemove = 58; break;
                 case 'ultimate': cellsToRemove = 62; break;
                 default: cellsToRemove = 40;
             }
