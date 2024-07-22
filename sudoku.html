@@ -197,7 +197,40 @@
             font-weight: bold;
             color: var(--secondary-color);
         }
-        
+
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+    
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+    
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    
+        #loading-overlay p {
+            color: white;
+            margin-top: 10px;
+        }
+            
         @media (max-width: 600px) {
             .controls {
                 flex-direction: row;
@@ -281,8 +314,9 @@
                 newGame: "New Game",
                 startChecking: "Start Checking",
                 stopChecking: "Stop Checking",
-                congratulations: "Congratulations! You solved the puzzle!"
-            },
+                congratulations: "Congratulations! You solved the puzzle!",
+                generatingPuzzle: "Generating puzzle..."
+                },
             de: {
                 title: "Sudoku-Herausforderung",
                 difficulty: "Schwierigkeitsgrad",
@@ -295,7 +329,8 @@
                 newGame: "Neues Spiel",
                 startChecking: "Prüfung starten",
                 stopChecking: "Prüfung beenden",
-                congratulations: "Glückwunsch! Du hast das Puzzle gelöst!"
+                congratulations: "Glückwunsch! Du hast das Puzzle gelöst!",
+                generatingPuzzle: "Puzzle wird generiert..."
             },
             fr: {
                 title: "Défi Sudoku",
@@ -309,7 +344,8 @@
                 newGame: "Nouvelle Partie",
                 startChecking: "Commencer la vérification",
                 stopChecking: "Arrêter la vérification",
-                congratulations: "Félicitations ! Vous avez résolu le puzzle !"
+                congratulations: "Félicitations ! Vous avez résolu le puzzle !",
+                generatingPuzzle: "Génération du puzzle..."
             },
             it: {
                 title: "Sfida Sudoku",
@@ -323,7 +359,8 @@
                 newGame: "Nuova Partita",
                 startChecking: "Inizia controllo",
                 stopChecking: "Ferma controllo",
-                congratulations: "Congratulazioni! Hai risolto il puzzle!"
+                congratulations: "Congratulazioni! Hai risolto il puzzle!",
+                generatingPuzzle: "Generazione del puzzle..."
             },
             sv: {
                 title: "Sudoku-utmaning",
@@ -337,7 +374,8 @@
                 newGame: "Nytt spel",
                 startChecking: "Börja kontrollera",
                 stopChecking: "Sluta kontrollera",
-                congratulations: "Grattis! Du löste pusslet!"
+                congratulations: "Grattis! Du löste pusslet!",
+                generatingPuzzle: "Genererar pussel..."
             },
             sk: {
                 title: "Sudoku výzva",
@@ -351,7 +389,8 @@
                 newGame: "Nová hra",
                 startChecking: "Začať kontrolu",
                 stopChecking: "Zastaviť kontrolu",
-                congratulations: "Blahoželáme! Vyriešili ste hlavolam!"
+                congratulations: "Blahoželáme! Vyriešili ste hlavolam!",
+                generatingPuzzle: "Generuje sa hlavolam..."
             },
             es: {
                 title: "Desafío Sudoku",
@@ -365,7 +404,8 @@
                 newGame: "Nuevo Juego",
                 startChecking: "Comenzar verificación",
                 stopChecking: "Detener verificación",
-                congratulations: "¡Felicidades! ¡Has resuelto el rompecabezas!"
+                congratulations: "¡Felicidades! ¡Has resuelto el rompecabezas!",
+                generatingPuzzle: "Generando rompecabezas..."
             },
             pt: {
                 title: "Desafio Sudoku",
@@ -379,7 +419,8 @@
                 newGame: "Novo Jogo",
                 startChecking: "Iniciar verificação",
                 stopChecking: "Parar verificação",
-                congratulations: "Parabéns! Você resolveu o quebra-cabeça!"
+                congratulations: "Parabéns! Você resolveu o quebra-cabeça!",
+                generatingPuzzle: "Gerando quebra-cabeça..."
             },
             no: {
                 title: "Sudoku-utfordring",
@@ -393,7 +434,8 @@
                 newGame: "Nytt spill",
                 startChecking: "Start sjekking",
                 stopChecking: "Stopp sjekking",
-                congratulations: "Gratulerer! Du løste puslespillet!"
+                congratulations: "Gratulerer! Du løste puslespillet!",
+                generatingPuzzle: "Genererer puslespill..."
             },
             fi: {
                 title: "Sudoku-haaste",
@@ -407,7 +449,8 @@
                 newGame: "Uusi peli",
                 startChecking: "Aloita tarkistus",
                 stopChecking: "Lopeta tarkistus",
-                congratulations: "Onnittelut! Ratkaisit pelin!"
+                congratulations: "Onnittelut! Ratkaisit pelin!",
+                generatingPuzzle: "Luodaan peliä..."
             },
             pl: {
                 title: "Wyzwanie Sudoku",
@@ -421,7 +464,8 @@
                 newGame: "Nowa gra",
                 startChecking: "Rozpocznij sprawdzanie",
                 stopChecking: "Zatrzymaj sprawdzanie",
-                congratulations: "Gratulacje! Rozwiązałeś łamigłówkę!"
+                congratulations: "Gratulacje! Rozwiązałeś łamigłówkę!",
+                generatingPuzzle: "Generowanie łamigłówki..."
             },
             cs: {
                 title: "Sudoku výzva",
@@ -435,7 +479,8 @@
                 newGame: "Nová hra",
                 startChecking: "Začít kontrolu",
                 stopChecking: "Zastavit kontrolu",
-                congratulations: "Blahopřejeme! Vyřešili jste hádanku!"
+                congratulations: "Blahopřejeme! Vyřešili jste hádanku!",
+                generatingPuzzle: "Generování hádanky..."
             }
         };
 
@@ -453,6 +498,12 @@
                 }
             });
             updateCheckingButtonText();
+            
+            // Update loading overlay text if it's visible
+            const loadingText = document.getElementById('loading-text');
+            if (loadingText) {
+                loadingText.textContent = translations[lang].generatingPuzzle;
+            }
         }
 
         function updateCheckingButtonText() {
@@ -738,19 +789,86 @@
             input.tabIndex = -1;
         }
 
-        function newGame() {
-            currentDifficulty = document.getElementById('difficultySelect').value;
-            const { puzzle, solution } = generateSudoku(currentDifficulty);
-            currentPuzzle = puzzle;
-            currentSolution = solution;
-            displaySudoku(puzzle);
-            document.getElementById('message').textContent = '';
-            document.querySelector('.overlay').classList.remove('show');
-            isChecking = false;
-            isSolutionVisible = false;
-            updateCheckingButtonText();
+        function showLoadingOverlay() {
+            let loadingOverlay = document.getElementById('loading-overlay');
+            if (loadingOverlay) {
+                document.body.removeChild(loadingOverlay);
+            }
+            
+            loadingOverlay = document.createElement('div');
+            loadingOverlay.id = 'loading-overlay';
+            loadingOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            `;
+            
+            loadingOverlay.innerHTML = `
+                <div class="spinner" style="
+                    border: 4px solid #f3f3f3;
+                    border-top: 4px solid #3498db;
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    animation: spin 1s linear infinite;
+                "></div>
+                <p id="loading-text" style="color: white; margin-top: 10px;">${translations[currentLanguage].generatingPuzzle}</p>
+            `;
+            
+            document.body.appendChild(loadingOverlay);
+        
+            // Force a reflow
+            void loadingOverlay.offsetHeight;
+                
+            return new Promise(resolve => {
+                requestAnimationFrame(() => {
+                    resolve();
+                });
+            });
+        }
+        
+        function hideLoadingOverlay() {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
         }
 
+        async function newGame() {
+            currentDifficulty = document.getElementById('difficultySelect').value;
+            await showLoadingOverlay();
+        
+            try {
+                const result = await new Promise(resolve => {
+                    setTimeout(() => {
+                        const generatedPuzzle = generateSudoku(currentDifficulty);
+                        resolve(generatedPuzzle);
+                    }, 0);
+                });
+        
+                currentPuzzle = result.puzzle;
+                currentSolution = result.solution;
+                displaySudoku(currentPuzzle);
+                document.getElementById('message').textContent = '';
+                document.querySelector('.overlay').classList.remove('show');
+                isChecking = false;
+                isSolutionVisible = false;
+                updateCheckingButtonText();
+            } catch (error) {
+                document.getElementById('message').textContent = 'Error generating puzzle. Please try again.';
+            } finally {
+                hideLoadingOverlay();
+            }
+        }
+        
         function checkCell(input) {
             const row = parseInt(input.dataset.row);
             const col = parseInt(input.dataset.col);
@@ -856,10 +974,27 @@
             const newGameButton = document.getElementById('new-game');
             const toggleCheckingButton = document.getElementById('toggle-checking');
             const title = document.getElementById('title');
-
-            difficultySelect.addEventListener('change', newGame);
-            newGameButton.addEventListener('click', newGame);
-
+        
+            // Utility function to handle errors in async event listeners
+            function handleAsyncError(fn) {
+                return function(...args) {
+                    fn(...args).catch(error => {
+                        console.error('An error occurred:', error);
+                        document.getElementById('message').textContent = 'An error occurred. Please try again.';
+                    });
+                };
+            }
+        
+            // Use handleAsyncError to wrap the newGame function
+            const safeNewGame = handleAsyncError(newGame);
+        
+            difficultySelect.addEventListener('change', async () => {
+                await newGame();
+            });
+            newGameButton.addEventListener('click', async () => {
+                await newGame();
+            });
+        
             toggleCheckingButton.addEventListener('click', function () {
                 isChecking = !isChecking;
                 updateCheckingButtonText();
@@ -871,13 +1006,31 @@
                     });
                 }
             });
-
+        
             title.addEventListener('click', toggleSolution);
-
-            changeLanguage('en');
-            newGame();
-            resizeSudokuBoard();
+        
+            // Initialize the game
+            (async function initGame() {
+                try {
+                    changeLanguage('en');
+                    await newGame();
+                    resizeSudokuBoard();
+                } catch (error) {
+                    console.error('Error initializing game:', error);
+                    document.getElementById('message').textContent = 'Error initializing game. Please refresh the page.';
+                }
+            })();
         });
+
+        // Utility function to handle errors in async event listeners
+        function handleAsyncError(fn) {
+            return function(...args) {
+                fn(...args).catch(error => {
+                    console.error('An error occurred:', error);
+                    document.getElementById('message').textContent = 'An error occurred. Please try again.';
+                });
+            };
+        }
     </script>
 </body>
 
