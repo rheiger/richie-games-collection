@@ -2,60 +2,327 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to My Sudoku World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sudoku Challenge - Test Your Logic!</title>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sudoku">
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <meta name="theme-color" content="#1a1a2e">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #16213e;
+            --secondary-color: #0f3460;
+            --accent-color: #e94560;
+            --text-color: #fff;
+        }
+        
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #3498db, #8e44ad);
-            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            overflow-x: hidden;
         }
+        
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
             text-align: center;
         }
+        
         h1 {
-            font-size: 3em;
+            font-size: 4em;
             margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: fadeInUp 1s ease-out;
         }
+        
         p {
             font-size: 1.2em;
             line-height: 1.6;
             margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out 0.5s both;
         }
+        
         .btn {
             display: inline-block;
-            padding: 10px 20px;
+            padding: 15px 30px;
             margin: 10px;
-            background-color: #2ecc71;
+            background-color: var(--accent-color);
             color: white;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out 1s both;
         }
+        
         .btn:hover {
-            background-color: #27ae60;
+            background-color: #ff6b81;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
+        
         .footer {
             margin-top: 50px;
             font-size: 0.9em;
             opacity: 0.7;
+            animation: fadeInUp 1s ease-out 1.5s both;
+        }
+        
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 40px auto;
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+        
+        .sudoku-cell {
+            aspect-ratio: 1;
+            background-color: var(--secondary-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--accent-color);
+            transition: all 0.3s ease;
+        }
+        
+        .sudoku-cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .language-selector select {
+            padding: 5px 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            cursor: pointer;
+        }
+        
+        .language-selector option {
+            padding: 5px;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 3em; }
+            .sudoku-grid { max-width: 250px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to My Sudoku World</h1>
-        <p>Dive into the challenging and exciting world of Sudoku! Whether you're a beginner or a Sudoku master, we have puzzles that will keep your mind sharp and entertained.</p>
-        <a href="https://eiger.software/sudoku.html" class="btn">Play Sudoku Now</a>
-        <a href="https://eiger.software/SudokuWebApp" class="btn">Install as Web App</a>
-        <p class="footer">Created with ❤️ by Richie. Powered by Eiger Software.</p>
+    <div class="language-selector">
+        <select id="languageSelect" onchange="changeLanguage(this.value)">
+            <option value="en">🇬🇧 English</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="it">🇮🇹 Italiano</option>
+            <option value="sv">🇸🇪 Svenska</option>
+            <option value="sk">🇸🇰 Slovenčina</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="pt">🇵🇹 Português</option>
+            <option value="no">🇳🇴 Norsk</option>
+            <option value="fi">🇫🇮 Suomi</option>
+            <option value="pl">🇵🇱 Polski</option>
+            <option value="cs">🇨🇿 Čeština</option>
+        </select>
     </div>
+
+    <div class="container">
+        <h1 id="title">Sudoku Challenge</h1>
+        <p id="description">Dive into the world of numbers and logic. Challenge your mind with our addictive Sudoku puzzles!</p>
+        
+        <div class="sudoku-grid">
+            <div class="sudoku-cell">5</div>
+            <div class="sudoku-cell">3</div>
+            <div class="sudoku-cell">4</div>
+            <div class="sudoku-cell">6</div>
+            <div class="sudoku-cell">7</div>
+            <div class="sudoku-cell">2</div>
+            <div class="sudoku-cell">1</div>
+            <div class="sudoku-cell">9</div>
+            <div class="sudoku-cell">8</div>
+        </div>
+        
+        <a href="https://eiger.software/sudoku.html" class="btn" id="playNowBtn">Play Now</a>
+        <a href="https://eiger.software/SudokuWebApp" class="btn" id="installAppBtn">Install App</a>
+        
+        <p class="footer" id="footer">Created with ❤️ by Eiger Software. Challenge your mind daily!</p>
+    </div>
+    
+    <script>
+        const translations = {
+            en: {
+                title: "Sudoku Challenge",
+                description: "Dive into the world of numbers and logic. Challenge your mind with our addictive Sudoku puzzles!",
+                playNow: "Play Now",
+                installApp: "Install App",
+                footer: "Created with ❤️ by Eiger Software. Challenge your mind daily!"
+            },
+            de: {
+                title: "Sudoku-Herausforderung",
+                description: "Tauchen Sie ein in die Welt der Zahlen und Logik. Fordern Sie Ihren Verstand mit unseren süchtig machenden Sudoku-Rätseln heraus!",
+                playNow: "Jetzt spielen",
+                installApp: "App installieren",
+                footer: "Erstellt mit ❤️ von Eiger Software. Fordern Sie täglich Ihren Verstand heraus!"
+            },
+            fr: {
+                title: "Défi Sudoku",
+                description: "Plongez dans le monde des chiffres et de la logique. Défiez votre esprit avec nos puzzles Sudoku addictifs !",
+                playNow: "Jouer maintenant",
+                installApp: "Installer l'application",
+                footer: "Créé avec ❤️ par Eiger Software. Défiez votre esprit quotidiennement !"
+            },
+            // Add translations for other languages here
+            it: {
+                title: "Sfida Sudoku",
+                description: "Immergiti nel mondo dei numeri e della logica. Sfida la tua mente con i nostri puzzle Sudoku avvincenti!",
+                playNow: "Gioca ora",
+                installApp: "Installa l'app",
+                footer: "Creato con ❤️ da Eiger Software. Sfida la tua mente ogni giorno!"
+            },
+            sv: {
+                title: "Sudoku-utmaning",
+                description: "Dyk in i siffrornas och logikens värld. Utmana ditt sinne med våra beroendeframkallande Sudoku-pussel!",
+                playNow: "Spela nu",
+                installApp: "Installera appen",
+                footer: "Skapad med ❤️ av Eiger Software. Utmana ditt sinne dagligen!"
+            },
+            sk: {
+                title: "Sudoku výzva",
+                description: "Ponorte sa do sveta čísel a logiky. Vyzvite svoju myseľ s našimi návykovými Sudoku hlavolamami!",
+                playNow: "Hrať teraz",
+                installApp: "Inštalovať aplikáciu",
+                footer: "Vytvorené s ❤️ od Eiger Software. Vyzvite svoju myseľ každý deň!"
+            },
+            es: {
+                title: "Desafío Sudoku",
+                description: "Sumérgete en el mundo de los números y la lógica. ¡Desafía tu mente con nuestros adictivos puzles de Sudoku!",
+                playNow: "Jugar ahora",
+                installApp: "Instalar aplicación",
+                footer: "Creado con ❤️ por Eiger Software. ¡Desafía tu mente diariamente!"
+            },
+            pt: {
+                title: "Desafio Sudoku",
+                description: "Mergulhe no mundo dos números e da lógica. Desafie sua mente com nossos viciantes quebra-cabeças Sudoku!",
+                playNow: "Jogar agora",
+                installApp: "Instalar aplicativo",
+                footer: "Criado com ❤️ por Eiger Software. Desafie sua mente diariamente!"
+            },
+            no: {
+                title: "Sudoku-utfordring",
+                description: "Dykk inn i tallenes og logikkens verden. Utfordre sinnet ditt med våre vanedannende Sudoku-puslespill!",
+                playNow: "Spill nå",
+                installApp: "Installer appen",
+                footer: "Laget med ❤️ av Eiger Software. Utfordre sinnet ditt daglig!"
+            },
+            fi: {
+                title: "Sudoku-haaste",
+                description: "Sukella numeroiden ja logiikan maailmaan. Haasta mielesi addiktoivilla Sudoku-pulmillamme!",
+                playNow: "Pelaa nyt",
+                installApp: "Asenna sovellus",
+                footer: "Luotu ❤️ Eiger Softwaren toimesta. Haasta mielesi päivittäin!"
+            },
+            pl: {
+                title: "Wyzwanie Sudoku",
+                description: "Zanurz się w świecie liczb i logiki. Rzuć wyzwanie swojemu umysłowi z naszymi uzależniającymi łamigłówkami Sudoku!",
+                playNow: "Zagraj teraz",
+                installApp: "Zainstaluj aplikację",
+                footer: "Stworzone z ❤️ przez Eiger Software. Rzucaj wyzwanie swojemu umysłowi codziennie!"
+            },
+            cs: {
+                title: "Sudoku výzva",
+                description: "Ponořte se do světa čísel a logiky. Vyzvěte svou mysl s našimi návykovými hlavolamy Sudoku!",
+                playNow: "Hrát nyní",
+                installApp: "Instalovat aplikaci",
+                footer: "Vytvořeno s ❤️ společností Eiger Software. Vyzvěte svou mysl každý den!"
+            }
+        };
+
+        function changeLanguage(lang) {
+            document.documentElement.lang = lang;
+            document.getElementById('title').textContent = translations[lang].title;
+            document.getElementById('description').textContent = translations[lang].description;
+            document.getElementById('playNowBtn').textContent = translations[lang].playNow;
+            document.getElementById('installAppBtn').textContent = translations[lang].installApp;
+            document.getElementById('footer').textContent = translations[lang].footer;
+        }
+
+        function detectLanguage() {
+            const userLang = navigator.language || navigator.userLanguage;
+            const lang = userLang.split('-')[0];
+            return translations[lang] ? lang : 'en';
+        }
+
+        // Set initial language
+        const initialLang = detectLanguage();
+        document.getElementById('languageSelect').value = initialLang;
+        changeLanguage(initialLang);
+
+        // Service Worker registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    }, (err) => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+        
+        // Sudoku grid interactivity
+        document.querySelectorAll('.sudoku-cell').forEach(cell => {
+            cell.addEventListener('click', () => {
+                cell.style.backgroundColor = getRandomColor();
+            });
+        });
+        
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+    </script>
 </body>
 </html>
