@@ -10,6 +10,7 @@
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#3498db">
     <style>
         :root {
             --primary-color: #3498db;
@@ -299,11 +300,6 @@
         </div>
     </div>
     <script>
-        if('serviceWorker' in navigator){
-            navigator.serviceWorker.register('./service-worker.js')
-            .then((reg) => console.log('Service Worker registered', reg))
-            .catch((err) => console.log('Service Worker not registered', err));
-        }
         let currentPuzzle = [];
         let currentSolution = [];
         let isChecking = false;
@@ -995,6 +991,18 @@
                 };
             }
         
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./service-worker.js')
+                        .then(registration => {
+                            console.log('Service Worker registered successfully:', registration.scope);
+                        })
+                        .catch(error => {
+                            console.log('Service Worker registration failed:', error);
+                        });
+                });
+            }
+
             // Use handleAsyncError to wrap the newGame function
             const safeNewGame = handleAsyncError(newGame);
         
