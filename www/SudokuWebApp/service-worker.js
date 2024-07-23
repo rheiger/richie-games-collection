@@ -2,13 +2,13 @@ self.addEventListener('install', (e) => {
     e.waitUntil(
       caches.open('sudoku-pwa').then((cache) => {
         return cache.addAll([
-          '/',
-          '/index.html',
-          '/styles.css',
-          '/script.js',
-          '/manifest.json',
-          '/icon-192x192.png',
-          '/icon-512x512.png'
+          './',
+          './index.html',
+          './styles.css',
+          './script.js',
+          './manifest.json',
+          './icon-192x192.png',
+          './icon-512x512.png'
         ]);
       })
     );
