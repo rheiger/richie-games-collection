@@ -8,25 +8,55 @@
         :root {
             --primary-color: #3498db;
             --secondary-color: #2ecc71;
-            --background-color: #ecf0f1;
             --text-color: #34495e;
             --highlight-color: #e74c3c;
+            --background-color: #f0f0f0;
+            --animation-speed: 20s;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             background-color: var(--background-color);
+            background-image: 
+                linear-gradient(30deg, #f6f8fa 12%, transparent 12.5%, transparent 87%, #f6f8fa 87.5%, #f6f8fa),
+                linear-gradient(150deg, #f6f8fa 12%, transparent 12.5%, transparent 87%, #f6f8fa 87.5%, #f6f8fa),
+                linear-gradient(30deg, #f6f8fa 12%, transparent 12.5%, transparent 87%, #f6f8fa 87.5%, #f6f8fa),
+                linear-gradient(150deg, #f6f8fa 12%, transparent 12.5%, transparent 87%, #f6f8fa 87.5%, #f6f8fa),
+                linear-gradient(60deg, #e3e7eb 25%, transparent 25.5%, transparent 75%, #e3e7eb 75%, #e3e7eb),
+                linear-gradient(60deg, #e3e7eb 25%, transparent 25.5%, transparent 75%, #e3e7eb 75%, #e3e7eb);
+            background-size: 80px 140px;
+            background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+            animation: moveBackground var(--animation-speed) linear infinite;
+        }
+        @keyframes moveBackground {
+            0% {
+                background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+            }
+            100% {
+                background-position: 80px 140px, 80px 140px, 120px 210px, 120px 210px, 80px 140px, 120px 210px;
+            }
+        }
+        .container {
+            flex-grow: 1;
+            text-align: center;
+            padding: 40px 20px;
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
+    
         .language-selector {
             text-align: center;
-            margin-bottom: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
             padding: 10px;
-            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         .language-btn {
@@ -48,11 +78,11 @@
             text-shadow: 0 0 10px var(--highlight-color);
         }
         .container {
+            flex-grow: 1;
             text-align: center;
-            background-color: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
         h1 {
             color: var(--primary-color);
@@ -83,10 +113,17 @@
             transform: translateY(-3px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
-        footer {
+        .coming-soon {
             margin-top: 40px;
             font-style: italic;
-            color: var(--text-color);
+            color: var(--highlight-color);
+        }
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
         }
     </style>
 </head>
@@ -103,6 +140,7 @@
         <div class="game-links">
             <a href="sudoku.html" class="btn" id="sudokuBtn">Play Sudoku</a>
             <a href="connect-four.html" class="btn" id="connectFourBtn">Play Connect Four</a>
+            <a href="mastermind.html" class="btn" id="mastermindBtn">Play Mastermind</a>
         </div>
 
         <p id="pwaInfo">Each game is also available as a Progressive Web App for an enhanced, offline-capable experience:</p>
@@ -110,12 +148,15 @@
         <div class="game-links">
             <a href="sudoku/index.html" class="btn" id="sudokuPwaBtn">Sudoku PWA</a>
             <a href="connect-four/index.html" class="btn" id="connectFourPwaBtn">Connect Four PWA</a>
+            <a href="mastermind/index.html" class="btn" id="mastermindPwaBtn">Mastermind PWA</a>
         </div>
 
-        <footer>
-            <p id="footer">Created with ❤️ by Eiger Software. Challenge your mind daily!</p>
-        </footer>
+        <p class="coming-soon" id="comingSoon">Check back soon for more exciting games!</p>
     </div>
+
+    <footer>
+        <p id="footer">Created with ❤️ by Eiger Software. Challenge your mind daily!</p>
+    </footer>
 
     <script>
         const languages = {
@@ -139,9 +180,12 @@
                 welcome: 'Welcome to our collection of mind-challenging games! Exercise your brain with our addictive puzzles and strategic challenges.',
                 sudokuBtn: 'Play Sudoku',
                 connectFourBtn: 'Play Connect Four',
+                mastermindBtn: 'Play Mastermind',
                 pwaInfo: 'Each game is also available as a Progressive Web App for an enhanced, offline-capable experience:',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Connect Four PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: 'Check back soon for more exciting games!',
                 footer: 'Created with ❤️ by me, Richie with great help from Claude.ai. Challenge your mind daily!'
             },
             'de': {
@@ -149,9 +193,12 @@
                 welcome: 'Willkommen zu unserer Sammlung von Denkspielen! Trainieren Sie Ihr Gehirn mit unseren süchtig machenden Rätseln und strategischen Herausforderungen.',
                 sudokuBtn: 'Sudoku spielen',
                 connectFourBtn: 'Vier gewinnt spielen',
+                mastermindBtn: 'Mastermind spielen',
                 pwaInfo: 'Jedes Spiel ist auch als Progressive Web App für ein verbessertes, offline-fähiges Erlebnis verfügbar:',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Vier gewinnt PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: 'Schauen Sie bald wieder vorbei für weitere spannende Spiele!',
                 footer: 'Mit ❤️ erstellt von mir, Richie, mit großer Hilfe von Claude.ai. Fordern Sie Ihren Verstand täglich heraus!'
             },
             'fr': {
@@ -159,9 +206,12 @@
                 welcome: 'Bienvenue dans notre collection de jeux stimulants pour l\'esprit ! Exercez votre cerveau avec nos puzzles addictifs et nos défis stratégiques.',
                 sudokuBtn: 'Jouer au Sudoku',
                 connectFourBtn: 'Jouer au Puissance 4',
+                mastermindBtn: 'Jouer au Mastermind',
                 pwaInfo: 'Chaque jeu est également disponible en tant qu\'application web progressive pour une expérience améliorée et hors ligne :',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Puissance 4 PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: 'Revenez bientôt pour découvrir plus de jeux passionnants !',
                 footer: 'Créé avec ❤️ par moi, Richie, avec l\'aide précieuse de Claude.ai. Défiez votre esprit quotidiennement !'
             },
             'it': {
@@ -169,9 +219,12 @@
                 welcome: 'Benvenuti nella nostra collezione di giochi che sfidano la mente! Esercita il tuo cervello con i nostri puzzle avvincenti e sfide strategiche.',
                 sudokuBtn: 'Gioca a Sudoku',
                 connectFourBtn: 'Gioca a Forza Quattro',
+                mastermindBtn: 'Gioca a Mastermind',
                 pwaInfo: 'Ogni gioco è disponibile anche come Progressive Web App per un\'esperienza migliorata e utilizzabile offline:',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Forza Quattro PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: 'Torna presto per scoprire altri giochi entusiasmanti!',
                 footer: 'Creato con ❤️ da me, Richie, con il grande aiuto di Claude.ai. Sfida la tua mente ogni giorno!'
             },
             'sv': {
@@ -179,9 +232,12 @@
                 welcome: 'Välkommen till vår samling av hjärnutmanande spel! Träna din hjärna med våra beroendeframkallande pussel och strategiska utmaningar.',
                 sudokuBtn: 'Spela Sudoku',
                 connectFourBtn: 'Spela Fyra i rad',
+                mastermindBtn: 'Spela Mastermind',
                 pwaInfo: 'Varje spel finns också tillgängligt som en Progressive Web App för en förbättrad, offline-kapabel upplevelse:',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Fyra i rad PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: 'Kom tillbaka snart för fler spännande spel!',
                 footer: 'Skapad med ❤️ av mig, Richie, med stor hjälp från Claude.ai. Utmana ditt sinne dagligen!'
             },
             'sk': {
@@ -189,9 +245,12 @@
                 welcome: 'Vitajte v našej zbierke hier, ktoré sú výzvou pre myseľ! Precvičte si mozog s našimi návykovými hlavolamami a strategickými výzvami.',
                 sudokuBtn: 'Hrať Sudoku',
                 connectFourBtn: 'Hrať Štyri v rade',
+                mastermindBtn: 'Hrať Mastermind',
                 pwaInfo: 'Každá hra je k dispozícii aj ako progresívna webová aplikácia pre vylepšený zážitok s možnosťou offline použitia:',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Štyri v rade PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: 'Čoskoro sa vráťte pre ďalšie vzrušujúce hry!',
                 footer: 'Vytvorené s ❤️ mnou, Richiem, s veľkou pomocou od Claude.ai. Denne si precvičujte svoju myseľ!'
             },
             'es': {
@@ -199,9 +258,12 @@
                 welcome: '¡Bienvenido a nuestra colección de juegos que desafían la mente! Ejercita tu cerebro con nuestros adictivos rompecabezas y desafíos estratégicos.',
                 sudokuBtn: 'Jugar Sudoku',
                 connectFourBtn: 'Jugar Conecta Cuatro',
+                mastermindBtn: 'Jugar Mastermind',
                 pwaInfo: 'Cada juego también está disponible como una Aplicación Web Progresiva para una experiencia mejorada y con capacidad offline:',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Conecta Cuatro PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: '¡Vuelve pronto para descubrir más juegos emocionantes!',
                 footer: 'Creado con ❤️ por mí, Richie, con gran ayuda de Claude.ai. ¡Desafía tu mente diariamente!'
             },
             'pt': {
@@ -209,9 +271,12 @@
                 welcome: 'Bem-vindo à nossa coleção de jogos que desafiam a mente! Exercite seu cérebro com nossos quebra-cabeças viciantes e desafios estratégicos.',
                 sudokuBtn: 'Jogar Sudoku',
                 connectFourBtn: 'Jogar Conecta Quatro',
+                mastermindBtn: 'Jogar Mastermind',
                 pwaInfo: 'Cada jogo também está disponível como um Aplicativo Web Progressivo para uma experiência aprimorada e com capacidade offline:',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Conecta Quatro PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: 'Volte em breve para mais jogos emocionantes!',
                 footer: 'Criado com ❤️ por mim, Richie, com grande ajuda de Claude.ai. Desafie sua mente diariamente!'
             },
             'no': {
@@ -219,9 +284,12 @@
                 welcome: 'Velkommen til vår samling av tankeutfordrende spill! Tren hjernen din med våre vanedannende puslespill og strategiske utfordringer.',
                 sudokuBtn: 'Spill Sudoku',
                 connectFourBtn: 'Spill Fire på rad',
+                mastermindBtn: 'Spill Mastermind',
                 pwaInfo: 'Hvert spill er også tilgjengelig som en Progressive Web App for en forbedret, offline-kapabel opplevelse:',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Fire på rad PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: 'Kom tilbake snart for flere spennende spill!',
                 footer: 'Laget med ❤️ av meg, Richie, med stor hjelp fra Claude.ai. Utfordre sinnet ditt daglig!'
             },
             'fi': {
@@ -229,9 +297,12 @@
                 welcome: 'Tervetuloa kokoelmaamme mieltä haastavista peleistä! Harjoita aivojasi koukuttavilla pulmillamme ja strategisilla haasteilla.',
                 sudokuBtn: 'Pelaa Sudokua',
                 connectFourBtn: 'Pelaa Neljän suora',
+                mastermindBtn: 'Pelaa Mastermind',
                 pwaInfo: 'Jokainen peli on myös saatavilla Progressive Web Appina parannettua, offline-kykyistä kokemusta varten:',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Neljän suora PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: 'Palaa pian takaisin löytääksesi lisää jännittäviä pelejä!',
                 footer: 'Luotu ❤️:llä minun, Richien toimesta, Claude.ai:n suurella avustuksella. Haasta mielesi päivittäin!'
             },
             'pl': {
@@ -239,9 +310,12 @@
                 welcome: 'Witaj w naszej kolekcji gier umysłowych! Ćwicz swój mózg z naszymi uzależniającymi łamigłówkami i wyzwaniami strategicznymi.',
                 sudokuBtn: 'Graj w Sudoku',
                 connectFourBtn: 'Graj w Cztery w rzędzie',
+                mastermindBtn: 'Graj w Mastermind',
                 pwaInfo: 'Każda gra jest również dostępna jako Progresywna Aplikacja Internetowa dla ulepszonego doświadczenia z możliwością gry offline:',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Cztery w rzędzie PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: 'Wróć wkrótce po więcej ekscytujących gier!',
                 footer: 'Stworzone z ❤️ przeze mnie, Richiego, z wielką pomocą Claude.ai. Codziennie rzucaj wyzwanie swojemu umysłowi!'
             },
             'cs': {
@@ -249,9 +323,12 @@
                 welcome: 'Vítejte v naší sbírce her, které prověří vaši mysl! Procvičte si mozek s našimi návykovými hádankami a strategickými výzvami.',
                 sudokuBtn: 'Hrát Sudoku',
                 connectFourBtn: 'Hrát Čtyři v řadě',
+                mastermindBtn: 'Hrát Mastermind',
                 pwaInfo: 'Každá hra je také k dispozici jako progresivní webová aplikace pro vylepšený zážitek s možností offline hraní:',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Čtyři v řadě PWA',
+                mastermindPwaBtn: 'Mastermind PWA',
+                comingSoon: 'Vraťte se brzy pro více vzrušujících her!',
                 footer: 'Vytvořeno s ❤️ mnou, Richiem, s velkou pomocí od Claude.ai. Denně si procvičujte svou mysl!'
             }
         };
@@ -276,12 +353,14 @@
             document.getElementById('welcome').textContent = translation.welcome;
             document.getElementById('sudokuBtn').textContent = translation.sudokuBtn;
             document.getElementById('connectFourBtn').textContent = translation.connectFourBtn;
+            document.getElementById('mastermindBtn').textContent = translation.mastermindBtn;
             document.getElementById('pwaInfo').textContent = translation.pwaInfo;
             document.getElementById('sudokuPwaBtn').textContent = translation.sudokuPwaBtn;
             document.getElementById('connectFourPwaBtn').textContent = translation.connectFourPwaBtn;
+            document.getElementById('mastermindPwaBtn').textContent = translation.mastermindPwaBtn;
+            document.getElementById('comingSoon').textContent = translation.comingSoon;
             document.getElementById('footer').textContent = translation.footer;
 
-            // Update active language button
             document.querySelectorAll('.language-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
             });
