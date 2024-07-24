@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touchicon" href="icon-192x192.png">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sudoku">
+    <meta name="theme-color" content="#3498db">
+    <title>Connect Four</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .language-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .language-btn {
+            margin: 5px;
+        }
+        .language-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            margin: 0 5px;
+            opacity: 0.7;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .language-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .language-btn.active {
+            opacity: 1;
+            font-weight: bold;
+        }
+        h1 {
+            color: #3498db;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            background-color: #3498db;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 350px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .cell {
+            width: 100%;
+            padding-bottom: 100%;
+            background-color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .cell::after {
+            content: '';
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+        }
+        
+        .cell.red::after {
+            background-color: red;
+        }
+        
+        .cell.yellow::after {
+            background-color: yellow;
+        }
+        
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #resetBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        @keyframes dropAnimation {
+            from { transform: translateY(-300px); }
+            to { transform: translateY(0); }
+        }
+        
+        .cell.animated {
+            animation: dropAnimation 0.5s ease-in;
+        }
+
+        @keyframes firework {
+            0% { transform: translate(-50%, -50%); width: 0.1vmin; opacity: 1; }
+            50% { width: 0.5vmin; opacity: 1; }
+            100% { width: 45vmin; opacity: 0; }
+        }
+        
+        .firework {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        .firework::before, .firework::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(0deg);
+            border-radius: 50%;
+            border: 2vmin solid gold;
+            animation: firework 0.5s linear infinite;
+        }
+        
+        .firework::after {
+            animation-delay: -0.3s;
+        }
+
+        @keyframes proudComputer {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .proud-computer {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5em;
+            animation: proudComputer 1s ease-in-out infinite;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .language-btn {
+                font-size: 1em;
+                margin: 0 2px;
+            }
+            
+            #resetBtn {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 600px) {
+            .firework::before, .firework::after {
+                border-width: 1vmin;
+            }
+        
+            .proud-computer {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-selector" id="languageSelector"></div>
+    <h1 id="title">Connect Four</h1>
+    <div id="board"></div>
+    <div id="message"></div>
+    <button id="resetBtn">New Game</button>
+
+    <script>
+        const languages = {
+            'en': { emoji: '🇬🇧', name: 'English' },
+            'de': { emoji: '🇩🇪', name: 'Deutsch' },
+            'fr': { emoji: '🇫🇷', name: 'Français' },
+            'it': { emoji: '🇮🇹', name: 'Italiano' },
+            'sv': { emoji: '🇸🇪', name: 'Svenska' },
+            'sk': { emoji: '🇸🇰', name: 'Slovenčina' },
+            'es': { emoji: '🇪🇸', name: 'Español' },
+            'pt': { emoji: '🇵🇹', name: 'Português' },
+            'no': { emoji: '🇳🇴', name: 'Norsk' },
+            'fi': { emoji: '🇫🇮', name: 'Suomi' },
+            'pl': { emoji: '🇵🇱', name: 'Polski' },
+            'cs': { emoji: '🇨🇿', name: 'Čeština' }
+        };
+        
+        const translations = {
+            'en': {
+                title: 'Connect Four',
+                newGame: 'New Game',
+                yourTurn: 'Your turn',
+                computerTurn: 'Computer\'s turn',
+                youWin: 'You win!',
+                computerWins: 'Computer wins!',
+                draw: 'It\'s a draw!',
+                footer: 'Created with ❤️ by me, Richie with great help from Claude.ai. Challenge your mind daily!'
+            },
+            'de': {
+                title: 'Vier gewinnt',
+                newGame: 'Neues Spiel',
+                yourTurn: 'Du bist dran',
+                computerTurn: 'Computer ist dran',
+                youWin: 'Du gewinnst!',
+                computerWins: 'Computer gewinnt!',
+                draw: 'Unentschieden!',
+                footer: 'Mit ❤️ erstellt von mir, Richie, mit großer Hilfe von Claude.ai. Fordern Sie Ihren Verstand täglich heraus!'
+            },
+            'fr': {
+                title: 'Puissance 4',
+                newGame: 'Nouvelle partie',
+                yourTurn: 'À votre tour',
+                computerTurn: 'Tour de l\'ordinateur',
+                youWin: 'Vous gagnez !',
+                computerWins: 'L\'ordinateur gagne !',
+                draw: 'Match nul !',
+                footer: 'Créé avec ❤️ par moi, Richie, avec l\'aide précieuse de Claude.ai. Défiez votre esprit quotidiennement !'
+            },
+            'it': {
+                title: 'Forza Quattro',
+                newGame: 'Nuova Partita',
+                yourTurn: 'È il tuo turno',
+                computerTurn: 'Turno del computer',
+                youWin: 'Hai vinto!',
+                computerWins: 'Il computer ha vinto!',
+                draw: 'È un pareggio!',
+                footer: 'Creato con ❤️ da me, Richie, con il grande aiuto di Claude.ai. Sfida la tua mente ogni giorno!'
+            },
+            'sv': {
+                title: 'Fyra i rad',
+                newGame: 'Nytt spel',
+                yourTurn: 'Din tur',
+                computerTurn: 'Datorns tur',
+                youWin: 'Du vinner!',
+                computerWins: 'Datorn vinner!',
+                draw: 'Det är oavgjort!',
+                footer: 'Skapad med ❤️ av mig, Richie, med stor hjälp från Claude.ai. Utmana ditt sinne dagligen!'
+            },
+            'sk': {
+                title: 'Štyri v rade',
+                newGame: 'Nová hra',
+                yourTurn: 'Tvoj ťah',
+                computerTurn: 'Ťah počítača',
+                youWin: 'Vyhrávaš!',
+                computerWins: 'Počítač vyhráva!',
+                draw: 'Je to remíza!',
+                footer: 'Vytvorené s ❤️ mnou, Richiem, s veľkou pomocou od Claude.ai. Denne si precvičujte svoju myseľ!'
+            },
+            'es': {
+                title: 'Conecta Cuatro',
+                newGame: 'Nuevo juego',
+                yourTurn: 'Tu turno',
+                computerTurn: 'Turno del ordenador',
+                youWin: '¡Ganaste!',
+                computerWins: '¡Gana el ordenador!',
+                draw: '¡Es un empate!',
+                footer: 'Creado con ❤️ por mí, Richie, con gran ayuda de Claude.ai. ¡Desafía tu mente diariamente!'
+            },
+            'pt': {
+                title: 'Conecta Quatro',
+                newGame: 'Novo jogo',
+                yourTurn: 'Sua vez',
+                computerTurn: 'Vez do computador',
+                youWin: 'Você venceu!',
+                computerWins: 'O computador venceu!',
+                draw: 'É um empate!',
+                footer: 'Criado com ❤️ por mim, Richie, com grande ajuda de Claude.ai. Desafie sua mente diariamente!'
+            },
+            'no': {
+                title: 'Fire på rad',
+                newGame: 'Nytt spill',
+                yourTurn: 'Din tur',
+                computerTurn: 'Datamaskinens tur',
+                youWin: 'Du vinner!',
+                computerWins: 'Datamaskinen vinner!',
+                draw: 'Det er uavgjort!',
+                footer: 'Laget med ❤️ av meg, Richie, med stor hjelp fra Claude.ai. Utfordre sinnet ditt daglig!'
+            },
+            'fi': {
+                title: 'Neljän suora',
+                newGame: 'Uusi peli',
+                yourTurn: 'Sinun vuorosi',
+                computerTurn: 'Tietokoneen vuoro',
+                youWin: 'Sinä voitat!',
+                computerWins: 'Tietokone voittaa!',
+                draw: 'Tasapeli!',
+                footer: 'Luotu ❤️:llä minun, Richien toimesta, Claude.ai:n suurella avustuksella. Haasta mielesi päivittäin!'
+            },
+            'pl': {
+                title: 'Cztery w rzędzie',
+                newGame: 'Nowa gra',
+                yourTurn: 'Twoja kolej',
+                computerTurn: 'Kolej komputera',
+                youWin: 'Wygrywasz!',
+                computerWins: 'Komputer wygrywa!',
+                draw: 'Remis!',
+                footer: 'Stworzone z ❤️ przeze mnie, Richiego, z wielką pomocą Claude.ai. Codziennie rzucaj wyzwanie swojemu umysłowi!'
+            },
+            'cs': {
+                title: 'Čtyři v řadě',
+                newGame: 'Nová hra',
+                yourTurn: 'Jste na tahu',
+                computerTurn: 'Tah počítače',
+                youWin: 'Vyhráli jste!',
+                computerWins: 'Počítač vyhrál!',
+                draw: 'Je to remíza!',
+                footer: 'Vytvořeno s ❤️ mnou, Richiem, s velkou pomocí od Claude.ai. Denně si procvičujte svou mysl!'
+            }
+        };
+
+        let currentPlayer = 'red';
+        let gameBoard = Array(6).fill().map(() => Array(7).fill(''));
+        let gameActive = true;
+
+        function createLanguageButtons() {
+            const languageSelector = document.getElementById('languageSelector');
+            for (const [langCode, langInfo] of Object.entries(languages)) {
+                const btn = document.createElement('button');
+                btn.innerHTML = `${langInfo.emoji} ${langInfo.name}`;
+                btn.className = 'language-btn';
+                btn.setAttribute('data-lang', langCode);
+                btn.onclick = () => setLanguage(langCode);
+                languageSelector.appendChild(btn);
+            }
+        }
+
+        function setLanguage(lang) {
+            document.documentElement.lang = lang;
+            const translation = translations[lang] || translations['en'];
+            document.title = translation.title;
+            document.getElementById('title').textContent = translation.title;
+            document.getElementById('resetBtn').textContent = translation.newGame;
+            updateMessage(currentPlayer === 'red' ? translation.yourTurn : translation.computerTurn);
+
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+        }
+
+        function detectLanguage() {
+            const browserLang = navigator.language.split('-')[0];
+            return languages[browserLang] ? browserLang : 'en';
+        }
+
+        function createBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+            for (let row = 5; row >= 0; row--) {
+                for (let col = 0; col < 7; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.col = col;
+                    cell.dataset.row = row;
+                    board.appendChild(cell);
+                }
+            }
+        }
+        
+        function dropPice(col) {
+            if (!gameActive) return;
+            let row = getNextEmptyRow(col);
+            if (row !== -1) {
+                gameBoard[row][col] = currentPlayer;
+                animateDropPiece(row, col);
+                setTimeout(() => {
+                    checkGameState(row, col);
+                    currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
+                    if (gameActive && currentPlayer === 'yellow') {
+                        setTimeout(computerMove, 500);
+                    }
+                }, 500); // Wait for animation to finish
+            }
+        }
+        
+        function animateDropPiece(row, col) {
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            cell.classList.add(currentPlayer, 'animated');
+            setTimeout(() => cell.classList.remove('animated'), 500);
+        }
+        
+        function getNextEmptyRow(col) {
+            for (let row = 0; row < 6; row++) {
+                if (gameBoard[row][col] === '') {
+                    return row;
+                }
+            }
+            return -1; // Column is full
+        }
+                
+        function updateBoard() {
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 7; col++) {
+                    const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                    cell.className = 'cell'; // Reset the cell
+                    if (gameBoard[row][col] !== '') {
+                        cell.classList.add(gameBoard[row][col]);
+                        cell.classList.add('animated');
+                        setTimeout(() => cell.classList.remove('animated'), 500);
+                    }
+                }
+            }
+        }
+        
+        function checkGameState(row, col) {
+            if (checkWin(row, col)) {
+                const winner = currentPlayer === 'red' ? translations[currentLang].youWin : translations[currentLang].computerWins;
+                updateMessage(winner);
+                gameActive = false;
+                if (currentPlayer === 'red') {
+                    setTimeout(showFireworks, 100);
+                } else {
+                    setTimeout(showProudComputer, 100);
+                }
+            } else if (checkDraw()) {
+                updateMessage(translations[currentLang].draw);
+                gameActive = false;
+            } else {
+                updateMessage(currentPlayer === 'red' ? translations[currentLang].computerTurn : translations[currentLang].yourTurn);
+            }
+        }
+
+        function dropPiece(col) {
+            if (!gameActive) return;
+            let row = getNextEmptyRow(col);
+            if (row !== -1) {
+                gameBoard[row][col] = currentPlayer;
+                animateDropPiece(row, col);
+                setTimeout(() => {
+                    checkGameState(row, col);
+                    currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
+                    if (gameActive && currentPlayer === 'yellow') {
+                        setTimeout(computerMove, 500);
+                    }
+                }, 500); // Wait for animation to finish
+            }
+        }
+        
+        function animateDropPiece(row, col) {
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            cell.classList.add(currentPlayer, 'animated');
+            setTimeout(() => cell.classList.remove('animated'), 500);
+        }
+        
+        function checkWin(row, col) {
+            const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+            return directions.some(([dy, dx]) => {
+                let count = 1;
+                for (let i = 1; i <= 3; i++) {
+                    if (checkDirection(row, col, dy, dx, i)) count++;
+                    else break;
+                }
+                for (let i = 1; i <= 3; i++) {
+                    if (checkDirection(row, col, -dy, -dx, i)) count++;
+                    else break;
+                }
+                return count >= 4;
+            });
+        }
+
+        function checkDirection(row, col, dy, dx, i) {
+            const newRow = row + i * dy;
+            const newCol = col + i * dx;
+            return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7 && 
+                   gameBoard[newRow][newCol] === currentPlayer;
+        }
+
+        function checkDraw() {
+            return gameBoard.every(row => row.every(cell => cell !== ''));
+        }
+
+        function computerMove() {
+            if (!gameActive) return;
+            
+            let bestScore = -Infinity;
+            let bestCol = 3; // Default to middle column
+            
+            for (let col = 0; col < 7; col++) {
+                if (canPlayColumn(col)) {
+                    let row = getNextEmptyRow(col);
+                    gameBoard[row][col] = 'yellow';
+                    let score = minimax(gameBoard, 4, false);
+                    gameBoard[row][col] = '';
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestCol = col;
+                    }
+                }
+            }
+            
+            dropPiece(bestCol);
+        }
+        
+        function minimax(board, depth, isMaximizing) {
+            if (depth === 0) {
+                return evaluateBoard(board);
+            }
+            
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (let col = 0; col < 7; col++) {
+                    if (canPlayColumn(col)) {
+                        let row = getNextEmptyRow(col);
+                        board[row][col] = 'yellow';
+                        let score = minimax(board, depth - 1, false);
+                        board[row][col] = '';
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let col = 0; col < 7; col++) {
+                    if (canPlayColumn(col)) {
+                        let row = getNextEmptyRow(col);
+                        board[row][col] = 'red';
+                        let score = minimax(board, depth - 1, true);
+                        board[row][col] = '';
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+                return bestScore;
+            }
+        }
+        
+        function evaluateBoard(board) {
+            let score = 0;
+            
+            // Check horizontal
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 4; col++) {
+                    score += evaluateLine(board[row][col], board[row][col+1], board[row][col+2], board[row][col+3]);
+                }
+            }
+            
+            // Check vertical
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 7; col++) {
+                    score += evaluateLine(board[row][col], board[row+1][col], board[row+2][col], board[row+3][col]);
+                }
+            }
+            
+            // Check diagonal (positive slope)
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 4; col++) {
+                    score += evaluateLine(board[row][col], board[row+1][col+1], board[row+2][col+2], board[row+3][col+3]);
+                }
+            }
+            
+            // Check diagonal (negative slope)
+            for (let row = 3; row < 6; row++) {
+                for (let col = 0; col < 4; col++) {
+                    score += evaluateLine(board[row][col], board[row-1][col+1], board[row-2][col+2], board[row-3][col+3]);
+                }
+            }
+            
+            return score;
+        }
+        
+        function evaluateLine(a, b, c, d) {
+            let score = 0;
+            let yellow = 0;
+            let red = 0;
+            let empty = 0;
+            
+            if (a === 'yellow') yellow++;
+            else if (a === 'red') red++;
+            else empty++;
+            
+            if (b === 'yellow') yellow++;
+            else if (b === 'red') red++;
+            else empty++;
+            
+            if (c === 'yellow') yellow++;
+            else if (c === 'red') red++;
+            else empty++;
+            
+            if (d === 'yellow') yellow++;
+            else if (d === 'red') red++;
+            else empty++;
+            
+            if (yellow === 4) score += 100;
+            else if (yellow === 3 && empty === 1) score += 5;
+            else if (yellow === 2 && empty === 2) score += 2;
+            
+            if (red === 3 && empty === 1) score -= 4;
+            
+            return score;
+        }
+        
+        function canPlayColumn(col) {
+            return gameBoard[5][col] === '';
+        }
+        
+        function updateMessage(msg) {
+            document.getElementById('message').textContent = msg;
+        }
+
+        function resetGame() {
+            gameBoard = Array(6).fill().map(() => Array(7).fill(''));
+            currentPlayer = 'red';
+            gameActive = true;
+            createBoard();
+            updateMessage(translations[currentLang].yourTurn);
+        }
+
+        function showFireworks() {
+            const fireworks = document.createElement('div');
+            fireworks.className = 'firework';
+            document.body.appendChild(fireworks);
+            setTimeout(() => document.body.removeChild(fireworks), 2000);
+        }
+
+        function showProudComputer() {
+            const proudComputer = document.createElement('div');
+            proudComputer.className = 'proud-computer';
+            proudComputer.textContent = '🖥️ I win!';
+            document.body.appendChild(proudComputer);
+            setTimeout(() => document.body.removeChild(proudComputer), 3000);
+        }
+
+        document.getElementById('board').addEventListener('click', (e) => {
+            if (e.target.classList.contains('cell') && currentPlayer === 'red') {
+                const col = parseInt(e.target.dataset.col);
+                dropPiece(col);
+            }
+        });
+
+        document.getElementById('board').addEventListener('touchstart', (e) => {
+            if (e.target.classList.contains('cell') && currentPlayer === 'red') {
+                e.preventDefault(); // Prevent scrolling when touching the game board
+                const col = parseInt(e.target.dataset.col);
+                dropPiece(col);
+            }
+        }, { passive: false });
+
+        document.getElementById('resetBtn').addEventListener('click', resetGame);
+
+        let currentLang = detectLanguage();
+        createLanguageButtons();
+        setLanguage(currentLang);
+        createBoard();
+        updateMessage(translations[currentLang].yourTurn);
+        
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+</script>
+</body>
+</html>

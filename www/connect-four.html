@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Connect Four</title>
     <style>
         body {
@@ -15,7 +15,14 @@
             padding: 20px;
         }
         .language-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             margin-bottom: 20px;
+        }
+        
+        .language-btn {
+            margin: 5px;
         }
         .language-btn {
             background: none;
@@ -39,25 +46,43 @@
         }
         #board {
             display: grid;
-            grid-template-columns: repeat(7, 50px);
-            grid-gap: 5px;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
             background-color: #3498db;
             padding: 10px;
             border-radius: 10px;
+            max-width: 350px;
+            width: 100%;
+            margin: 0 auto;
         }
+        
         .cell {
-            width: 50px;
-            height: 50px;
+            width: 100%;
+            padding-bottom: 100%;
             background-color: white;
             border-radius: 50%;
             cursor: pointer;
+            position: relative;
         }
-        .red {
+        
+        .cell::after {
+            content: '';
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+        }
+        
+        .cell.red::after {
             background-color: red;
         }
-        .yellow {
+        
+        .cell.yellow::after {
             background-color: yellow;
         }
+        
         #message {
             margin-top: 20px;
             font-weight: bold;
@@ -71,6 +96,90 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+        }
+        @keyframes dropAnimation {
+            from { transform: translateY(-300px); }
+            to { transform: translateY(0); }
+        }
+        
+        .cell.animated {
+            animation: dropAnimation 0.5s ease-in;
+        }
+
+        @keyframes firework {
+            0% { transform: translate(-50%, -50%); width: 0.1vmin; opacity: 1; }
+            50% { width: 0.5vmin; opacity: 1; }
+            100% { width: 45vmin; opacity: 0; }
+        }
+        
+        .firework {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        .firework::before, .firework::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(0deg);
+            border-radius: 50%;
+            border: 2vmin solid gold;
+            animation: firework 0.5s linear infinite;
+        }
+        
+        .firework::after {
+            animation-delay: -0.3s;
+        }
+
+        @keyframes proudComputer {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .proud-computer {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5em;
+            animation: proudComputer 1s ease-in-out infinite;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .language-btn {
+                font-size: 1em;
+                margin: 0 2px;
+            }
+            
+            #resetBtn {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 600px) {
+            .firework::before, .firework::after {
+                border-width: 1vmin;
+            }
+        
+            .proud-computer {
+                font-size: 3em;
+            }
         }
     </style>
 </head>
@@ -268,18 +377,26 @@
             }
         }
         
-        function dropPiece(col) {
+        function dropPice(col) {
             if (!gameActive) return;
             let row = getNextEmptyRow(col);
             if (row !== -1) {
                 gameBoard[row][col] = currentPlayer;
-                updateBoard();
-                checkGameState(row, col);
-                currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
-                if (gameActive && currentPlayer === 'yellow') {
-                    setTimeout(computerMove, 500);
-                }
+                animateDropPiece(row, col);
+                setTimeout(() => {
+                    checkGameState(row, col);
+                    currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
+                    if (gameActive && currentPlayer === 'yellow') {
+                        setTimeout(computerMove, 500);
+                    }
+                }, 500); // Wait for animation to finish
             }
+        }
+        
+        function animateDropPiece(row, col) {
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            cell.classList.add(currentPlayer, 'animated');
+            setTimeout(() => cell.classList.remove('animated'), 500);
         }
         
         function getNextEmptyRow(col) {
@@ -298,6 +415,8 @@
                     cell.className = 'cell'; // Reset the cell
                     if (gameBoard[row][col] !== '') {
                         cell.classList.add(gameBoard[row][col]);
+                        cell.classList.add('animated');
+                        setTimeout(() => cell.classList.remove('animated'), 500);
                     }
                 }
             }
@@ -308,6 +427,11 @@
                 const winner = currentPlayer === 'red' ? translations[currentLang].youWin : translations[currentLang].computerWins;
                 updateMessage(winner);
                 gameActive = false;
+                if (currentPlayer === 'red') {
+                    setTimeout(showFireworks, 100);
+                } else {
+                    setTimeout(showProudComputer, 100);
+                }
             } else if (checkDraw()) {
                 updateMessage(translations[currentLang].draw);
                 gameActive = false;
@@ -316,6 +440,28 @@
             }
         }
 
+        function dropPiece(col) {
+            if (!gameActive) return;
+            let row = getNextEmptyRow(col);
+            if (row !== -1) {
+                gameBoard[row][col] = currentPlayer;
+                animateDropPiece(row, col);
+                setTimeout(() => {
+                    checkGameState(row, col);
+                    currentPlayer = currentPlayer === 'red' ? 'yellow' : 'red';
+                    if (gameActive && currentPlayer === 'yellow') {
+                        setTimeout(computerMove, 500);
+                    }
+                }, 500); // Wait for animation to finish
+            }
+        }
+        
+        function animateDropPiece(row, col) {
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            cell.classList.add(currentPlayer, 'animated');
+            setTimeout(() => cell.classList.remove('animated'), 500);
+        }
+        
         function checkWin(row, col) {
             const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
             return directions.some(([dy, dx]) => {
@@ -476,8 +622,22 @@
             currentPlayer = 'red';
             gameActive = true;
             createBoard();
-            updateBoard();
             updateMessage(translations[currentLang].yourTurn);
+        }
+
+        function showFireworks() {
+            const fireworks = document.createElement('div');
+            fireworks.className = 'firework';
+            document.body.appendChild(fireworks);
+            setTimeout(() => document.body.removeChild(fireworks), 2000);
+        }
+
+        function showProudComputer() {
+            const proudComputer = document.createElement('div');
+            proudComputer.className = 'proud-computer';
+            proudComputer.textContent = '🖥️ I win!';
+            document.body.appendChild(proudComputer);
+            setTimeout(() => document.body.removeChild(proudComputer), 3000);
         }
 
         document.getElementById('board').addEventListener('click', (e) => {
@@ -486,6 +646,14 @@
                 dropPiece(col);
             }
         });
+
+        document.getElementById('board').addEventListener('touchstart', (e) => {
+            if (e.target.classList.contains('cell') && currentPlayer === 'red') {
+                e.preventDefault(); // Prevent scrolling when touching the game board
+                const col = parseInt(e.target.dataset.col);
+                dropPiece(col);
+            }
+        }, { passive: false });
 
         document.getElementById('resetBtn').addEventListener('click', resetGame);
 
