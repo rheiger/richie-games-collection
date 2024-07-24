@@ -2,327 +2,298 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sudoku Challenge - Test Your Logic!</title>
-    <link rel="manifest" href="./manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Sudoku">
-    <link rel="apple-touch-icon" href="icon-192x192.png">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
-    <meta name="theme-color" content="#1a1a2e">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eiger Software Game Collection</title>
     <style>
         :root {
-            --primary-color: #16213e;
-            --secondary-color: #0f3460;
-            --accent-color: #e94560;
-            --text-color: #fff;
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+            --highlight-color: #e74c3c;
         }
-        
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            overflow-x: hidden;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            text-align: center;
-        }
-        
-        h1 {
-            font-size: 4em;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            animation: fadeInUp 1s ease-out;
-        }
-        
-        p {
-            font-size: 1.2em;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            margin-bottom: 30px;
-            animation: fadeInUp 1s ease-out 0.5s both;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        
+        .language-selector {
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .language-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            margin: 0 5px;
+            opacity: 0.7;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .language-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .language-btn.active {
+            opacity: 1;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--highlight-color);
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .game-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
         .btn {
             display: inline-block;
-            padding: 15px 30px;
-            margin: 10px;
-            background-color: var(--accent-color);
+            background: var(--primary-color);
             color: white;
+            padding: 12px 24px;
             text-decoration: none;
             border-radius: 50px;
-            font-weight: 600;
             transition: all 0.3s ease;
-            animation: fadeInUp 1s ease-out 1s both;
-        }
-        
-        .btn:hover {
-            background-color: #ff6b81;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        
-        .footer {
-            margin-top: 50px;
-            font-size: 0.9em;
-            opacity: 0.7;
-            animation: fadeInUp 1s ease-out 1.5s both;
-        }
-        
-        .sudoku-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            max-width: 300px;
-            margin: 40px auto;
-            animation: fadeIn 1s ease-out 0.5s both;
-        }
-        
-        .sudoku-cell {
-            aspect-ratio: 1;
-            background-color: var(--secondary-color);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
             font-weight: bold;
-            color: var(--accent-color);
-            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        
-        .sudoku-cell:hover {
-            transform: scale(1.1);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        .btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
-        
-        .language-selector {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-        
-        .language-selector select {
-            padding: 5px 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            background-color: var(--secondary-color);
+        footer {
+            margin-top: 40px;
+            font-style: italic;
             color: var(--text-color);
-            cursor: pointer;
-        }
-        
-        .language-selector option {
-            padding: 5px;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @media (max-width: 768px) {
-            h1 { font-size: 3em; }
-            .sudoku-grid { max-width: 250px; }
         }
     </style>
 </head>
 <body>
-    <div class="language-selector">
-        <select id="languageSelect" onchange="changeLanguage(this.value)">
-            <option value="en">🇬🇧 English</option>
-            <option value="de">🇩🇪 Deutsch</option>
-            <option value="fr">🇫🇷 Français</option>
-            <option value="it">🇮🇹 Italiano</option>
-            <option value="sv">🇸🇪 Svenska</option>
-            <option value="sk">🇸🇰 Slovenčina</option>
-            <option value="es">🇪🇸 Español</option>
-            <option value="pt">🇵🇹 Português</option>
-            <option value="no">🇳🇴 Norsk</option>
-            <option value="fi">🇫🇮 Suomi</option>
-            <option value="pl">🇵🇱 Polski</option>
-            <option value="cs">🇨🇿 Čeština</option>
-        </select>
+    <div class="language-selector" id="languageSelector">
+        <!-- Language buttons will be dynamically inserted here -->
     </div>
 
     <div class="container">
-        <h1 id="title">Sudoku Challenge</h1>
-        <p id="description">Dive into the world of numbers and logic. Challenge your mind with our addictive Sudoku puzzles!</p>
-        
-        <div class="sudoku-grid">
-            <div class="sudoku-cell">5</div>
-            <div class="sudoku-cell">3</div>
-            <div class="sudoku-cell">4</div>
-            <div class="sudoku-cell">6</div>
-            <div class="sudoku-cell">7</div>
-            <div class="sudoku-cell">2</div>
-            <div class="sudoku-cell">1</div>
-            <div class="sudoku-cell">9</div>
-            <div class="sudoku-cell">8</div>
+        <h1 id="title">Eiger Software Game Collection</h1>
+
+        <p id="welcome">Welcome to our collection of mind-challenging games! Exercise your brain with our addictive puzzles and strategic challenges.</p>
+
+        <div class="game-links">
+            <a href="sudoku.html" class="btn" id="sudokuBtn">Play Sudoku</a>
+            <a href="connect-four.html" class="btn" id="connectFourBtn">Play Connect Four</a>
         </div>
-        
-        <a href="https://eiger.software/sudoku.html" class="btn" id="playNowBtn">Play Now</a>
-        <a href="https://eiger.software/SudokuWebApp" class="btn" id="installAppBtn">Install App</a>
-        
-        <p class="footer" id="footer">Created with ❤️ by Eiger Software. Challenge your mind daily!</p>
+
+        <p id="pwaInfo">Each game is also available as a Progressive Web App for an enhanced, offline-capable experience:</p>
+
+        <div class="game-links">
+            <a href="sudoku/index.html" class="btn" id="sudokuPwaBtn">Sudoku PWA</a>
+            <a href="connect-four/index.html" class="btn" id="connectFourPwaBtn">Connect Four PWA</a>
+        </div>
+
+        <footer>
+            <p id="footer">Created with ❤️ by Eiger Software. Challenge your mind daily!</p>
+        </footer>
     </div>
-    
+
     <script>
+        const languages = {
+            'en': { emoji: '🇬🇧', name: 'English' },
+            'de': { emoji: '🇩🇪', name: 'Deutsch' },
+            'fr': { emoji: '🇫🇷', name: 'Français' },
+            'it': { emoji: '🇮🇹', name: 'Italiano' },
+            'sv': { emoji: '🇸🇪', name: 'Svenska' },
+            'sk': { emoji: '🇸🇰', name: 'Slovenčina' },
+            'es': { emoji: '🇪🇸', name: 'Español' },
+            'pt': { emoji: '🇵🇹', name: 'Português' },
+            'no': { emoji: '🇳🇴', name: 'Norsk' },
+            'fi': { emoji: '🇫🇮', name: 'Suomi' },
+            'pl': { emoji: '🇵🇱', name: 'Polski' },
+            'cs': { emoji: '🇨🇿', name: 'Čeština' }
+        };
+
         const translations = {
-            en: {
-                title: "Sudoku Challenge",
-                description: "Dive into the world of numbers and logic. Challenge your mind with our addictive Sudoku puzzles!",
-                playNow: "Play Now",
-                installApp: "Install App",
-                footer: "Created with ❤️ by Eiger Software. Challenge your mind daily!"
+            'en': {
+                title: 'Eiger Software Game Collection',
+                welcome: 'Welcome to our collection of mind-challenging games! Exercise your brain with our addictive puzzles and strategic challenges.',
+                sudokuBtn: 'Play Sudoku',
+                connectFourBtn: 'Play Connect Four',
+                pwaInfo: 'Each game is also available as a Progressive Web App for an enhanced, offline-capable experience:',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Connect Four PWA',
+                footer: 'Created with ❤️ by me, Richie with great help from Claude.ai. Challenge your mind daily!'
             },
-            de: {
-                title: "Sudoku-Herausforderung",
-                description: "Tauchen Sie ein in die Welt der Zahlen und Logik. Fordern Sie Ihren Verstand mit unseren süchtig machenden Sudoku-Rätseln heraus!",
-                playNow: "Jetzt spielen",
-                installApp: "App installieren",
-                footer: "Erstellt mit ❤️ von Eiger Software. Fordern Sie täglich Ihren Verstand heraus!"
+            'de': {
+                title: 'Eiger Software Spielesammlung',
+                welcome: 'Willkommen zu unserer Sammlung von Denkspielen! Trainieren Sie Ihr Gehirn mit unseren süchtig machenden Rätseln und strategischen Herausforderungen.',
+                sudokuBtn: 'Sudoku spielen',
+                connectFourBtn: 'Vier gewinnt spielen',
+                pwaInfo: 'Jedes Spiel ist auch als Progressive Web App für ein verbessertes, offline-fähiges Erlebnis verfügbar:',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Vier gewinnt PWA',
+                footer: 'Mit ❤️ erstellt von mir, Richie, mit großer Hilfe von Claude.ai. Fordern Sie Ihren Verstand täglich heraus!'
             },
-            fr: {
-                title: "Défi Sudoku",
-                description: "Plongez dans le monde des chiffres et de la logique. Défiez votre esprit avec nos puzzles Sudoku addictifs !",
-                playNow: "Jouer maintenant",
-                installApp: "Installer l'application",
-                footer: "Créé avec ❤️ par Eiger Software. Défiez votre esprit quotidiennement !"
+            'fr': {
+                title: 'Collection de Jeux Eiger Software',
+                welcome: 'Bienvenue dans notre collection de jeux stimulants pour l\'esprit ! Exercez votre cerveau avec nos puzzles addictifs et nos défis stratégiques.',
+                sudokuBtn: 'Jouer au Sudoku',
+                connectFourBtn: 'Jouer au Puissance 4',
+                pwaInfo: 'Chaque jeu est également disponible en tant qu\'application web progressive pour une expérience améliorée et hors ligne :',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Puissance 4 PWA',
+                footer: 'Créé avec ❤️ par moi, Richie, avec l\'aide précieuse de Claude.ai. Défiez votre esprit quotidiennement !'
             },
-            // Add translations for other languages here
-            it: {
-                title: "Sfida Sudoku",
-                description: "Immergiti nel mondo dei numeri e della logica. Sfida la tua mente con i nostri puzzle Sudoku avvincenti!",
-                playNow: "Gioca ora",
-                installApp: "Installa l'app",
-                footer: "Creato con ❤️ da Eiger Software. Sfida la tua mente ogni giorno!"
+            'it': {
+                title: 'Collezione di Giochi Eiger Software',
+                welcome: 'Benvenuti nella nostra collezione di giochi che sfidano la mente! Esercita il tuo cervello con i nostri puzzle avvincenti e sfide strategiche.',
+                sudokuBtn: 'Gioca a Sudoku',
+                connectFourBtn: 'Gioca a Forza Quattro',
+                pwaInfo: 'Ogni gioco è disponibile anche come Progressive Web App per un\'esperienza migliorata e utilizzabile offline:',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Forza Quattro PWA',
+                footer: 'Creato con ❤️ da me, Richie, con il grande aiuto di Claude.ai. Sfida la tua mente ogni giorno!'
             },
-            sv: {
-                title: "Sudoku-utmaning",
-                description: "Dyk in i siffrornas och logikens värld. Utmana ditt sinne med våra beroendeframkallande Sudoku-pussel!",
-                playNow: "Spela nu",
-                installApp: "Installera appen",
-                footer: "Skapad med ❤️ av Eiger Software. Utmana ditt sinne dagligen!"
+            'sv': {
+                title: 'Eiger Software Spelsamling',
+                welcome: 'Välkommen till vår samling av hjärnutmanande spel! Träna din hjärna med våra beroendeframkallande pussel och strategiska utmaningar.',
+                sudokuBtn: 'Spela Sudoku',
+                connectFourBtn: 'Spela Fyra i rad',
+                pwaInfo: 'Varje spel finns också tillgängligt som en Progressive Web App för en förbättrad, offline-kapabel upplevelse:',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Fyra i rad PWA',
+                footer: 'Skapad med ❤️ av mig, Richie, med stor hjälp från Claude.ai. Utmana ditt sinne dagligen!'
             },
-            sk: {
-                title: "Sudoku výzva",
-                description: "Ponorte sa do sveta čísel a logiky. Vyzvite svoju myseľ s našimi návykovými Sudoku hlavolamami!",
-                playNow: "Hrať teraz",
-                installApp: "Inštalovať aplikáciu",
-                footer: "Vytvorené s ❤️ od Eiger Software. Vyzvite svoju myseľ každý deň!"
+            'sk': {
+                title: 'Zbierka hier Eiger Software',
+                welcome: 'Vitajte v našej zbierke hier, ktoré sú výzvou pre myseľ! Precvičte si mozog s našimi návykovými hlavolamami a strategickými výzvami.',
+                sudokuBtn: 'Hrať Sudoku',
+                connectFourBtn: 'Hrať Štyri v rade',
+                pwaInfo: 'Každá hra je k dispozícii aj ako progresívna webová aplikácia pre vylepšený zážitok s možnosťou offline použitia:',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Štyri v rade PWA',
+                footer: 'Vytvorené s ❤️ mnou, Richiem, s veľkou pomocou od Claude.ai. Denne si precvičujte svoju myseľ!'
             },
-            es: {
-                title: "Desafío Sudoku",
-                description: "Sumérgete en el mundo de los números y la lógica. ¡Desafía tu mente con nuestros adictivos puzles de Sudoku!",
-                playNow: "Jugar ahora",
-                installApp: "Instalar aplicación",
-                footer: "Creado con ❤️ por Eiger Software. ¡Desafía tu mente diariamente!"
+            'es': {
+                title: 'Colección de Juegos Eiger Software',
+                welcome: '¡Bienvenido a nuestra colección de juegos que desafían la mente! Ejercita tu cerebro con nuestros adictivos rompecabezas y desafíos estratégicos.',
+                sudokuBtn: 'Jugar Sudoku',
+                connectFourBtn: 'Jugar Conecta Cuatro',
+                pwaInfo: 'Cada juego también está disponible como una Aplicación Web Progresiva para una experiencia mejorada y con capacidad offline:',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Conecta Cuatro PWA',
+                footer: 'Creado con ❤️ por mí, Richie, con gran ayuda de Claude.ai. ¡Desafía tu mente diariamente!'
             },
-            pt: {
-                title: "Desafio Sudoku",
-                description: "Mergulhe no mundo dos números e da lógica. Desafie sua mente com nossos viciantes quebra-cabeças Sudoku!",
-                playNow: "Jogar agora",
-                installApp: "Instalar aplicativo",
-                footer: "Criado com ❤️ por Eiger Software. Desafie sua mente diariamente!"
+            'pt': {
+                title: 'Coleção de Jogos Eiger Software',
+                welcome: 'Bem-vindo à nossa coleção de jogos que desafiam a mente! Exercite seu cérebro com nossos quebra-cabeças viciantes e desafios estratégicos.',
+                sudokuBtn: 'Jogar Sudoku',
+                connectFourBtn: 'Jogar Conecta Quatro',
+                pwaInfo: 'Cada jogo também está disponível como um Aplicativo Web Progressivo para uma experiência aprimorada e com capacidade offline:',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Conecta Quatro PWA',
+                footer: 'Criado com ❤️ por mim, Richie, com grande ajuda de Claude.ai. Desafie sua mente diariamente!'
             },
-            no: {
-                title: "Sudoku-utfordring",
-                description: "Dykk inn i tallenes og logikkens verden. Utfordre sinnet ditt med våre vanedannende Sudoku-puslespill!",
-                playNow: "Spill nå",
-                installApp: "Installer appen",
-                footer: "Laget med ❤️ av Eiger Software. Utfordre sinnet ditt daglig!"
+            'no': {
+                title: 'Eiger Software Spillsamling',
+                welcome: 'Velkommen til vår samling av tankeutfordrende spill! Tren hjernen din med våre vanedannende puslespill og strategiske utfordringer.',
+                sudokuBtn: 'Spill Sudoku',
+                connectFourBtn: 'Spill Fire på rad',
+                pwaInfo: 'Hvert spill er også tilgjengelig som en Progressive Web App for en forbedret, offline-kapabel opplevelse:',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Fire på rad PWA',
+                footer: 'Laget med ❤️ av meg, Richie, med stor hjelp fra Claude.ai. Utfordre sinnet ditt daglig!'
             },
-            fi: {
-                title: "Sudoku-haaste",
-                description: "Sukella numeroiden ja logiikan maailmaan. Haasta mielesi addiktoivilla Sudoku-pulmillamme!",
-                playNow: "Pelaa nyt",
-                installApp: "Asenna sovellus",
-                footer: "Luotu ❤️ Eiger Softwaren toimesta. Haasta mielesi päivittäin!"
+            'fi': {
+                title: 'Eiger Software Pelikokoelma',
+                welcome: 'Tervetuloa kokoelmaamme mieltä haastavista peleistä! Harjoita aivojasi koukuttavilla pulmillamme ja strategisilla haasteilla.',
+                sudokuBtn: 'Pelaa Sudokua',
+                connectFourBtn: 'Pelaa Neljän suora',
+                pwaInfo: 'Jokainen peli on myös saatavilla Progressive Web Appina parannettua, offline-kykyistä kokemusta varten:',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Neljän suora PWA',
+                footer: 'Luotu ❤️:llä minun, Richien toimesta, Claude.ai:n suurella avustuksella. Haasta mielesi päivittäin!'
             },
-            pl: {
-                title: "Wyzwanie Sudoku",
-                description: "Zanurz się w świecie liczb i logiki. Rzuć wyzwanie swojemu umysłowi z naszymi uzależniającymi łamigłówkami Sudoku!",
-                playNow: "Zagraj teraz",
-                installApp: "Zainstaluj aplikację",
-                footer: "Stworzone z ❤️ przez Eiger Software. Rzucaj wyzwanie swojemu umysłowi codziennie!"
+            'pl': {
+                title: 'Kolekcja Gier Eiger Software',
+                welcome: 'Witaj w naszej kolekcji gier umysłowych! Ćwicz swój mózg z naszymi uzależniającymi łamigłówkami i wyzwaniami strategicznymi.',
+                sudokuBtn: 'Graj w Sudoku',
+                connectFourBtn: 'Graj w Cztery w rzędzie',
+                pwaInfo: 'Każda gra jest również dostępna jako Progresywna Aplikacja Internetowa dla ulepszonego doświadczenia z możliwością gry offline:',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Cztery w rzędzie PWA',
+                footer: 'Stworzone z ❤️ przeze mnie, Richiego, z wielką pomocą Claude.ai. Codziennie rzucaj wyzwanie swojemu umysłowi!'
             },
-            cs: {
-                title: "Sudoku výzva",
-                description: "Ponořte se do světa čísel a logiky. Vyzvěte svou mysl s našimi návykovými hlavolamy Sudoku!",
-                playNow: "Hrát nyní",
-                installApp: "Instalovat aplikaci",
-                footer: "Vytvořeno s ❤️ společností Eiger Software. Vyzvěte svou mysl každý den!"
+            'cs': {
+                title: 'Sbírka her Eiger Software',
+                welcome: 'Vítejte v naší sbírce her, které prověří vaši mysl! Procvičte si mozek s našimi návykovými hádankami a strategickými výzvami.',
+                sudokuBtn: 'Hrát Sudoku',
+                connectFourBtn: 'Hrát Čtyři v řadě',
+                pwaInfo: 'Každá hra je také k dispozici jako progresivní webová aplikace pro vylepšený zážitek s možností offline hraní:',
+                sudokuPwaBtn: 'Sudoku PWA',
+                connectFourPwaBtn: 'Čtyři v řadě PWA',
+                footer: 'Vytvořeno s ❤️ mnou, Richiem, s velkou pomocí od Claude.ai. Denně si procvičujte svou mysl!'
             }
         };
 
-        function changeLanguage(lang) {
+        function createLanguageButtons() {
+            const languageSelector = document.getElementById('languageSelector');
+            for (const [langCode, langInfo] of Object.entries(languages)) {
+                const btn = document.createElement('button');
+                btn.innerHTML = `${langInfo.emoji} ${langInfo.name}`;
+                btn.className = 'language-btn';
+                btn.setAttribute('data-lang', langCode);
+                btn.onclick = () => setLanguage(langCode);
+                languageSelector.appendChild(btn);
+            }
+        }
+
+        function setLanguage(lang) {
             document.documentElement.lang = lang;
-            document.getElementById('title').textContent = translations[lang].title;
-            document.getElementById('description').textContent = translations[lang].description;
-            document.getElementById('playNowBtn').textContent = translations[lang].playNow;
-            document.getElementById('installAppBtn').textContent = translations[lang].installApp;
-            document.getElementById('footer').textContent = translations[lang].footer;
+            const translation = translations[lang] || translations['en'];
+            document.title = translation.title;
+            document.getElementById('title').textContent = translation.title;
+            document.getElementById('welcome').textContent = translation.welcome;
+            document.getElementById('sudokuBtn').textContent = translation.sudokuBtn;
+            document.getElementById('connectFourBtn').textContent = translation.connectFourBtn;
+            document.getElementById('pwaInfo').textContent = translation.pwaInfo;
+            document.getElementById('sudokuPwaBtn').textContent = translation.sudokuPwaBtn;
+            document.getElementById('connectFourPwaBtn').textContent = translation.connectFourPwaBtn;
+            document.getElementById('footer').textContent = translation.footer;
+
+            // Update active language button
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
         }
 
         function detectLanguage() {
-            const userLang = navigator.language || navigator.userLanguage;
-            const lang = userLang.split('-')[0];
-            return translations[lang] ? lang : 'en';
+            const browserLang = navigator.language.split('-')[0];
+            return languages[browserLang] ? browserLang : 'en';
         }
 
-        // Set initial language
-        const initialLang = detectLanguage();
-        document.getElementById('languageSelect').value = initialLang;
-        changeLanguage(initialLang);
-
-        // Service Worker registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then((registration) => {
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                    }, (err) => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-            });
-        }
-        
-        // Sudoku grid interactivity
-        document.querySelectorAll('.sudoku-cell').forEach(cell => {
-            cell.addEventListener('click', () => {
-                cell.style.backgroundColor = getRandomColor();
-            });
-        });
-        
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
+        createLanguageButtons();
+        setLanguage(detectLanguage());
     </script>
 </body>
 </html>
