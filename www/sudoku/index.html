@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- This is sudoku/index.html-->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,8 +20,9 @@
             --background-color: #ecf0f1;
             --text-color: #34495e;
             --grid-border-color: #34495e;
+            --highlight-color: #e74c3c;
         }
-        
+
         body {
             font-family: 'Arial', sans-serif;
             background-color: var(--background-color);
@@ -32,7 +34,7 @@
             align-items: center;
             min-height: 100vh;
         }
-        
+
         input {
             width: 100%;
             height: 100%;
@@ -43,22 +45,53 @@
             box-sizing: border-box;
             background-color: transparent;
         }
-        
+
+        .language-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: black;
+            font-size: 1.2em;
+            margin: 0 5px;
+            opacity: 0.7;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .language-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .language-btn.active {
+            opacity: 1;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--highlight-color);
+        }
+
         .fixed {
             font-weight: bold;
             color: var(--text-color);
         }
-        
+
         .container {
             background-color: white;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             padding: 10px;
             max-width: 95vw;
             width: 100%;
             box-sizing: border-box;
         }
-        
+
         #title {
             text-align: center;
             color: var(--primary-color);
@@ -67,7 +100,7 @@
             font-size: 1.5em;
             cursor: pointer;
         }
-        
+
         .controls {
             display: flex;
             flex-wrap: wrap;
@@ -75,14 +108,14 @@
             justify-content: center;
             margin-bottom: 10px;
         }
-        
+
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -91,28 +124,29 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
-        
+
         .overlay.show {
             opacity: 1;
             pointer-events: auto;
         }
-        
+
         .congratulations {
             background-color: white;
             padding: 20px;
             border-radius: 10px;
             text-align: center;
             transform: rotate(-15deg);
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
             max-width: 80%;
         }
-        
+
         .congratulations h2 {
             color: var(--primary-color);
             margin-top: 0;
-        }    
-        
-        select, button {
+        }
+
+        select,
+        button {
             padding: 8px;
             border: none;
             border-radius: 5px;
@@ -122,48 +156,52 @@
             transition: background-color 0.3s ease;
             font-size: 0.9em;
         }
-        
-        select:hover, button:hover {
+
+        select:hover,
+        button:hover {
             background-color: #2980b9;
         }
-        
+
         #sudoku-board {
             border-collapse: collapse;
             margin: 0 auto;
             width: 100%;
             max-width: 100%;
         }
-        
+
         #sudoku-board td {
-            width: 40px; /* Fixed width for desktop view */
-            height: 40px; /* Fixed height for desktop view */
+            width: 40px;
+            /* Fixed width for desktop view */
+            height: 40px;
+            /* Fixed height for desktop view */
             text-align: center;
             border: 1px solid var(--grid-border-color);
-            font-size: 18px; /* Font size for desktop view */
+            font-size: 18px;
+            /* Font size for desktop view */
             box-sizing: border-box;
         }
-        
+
         #sudoku-board tr:nth-child(3n+1) td {
             border-top: 2px solid var(--grid-border-color);
         }
-        
+
         #sudoku-board td:nth-child(3n+1) {
             border-left: 2px solid var(--grid-border-color);
         }
-        
+
         #sudoku-board td {
             border-right: 1px solid var(--grid-border-color);
             border-bottom: 1px solid var(--grid-border-color);
         }
-        
+
         #sudoku-board td:last-child {
             border-right: 2px solid var(--grid-border-color);
         }
-        
+
         #sudoku-board tr:last-child td {
             border-bottom: 2px solid var(--grid-border-color);
         }
-        
+
         #sudoku-board input {
             width: 100%;
             height: 100%;
@@ -172,32 +210,36 @@
             border: none;
             outline: none;
             background-color: transparent;
-            color: #000; /* Default color for all inputs */
+            color: #000;
+            /* Default color for all inputs */
         }
-        
+
         #sudoku-board input.given {
             font-weight: bold;
             color: var(--primary-color);
         }
-        
+
         #sudoku-board input.solution {
-            color: #999; /* Light grey color */
+            color: #999;
+            /* Light grey color */
             font-style: italic;
         }
-        
+
         #sudoku-board input.incorrect {
-            color: #e74c3c !important; /* Use !important to ensure this overrides other styles */
+            color: #e74c3c !important;
+            /* Use !important to ensure this overrides other styles */
         }
-        
+
         #sudoku-board input.hint {
             color: var(--secondary-color);
             font-style: italic;
         }
-        
+
         #sudoku-board input.user-entered {
-            color: #000; /* Black color for user-entered values */
-        }    
-        
+            color: #000;
+            /* Black color for user-entered values */
+        }
+
         #message {
             text-align: center;
             margin-top: 10px;
@@ -218,7 +260,7 @@
             align-items: center;
             z-index: 9999;
         }
-    
+
         .spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #3498db;
@@ -227,34 +269,44 @@
             height: 40px;
             animation: spin 1s linear infinite;
         }
-    
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-    
+
         #loading-overlay p {
             color: white;
             margin-top: 10px;
         }
-            
+
         @media (max-width: 600px) {
             .controls {
                 flex-direction: row;
             }
+
             .container {
                 padding: 10px;
             }
-            select, button {
+
+            select,
+            button {
                 flex: 1 1 auto;
                 font-size: 0.8em;
                 padding: 6px;
             }
+
             #sudoku-board td {
                 width: calc(100vw / 9);
                 height: calc(100vw / 9);
                 font-size: calc(4.5vw);
             }
+
             #sudoku-board input {
                 font-size: calc(4.5vw);
             }
@@ -264,22 +316,9 @@
 
 <body>
     <div class="container">
+        <div id="languageSelector" class="language-selector"></div>
         <h1 id="title" data-i18n="title">Sudoku Challenge</h1>
         <div class="controls">
-            <select id="languageSelect" onchange="changeLanguage(this.value)">
-                <option value="en">🇬🇧 English</option>
-                <option value="de">🇩🇪 Deutsch</option>
-                <option value="fr">🇫🇷 Français</option>
-                <option value="it">🇮🇹 Italiano</option>
-                <option value="sv">🇸🇪 Svenska</option>
-                <option value="sk">🇸🇰 Slovenčina</option>
-                <option value="es">🇪🇸 Español</option>
-                <option value="pt">🇵🇹 Português</option>
-                <option value="no">🇳🇴 Norsk</option>
-                <option value="fi">🇫🇮 Suomi</option>
-                <option value="pl">🇵🇱 Polski</option>
-                <option value="cs">🇨🇿 Čeština</option>
-            </select>
             <select id="difficultySelect" data-i18n="difficulty">
                 <option value="trivial" data-i18n="trivial">Trivial</option>
                 <option value="easy" data-i18n="easy">Easy</option>
@@ -308,6 +347,21 @@
         let currentLanguage = 'en';
         let currentDifficulty = 'easy';
 
+        const languages = {
+            'en': { emoji: '🇬🇧', name: 'English' },
+            'de': { emoji: '🇩🇪', name: 'Deutsch' },
+            'fr': { emoji: '🇫🇷', name: 'Français' },
+            'it': { emoji: '🇮🇹', name: 'Italiano' },
+            'sv': { emoji: '🇸🇪', name: 'Svenska' },
+            'sk': { emoji: '🇸🇰', name: 'Slovenčina' },
+            'es': { emoji: '🇪🇸', name: 'Español' },
+            'pt': { emoji: '🇵🇹', name: 'Português' },
+            'no': { emoji: '🇳🇴', name: 'Norsk' },
+            'fi': { emoji: '🇫🇮', name: 'Suomi' },
+            'pl': { emoji: '🇵🇱', name: 'Polski' },
+            'cs': { emoji: '🇨🇿', name: 'Čeština' }
+        };
+
         const translations = {
             en: {
                 title: "Sudoku Challenge",
@@ -323,7 +377,7 @@
                 stopChecking: "Stop Checking",
                 congratulations: "Congratulations! You solved the puzzle!",
                 generatingPuzzle: "Generating puzzle..."
-                },
+            },
             de: {
                 title: "Sudoku-Herausforderung",
                 difficulty: "Schwierigkeitsgrad",
@@ -491,7 +545,19 @@
             }
         };
 
-        function changeLanguage(lang) {
+        function createLanguageButtons() {
+            const languageSelector = document.getElementById('languageSelector');
+            for (const [langCode, langInfo] of Object.entries(languages)) {
+                const btn = document.createElement('button');
+                btn.innerHTML = `${langInfo.emoji} ${langInfo.name}`;
+                btn.className = 'language-btn';
+                btn.setAttribute('data-lang', langCode);
+                btn.onclick = () => setLanguage(langCode);
+                languageSelector.appendChild(btn);
+            }
+        }
+
+        function setLanguage(lang) {
             currentLanguage = lang;
             document.querySelectorAll('[data-i18n]').forEach(element => {
                 const key = element.getAttribute('data-i18n');
@@ -505,12 +571,24 @@
                 }
             });
             updateCheckingButtonText();
-            
+
             // Update loading overlay text if it's visible
             const loadingText = document.getElementById('loading-text');
             if (loadingText) {
                 loadingText.textContent = translations[lang].generatingPuzzle;
             }
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+        }
+
+        function detectLanguage() {
+            const storedLang = localStorage.getItem('preferredLanguage');
+            if (storedLang && languages[storedLang]) {
+                return storedLang;
+            }
+            const browserLang = navigator.language.split('-')[0];
+            return languages[browserLang] ? browserLang : 'en';
         }
 
         function updateCheckingButtonText() {
@@ -801,7 +879,7 @@
             if (loadingOverlay) {
                 document.body.removeChild(loadingOverlay);
             }
-            
+
             loadingOverlay = document.createElement('div');
             loadingOverlay.id = 'loading-overlay';
             loadingOverlay.style.cssText = `
@@ -817,7 +895,7 @@
                 align-items: center;
                 z-index: 9999;
             `;
-            
+
             loadingOverlay.innerHTML = `
                 <div class="spinner" style="
                     border: 4px solid #f3f3f3;
@@ -829,19 +907,19 @@
                 "></div>
                 <p id="loading-text" style="color: white; margin-top: 10px;">${translations[currentLanguage].generatingPuzzle}</p>
             `;
-            
+
             document.body.appendChild(loadingOverlay);
-        
+
             // Force a reflow
             void loadingOverlay.offsetHeight;
-                
+
             return new Promise(resolve => {
                 requestAnimationFrame(() => {
                     resolve();
                 });
             });
         }
-        
+
         function hideLoadingOverlay() {
             const loadingOverlay = document.getElementById('loading-overlay');
             if (loadingOverlay) {
@@ -852,7 +930,7 @@
         async function newGame() {
             currentDifficulty = document.getElementById('difficultySelect').value;
             await showLoadingOverlay();
-        
+
             try {
                 const result = await new Promise(resolve => {
                     setTimeout(() => {
@@ -860,7 +938,7 @@
                         resolve(generatedPuzzle);
                     }, 0);
                 });
-        
+
                 currentPuzzle = result.puzzle;
                 currentSolution = result.solution;
                 displaySudoku(currentPuzzle);
@@ -875,7 +953,7 @@
                 hideLoadingOverlay();
             }
         }
-        
+
         function checkCell(input) {
             const row = parseInt(input.dataset.row);
             const col = parseInt(input.dataset.col);
@@ -981,17 +1059,17 @@
             const newGameButton = document.getElementById('new-game');
             const toggleCheckingButton = document.getElementById('toggle-checking');
             const title = document.getElementById('title');
-        
+
             // Utility function to handle errors in async event listeners
             function handleAsyncError(fn) {
-                return function(...args) {
+                return function (...args) {
                     fn(...args).catch(error => {
                         console.error('An error occurred:', error);
                         document.getElementById('message').textContent = 'An error occurred. Please try again.';
                     });
                 };
             }
-        
+
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('./service-worker.js')
@@ -1006,14 +1084,14 @@
 
             // Use handleAsyncError to wrap the newGame function
             const safeNewGame = handleAsyncError(newGame);
-        
+
             difficultySelect.addEventListener('change', async () => {
                 await newGame();
             });
             newGameButton.addEventListener('click', async () => {
                 await newGame();
             });
-        
+
             toggleCheckingButton.addEventListener('click', function () {
                 isChecking = !isChecking;
                 updateCheckingButtonText();
@@ -1025,13 +1103,15 @@
                     });
                 }
             });
-        
+
             title.addEventListener('click', toggleSolution);
-        
+
             // Initialize the game
             (async function initGame() {
                 try {
-                    changeLanguage('en');
+                    createLanguageButtons();
+                    let currentLang = detectLanguage();
+                    setLanguage(currentLang);
                     await newGame();
                     resizeSudokuBoard();
                 } catch (error) {
@@ -1043,14 +1123,87 @@
 
         // Utility function to handle errors in async event listeners
         function handleAsyncError(fn) {
-            return function(...args) {
+            return function (...args) {
                 fn(...args).catch(error => {
                     console.error('An error occurred:', error);
                     document.getElementById('message').textContent = 'An error occurred. Please try again.';
                 });
             };
         }
+
+        function toggleReleaseNotes() {
+            console.log("toggleReleaseNotes called");
+            const notes = document.getElementById('release-notes');
+            if (notes.style.display === 'none') {
+                console.log("Showing release notes");
+                notes.style.display = 'block';
+                populateReleaseNotes();
+            } else {
+                console.log("Hiding release notes");
+                notes.style.display = 'none';
+            }
+        }
+
+        function populateReleaseNotes() {
+            console.log("Populating release notes");
+            const notes = document.getElementById('release-notes');
+            notes.innerHTML = `
+                <strong>Version ${releaseInfo.version}</strong> - ${releaseInfo.notes}
+                <ul style="margin: 5px 0 0 20px; padding: 0;">
+                    ${releaseInfo.features.map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        function initReleaseNotes() {
+            console.log("Initializing release notes");
+            const releaseTag = document.getElementById('release-tag');
+            if (releaseTag) {
+                console.log("Release tag found, adding event listener");
+                releaseTag.addEventListener('click', toggleReleaseNotes);
+                releaseTag.addEventListener('touchstart', function (event) {
+                    event.preventDefault();
+                    toggleReleaseNotes();
+                });
+            } else {
+                console.error("Release tag not found");
+            }
+        }
+
+        // Close release notes when clicking outside
+        document.addEventListener('click', function (event) {
+            console.log("Document clicked");
+            const releaseTag = document.getElementById('release-tag');
+            const releaseNotes = document.getElementById('release-notes');
+            if (releaseTag && releaseNotes && !releaseTag.contains(event.target) && !releaseNotes.contains(event.target)) {
+                console.log("Closing release notes");
+                releaseNotes.style.display = 'none';
+            }
+        });
+
+        // Run initialization when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', initReleaseNotes);
+
+        console.log("Release notes script finished");
+
+        const releaseInfo = {
+            version: "1.0.0",
+            notes: "Initial release of Sudoku",
+            features: [
+                "Multiple difficulty levels",
+                "Minimal optimization for numeric keyboard on smartphones",
+                "Multi-language support"
+            ]
+        };
     </script>
+    <div id="release-tag"
+        style="position: fixed; bottom: 10px; right: 10px; font-size: 12px; color: #888; cursor: pointer; z-index: 1000;">
+        v1.0.0
+    </div>
+    <div id="release-notes"
+        style="display: none; position: fixed; bottom: 40px; right: 10px; background-color: #f9f9f9; border: 1px solid #ddd; padding: 10px; border-radius: 5px; font-size: 12px; max-width: 300px; z-index: 1000;">
+        <!-- Release notes content will be inserted here -->
+    </div>
 </body>
 
 </html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-    <!--  This is connect-four/index.html -->
+<!--  This is connect-four/index.html -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,6 +14,15 @@
     <meta name="theme-color" content="#3498db">
     <title>Connect Four</title>
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+            --grid-border-color: #34495e;
+            --highlight-color: #e74c3c;
+        }
+
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -22,16 +32,14 @@
             margin: 0;
             padding: 20px;
         }
+
         .language-selector {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             margin-bottom: 20px;
         }
-        
-        .language-btn {
-            margin: 5px;
-        }
+
         .language-btn {
             background: none;
             border: none;
@@ -41,17 +49,22 @@
             opacity: 0.7;
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
+
         .language-btn:hover {
             opacity: 1;
             transform: scale(1.1);
         }
+
         .language-btn.active {
             opacity: 1;
             font-weight: bold;
+            text-shadow: 0 0 10px var(--highlight-color);
         }
+
         h1 {
             color: #3498db;
         }
+
         #board {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -63,7 +76,7 @@
             width: 100%;
             margin: 0 auto;
         }
-        
+
         .cell {
             width: 100%;
             padding-bottom: 100%;
@@ -72,7 +85,7 @@
             cursor: pointer;
             position: relative;
         }
-        
+
         .cell::after {
             content: '';
             position: absolute;
@@ -82,19 +95,20 @@
             height: 90%;
             border-radius: 50%;
         }
-        
+
         .cell.red::after {
             background-color: red;
         }
-        
+
         .cell.yellow::after {
             background-color: yellow;
         }
-        
+
         #message {
             margin-top: 20px;
             font-weight: bold;
         }
+
         #resetBtn {
             margin-top: 20px;
             padding: 10px 20px;
@@ -105,21 +119,39 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         @keyframes dropAnimation {
-            from { transform: translateY(-300px); }
-            to { transform: translateY(0); }
+            from {
+                transform: translateY(-300px);
+            }
+
+            to {
+                transform: translateY(0);
+            }
         }
-        
+
         .cell.animated {
             animation: dropAnimation 0.5s ease-in;
         }
 
         @keyframes firework {
-            0% { transform: translate(-50%, -50%); width: 0.1vmin; opacity: 1; }
-            50% { width: 0.5vmin; opacity: 1; }
-            100% { width: 45vmin; opacity: 0; }
+            0% {
+                transform: translate(-50%, -50%);
+                width: 0.1vmin;
+                opacity: 1;
+            }
+
+            50% {
+                width: 0.5vmin;
+                opacity: 1;
+            }
+
+            100% {
+                width: 45vmin;
+                opacity: 0;
+            }
         }
-        
+
         .firework {
             position: fixed;
             top: 50%;
@@ -127,8 +159,9 @@
             transform: translate(-50%, -50%);
             pointer-events: none;
         }
-        
-        .firework::before, .firework::after {
+
+        .firework::before,
+        .firework::after {
             content: "";
             position: absolute;
             top: 50%;
@@ -138,16 +171,23 @@
             border: 2vmin solid gold;
             animation: firework 0.5s linear infinite;
         }
-        
+
         .firework::after {
             animation-delay: -0.3s;
         }
 
         @keyframes proudComputer {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
         }
-        
+
         .proud-computer {
             position: fixed;
             top: 50%;
@@ -161,36 +201,41 @@
             text-align: center;
             z-index: 1000;
         }
+
         @media (max-width: 600px) {
             body {
                 padding: 10px;
             }
-            
+
             h1 {
                 font-size: 1.5em;
             }
-            
+
             .language-btn {
                 font-size: 1em;
                 margin: 0 2px;
             }
-            
+
             #resetBtn {
                 font-size: 14px;
                 padding: 8px 16px;
             }
         }
+
         @media (max-width: 600px) {
-            .firework::before, .firework::after {
+
+            .firework::before,
+            .firework::after {
                 border-width: 1vmin;
             }
-        
+
             .proud-computer {
                 font-size: 3em;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="language-selector" id="languageSelector"></div>
     <h1 id="title">Connect Four</h1>
@@ -213,7 +258,7 @@
             'pl': { emoji: '🇵🇱', name: 'Polski' },
             'cs': { emoji: '🇨🇿', name: 'Čeština' }
         };
-        
+
         const translations = {
             'en': {
                 title: 'Connect Four',
@@ -367,9 +412,14 @@
         }
 
         function detectLanguage() {
+            const storedLang = localStorage.getItem('preferredLanguage');
+            if (storedLang && languages[storedLang]) {
+                return storedLang;
+            }
             const browserLang = navigator.language.split('-')[0];
             return languages[browserLang] ? browserLang : 'en';
         }
+
 
         function createBoard() {
             const board = document.getElementById('board');
@@ -384,7 +434,7 @@
                 }
             }
         }
-        
+
         function dropPice(col) {
             if (!gameActive) return;
             let row = getNextEmptyRow(col);
@@ -400,13 +450,13 @@
                 }, 500); // Wait for animation to finish
             }
         }
-        
+
         function animateDropPiece(row, col) {
             const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
             cell.classList.add(currentPlayer, 'animated');
             setTimeout(() => cell.classList.remove('animated'), 500);
         }
-        
+
         function getNextEmptyRow(col) {
             for (let row = 0; row < 6; row++) {
                 if (gameBoard[row][col] === '') {
@@ -415,7 +465,7 @@
             }
             return -1; // Column is full
         }
-                
+
         function updateBoard() {
             for (let row = 0; row < 6; row++) {
                 for (let col = 0; col < 7; col++) {
@@ -429,7 +479,7 @@
                 }
             }
         }
-        
+
         function checkGameState(row, col) {
             if (checkWin(row, col)) {
                 const winner = currentPlayer === 'red' ? translations[currentLang].youWin : translations[currentLang].computerWins;
@@ -463,13 +513,13 @@
                 }, 500); // Wait for animation to finish
             }
         }
-        
+
         function animateDropPiece(row, col) {
             const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
             cell.classList.add(currentPlayer, 'animated');
             setTimeout(() => cell.classList.remove('animated'), 500);
         }
-        
+
         function checkWin(row, col) {
             const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
             return directions.some(([dy, dx]) => {
@@ -489,8 +539,8 @@
         function checkDirection(row, col, dy, dx, i) {
             const newRow = row + i * dy;
             const newCol = col + i * dx;
-            return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7 && 
-                   gameBoard[newRow][newCol] === currentPlayer;
+            return newRow >= 0 && newRow < 6 && newCol >= 0 && newCol < 7 &&
+                gameBoard[newRow][newCol] === currentPlayer;
         }
 
         function checkDraw() {
@@ -499,32 +549,32 @@
 
         function computerMove() {
             if (!gameActive) return;
-            
+
             let bestScore = -Infinity;
             let bestCol = 3; // Default to middle column
-            
+
             for (let col = 0; col < 7; col++) {
                 if (canPlayColumn(col)) {
                     let row = getNextEmptyRow(col);
                     gameBoard[row][col] = 'yellow';
                     let score = minimax(gameBoard, 4, false);
                     gameBoard[row][col] = '';
-                    
+
                     if (score > bestScore) {
                         bestScore = score;
                         bestCol = col;
                     }
                 }
             }
-            
+
             dropPiece(bestCol);
         }
-        
+
         function minimax(board, depth, isMaximizing) {
             if (depth === 0) {
                 return evaluateBoard(board);
             }
-            
+
             if (isMaximizing) {
                 let bestScore = -Infinity;
                 for (let col = 0; col < 7; col++) {
@@ -551,76 +601,76 @@
                 return bestScore;
             }
         }
-        
+
         function evaluateBoard(board) {
             let score = 0;
-            
+
             // Check horizontal
             for (let row = 0; row < 6; row++) {
                 for (let col = 0; col < 4; col++) {
-                    score += evaluateLine(board[row][col], board[row][col+1], board[row][col+2], board[row][col+3]);
+                    score += evaluateLine(board[row][col], board[row][col + 1], board[row][col + 2], board[row][col + 3]);
                 }
             }
-            
+
             // Check vertical
             for (let row = 0; row < 3; row++) {
                 for (let col = 0; col < 7; col++) {
-                    score += evaluateLine(board[row][col], board[row+1][col], board[row+2][col], board[row+3][col]);
+                    score += evaluateLine(board[row][col], board[row + 1][col], board[row + 2][col], board[row + 3][col]);
                 }
             }
-            
+
             // Check diagonal (positive slope)
             for (let row = 0; row < 3; row++) {
                 for (let col = 0; col < 4; col++) {
-                    score += evaluateLine(board[row][col], board[row+1][col+1], board[row+2][col+2], board[row+3][col+3]);
+                    score += evaluateLine(board[row][col], board[row + 1][col + 1], board[row + 2][col + 2], board[row + 3][col + 3]);
                 }
             }
-            
+
             // Check diagonal (negative slope)
             for (let row = 3; row < 6; row++) {
                 for (let col = 0; col < 4; col++) {
-                    score += evaluateLine(board[row][col], board[row-1][col+1], board[row-2][col+2], board[row-3][col+3]);
+                    score += evaluateLine(board[row][col], board[row - 1][col + 1], board[row - 2][col + 2], board[row - 3][col + 3]);
                 }
             }
-            
+
             return score;
         }
-        
+
         function evaluateLine(a, b, c, d) {
             let score = 0;
             let yellow = 0;
             let red = 0;
             let empty = 0;
-            
+
             if (a === 'yellow') yellow++;
             else if (a === 'red') red++;
             else empty++;
-            
+
             if (b === 'yellow') yellow++;
             else if (b === 'red') red++;
             else empty++;
-            
+
             if (c === 'yellow') yellow++;
             else if (c === 'red') red++;
             else empty++;
-            
+
             if (d === 'yellow') yellow++;
             else if (d === 'red') red++;
             else empty++;
-            
+
             if (yellow === 4) score += 100;
             else if (yellow === 3 && empty === 1) score += 5;
             else if (yellow === 2 && empty === 2) score += 2;
-            
+
             if (red === 3 && empty === 1) score -= 4;
-            
+
             return score;
         }
-        
+
         function canPlayColumn(col) {
             return gameBoard[5][col] === '';
         }
-        
+
         function updateMessage(msg) {
             document.getElementById('message').textContent = msg;
         }
@@ -665,12 +715,12 @@
 
         document.getElementById('resetBtn').addEventListener('click', resetGame);
 
-        let currentLang = detectLanguage();
         createLanguageButtons();
+        let currentLang = detectLanguage();
         setLanguage(currentLang);
         createBoard();
         updateMessage(translations[currentLang].yourTurn);
-        
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
@@ -683,6 +733,79 @@
             });
         }
 
-</script>
+        function toggleReleaseNotes() {
+            console.log("toggleReleaseNotes called");
+            const notes = document.getElementById('release-notes');
+            if (notes.style.display === 'none') {
+                console.log("Showing release notes");
+                notes.style.display = 'block';
+                populateReleaseNotes();
+            } else {
+                console.log("Hiding release notes");
+                notes.style.display = 'none';
+            }
+        }
+
+        function populateReleaseNotes() {
+            console.log("Populating release notes");
+            const notes = document.getElementById('release-notes');
+            notes.innerHTML = `
+                <strong>Version ${releaseInfo.version}</strong> - ${releaseInfo.notes}
+                <ul style="margin: 5px 0 0 20px; padding: 0;">
+                    ${releaseInfo.features.map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        function initReleaseNotes() {
+            console.log("Initializing release notes");
+            const releaseTag = document.getElementById('release-tag');
+            if (releaseTag) {
+                console.log("Release tag found, adding event listener");
+                releaseTag.addEventListener('click', toggleReleaseNotes);
+                releaseTag.addEventListener('touchstart', function (event) {
+                    event.preventDefault();
+                    toggleReleaseNotes();
+                });
+            } else {
+                console.error("Release tag not found");
+            }
+        }
+
+        // Close release notes when clicking outside
+        document.addEventListener('click', function (event) {
+            console.log("Document clicked");
+            const releaseTag = document.getElementById('release-tag');
+            const releaseNotes = document.getElementById('release-notes');
+            if (releaseTag && releaseNotes && !releaseTag.contains(event.target) && !releaseNotes.contains(event.target)) {
+                console.log("Closing release notes");
+                releaseNotes.style.display = 'none';
+            }
+        });
+
+        // Run initialization when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', initReleaseNotes);
+
+        console.log("Release notes script finished");
+
+        const releaseInfo = {
+            version: "1.0.0",
+            notes: "Initial release of Connect-four",
+            features: [
+                "Improved Computer opponent",
+                "Drop of discs improved",
+                "Multi-language support"
+            ]
+        };
+    </script>
+    <div id="release-tag"
+        style="position: fixed; bottom: 10px; right: 10px; font-size: 12px; color: #888; cursor: pointer; z-index: 1000;">
+        v1.0.0
+    </div>
+    <div id="release-notes"
+        style="display: none; position: fixed; bottom: 40px; right: 10px; background-color: #f9f9f9; border: 1px solid #ddd; padding: 10px; border-radius: 5px; font-size: 12px; max-width: 300px; z-index: 1000;">
+        <!-- Release notes content will be inserted here -->
+    </div>
 </body>
+
 </html>

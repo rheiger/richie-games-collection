@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-    <!-- This is mastermind/index.html -->
+<!-- This is mastermind/index.html -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -22,6 +23,7 @@
             --dent-color: #bdc3c7;
             --highlight-color: #e74c3c;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -34,11 +36,13 @@
             align-items: center;
             min-height: 100vh;
         }
+
         h1 {
             color: var(--primary-color);
             margin-bottom: 10px;
             font-size: 24px;
         }
+
         #game-container {
             display: flex;
             flex-direction: column;
@@ -46,6 +50,7 @@
             width: 100%;
             max-width: 500px;
         }
+
         #game-board {
             display: flex;
             flex-direction: column;
@@ -53,6 +58,7 @@
             margin-bottom: 10px;
             width: 100%;
         }
+
         .row {
             display: flex;
             margin-bottom: 5px;
@@ -62,9 +68,11 @@
             width: 100%;
             justify-content: center;
         }
+
         .row.active {
             opacity: 1;
         }
+
         .dent {
             width: 30px;
             height: 30px;
@@ -75,9 +83,11 @@
             justify-content: center;
             align-items: center;
         }
+
         .dent.selected {
             border: 2px solid var(--highlight-color);
         }
+
         .tile {
             width: 28px;
             height: 28px;
@@ -92,12 +102,14 @@
             border-radius: 50%;
             cursor: move;
         }
+
         .dent .tile {
             width: 26px;
             height: 26px;
             margin: 0;
             font-size: 16px;
-        }        
+        }
+
         .feedback-area {
             width: 40px;
             height: 40px;
@@ -108,23 +120,28 @@
             border: 2px solid var(--primary-color);
             border-radius: 5px;
         }
+
         .feedback {
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-gap: 2px;
             padding: 2px;
         }
+
         .peg {
             width: 12px;
             height: 12px;
             border-radius: 50%;
         }
+
         .black {
             background-color: var(--feedback-black);
         }
+
         .white {
             background-color: var(--feedback-white);
         }
+
         #digit-selector {
             display: flex;
             justify-content: center;
@@ -132,10 +149,13 @@
             flex-wrap: wrap;
             max-width: 200px;
         }
+
         #digit-selector .tile {
             margin: 5px;
         }
-        select, button {
+
+        select,
+        button {
             background-color: var(--primary-color);
             color: white;
             border: none;
@@ -146,42 +166,54 @@
             border-radius: 5px;
             transition: background-color 0.3s ease;
         }
-        select:hover, button:hover {
+
+        select:hover,
+        button:hover {
             background-color: var(--secondary-color);
         }
+
         #message {
             font-weight: bold;
             margin-top: 10px;
             text-align: center;
         }
+
         .language-selector {
-            margin-bottom: 10px;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         .language-btn {
             background: none;
             border: none;
             cursor: pointer;
+            color: black;
             font-size: 1.2em;
             margin: 0 5px;
             opacity: 0.7;
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
+
         .language-btn:hover {
             opacity: 1;
             transform: scale(1.1);
         }
+
         .language-btn.active {
             opacity: 1;
             font-weight: bold;
             text-shadow: 0 0 10px var(--highlight-color);
         }
+
         .submit-guess {
             font-size: 20px;
             cursor: pointer;
         }
+
         .digit-btn {
             width: 40px;
             height: 40px;
@@ -193,49 +225,59 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         .clear-btn {
             width: auto;
             padding: 0 10px;
         }
+
         .digit-btn:hover {
             background-color: var(--secondary-color);
         }
-        .tile-container, .button-container {
+
+        .tile-container,
+        .button-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             margin-bottom: 10px;
         }
+
         @media (max-width: 480px) {
             .dent {
                 width: 25px;
                 height: 25px;
             }
+
             .dent .tile {
                 width: 23px;
                 height: 23px;
                 font-size: 14px;
             }
+
             .feedback-area {
                 width: 35px;
                 height: 35px;
             }
+
             .peg {
                 width: 10px;
                 height: 10px;
             }
+
             .digit-btn {
                 width: 35px;
                 height: 35px;
                 font-size: 16px;
             }
         }
+
         @media (max-width: 600px) {
             .tile-container {
                 display: none;
             }
         }
-        
+
         @media (min-width: 601px) {
             .button-container {
                 display: none;
@@ -243,6 +285,7 @@
         }
     </style>
 </head>
+
 <body>
     <div id="game-container">
         <div id="languageSelector" class="language-selector"></div>
@@ -275,7 +318,7 @@
             'pl': { emoji: '🇵🇱', name: 'Polski' },
             'cs': { emoji: '🇨🇿', name: 'Čeština' }
         };
-        
+
         const translations = {
             'en': {
                 title: 'Mastermind',
@@ -285,6 +328,7 @@
                 newGame: 'New Game',
                 win: 'Congratulations! You\'ve cracked the code!',
                 lose: 'Game over! The code was: ',
+                incompleteRow: 'Please fill all four positions before submitting.',
                 selectDifficulty: 'Select difficulty to start a new game.'
             },
             'de': {
@@ -405,7 +449,11 @@
         let maxAttempts = 0;
         let gameActive = false;
 
-        function detectBrowserLanguage() {
+        function detectLanguage() {
+            const storedLang = localStorage.getItem('preferredLanguage');
+            if (storedLang && languages[storedLang]) {
+                return storedLang;
+            }
             const browserLang = navigator.language.split('-')[0];
             return languages[browserLang] ? browserLang : 'en';
         }
@@ -414,7 +462,7 @@
             currentLanguage = lang;
             document.documentElement.lang = lang;
             const translation = translations[lang] || translations['en'];
-            
+
             // Update text content
             document.title = translation.title;
             document.getElementById('title').textContent = translation.title;
@@ -423,7 +471,7 @@
             document.getElementById('hard').textContent = translation.hard;
             document.getElementById('new-game').textContent = translation.newGame;
             updateMessage(translation.selectDifficulty);
-        
+
             // Highlight the selected language button
             document.querySelectorAll('.language-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
@@ -450,6 +498,7 @@
         }
 
         function createGameBoard() {
+            console.log('Generating board');
             const gameBoard = document.getElementById('game-board');
             gameBoard.innerHTML = '';
             for (let i = 0; i < 12; i++) {
@@ -460,9 +509,8 @@
                     const dent = document.createElement('div');
                     dent.className = 'dent';
                     dent.dataset.col = j;
-                    dent.ondrop = drop;
-                    dent.ondragover = allowDrop;
-                    dent.onclick = selectDent;
+                    dent.addEventListener('drop', drop);
+                    dent.addEventListener('dragover', allowDrop);
                     row.appendChild(dent);
                 }
                 const feedbackArea = document.createElement('div');
@@ -470,30 +518,70 @@
                 const submitGuess = document.createElement('div');
                 submitGuess.className = 'submit-guess';
                 submitGuess.textContent = '?';
-                submitGuess.onclick = () => checkRow(i);
                 feedbackArea.appendChild(submitGuess);
                 row.appendChild(feedbackArea);
                 gameBoard.appendChild(row);
+            }
+
+            // Add event listeners
+            gameBoard.addEventListener('click', handleBoardClick);
+
+            // Set the first row as active
+            const firstRow = document.querySelector('.row[data-row="0"]');
+            firstRow.classList.add('active');
+            updateSubmitButtonState(firstRow);
+        }
+
+        function handleBoardClick(event) {
+            const clickedElement = event.target;
+
+            if (clickedElement.classList.contains('dent') || clickedElement.classList.contains('tile')) {
+                selectDent(clickedElement.closest('.dent'));
+            } else if (clickedElement.classList.contains('submit-guess')) {
+                handleSubmitGuess(clickedElement);
+            }
+        }
+
+        function handleSubmitGuess(submitButton) {
+            const row = submitButton.closest('.row');
+            if (row.classList.contains('active') && row.querySelectorAll('.dent .tile').length === 4) {
+                checkRow(parseInt(row.dataset.row));
+            }
+        }
+
+        function verifyEventListeners() {
+            for (let i = 0; i < 12; i++) {
+                const submitGuess = document.getElementById(`submit-guess-${i}`);
+                if (submitGuess) {
+                    // Add a temporary click event to check if it's working
+                    submitGuess.addEventListener('click', function () {
+                        console.log(`Verification click on submit-guess-${i}`);
+                    });
+                    // Simulate a click to verify
+                    submitGuess.click();
+                } else {
+                    console.log(`submit-guess-${i} not found`);
+                }
             }
         }
 
         let selectedDent = null;
 
-        function selectDent(event) {
-            if (!gameActive || parseInt(event.target.parentElement.dataset.row) !== attempts) {
-                return;
+        function selectDent(dent) {
+            const row = dent.closest('.row');
+            if (row.classList.contains('active')) {
+                if (selectedDent) {
+                    selectedDent.classList.remove('selected');
+                }
+                selectedDent = dent;
+                selectedDent.classList.add('selected');
             }
-            if (selectedDent) {
-                selectedDent.classList.remove('selected');
-            }
-            selectedDent = event.target;
-            selectedDent.classList.add('selected');
         }
 
         function createDigitSelector() {
             const digitSelector = document.getElementById('digit-selector');
             digitSelector.innerHTML = '';
-            
+
             // Draggable tiles
             const tileContainer = document.createElement('div');
             tileContainer.className = 'tile-container';
@@ -509,7 +597,7 @@
                 tileContainer.appendChild(tile);
             }
             digitSelector.appendChild(tileContainer);
-        
+
             // Buttons for touch/click input
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'button-container';
@@ -537,11 +625,11 @@
             draggedTile.style.position = 'absolute';
             draggedTile.style.zIndex = 1000;
             document.body.appendChild(draggedTile);
-            
+
             const touch = event.touches[0];
             touchStartX = touch.clientX - event.target.offsetLeft;
             touchStartY = touch.clientY - event.target.offsetTop;
-            
+
             positionDraggedTile(touch.clientX, touch.clientY);
         }
 
@@ -558,7 +646,7 @@
             if (draggedTile) {
                 const touch = event.changedTouches[0];
                 const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-                
+
                 if (dropTarget && dropTarget.classList.contains('dent')) {
                     const row = dropTarget.parentElement;
                     if (parseInt(row.dataset.row) === attempts && row.classList.contains('active')) {
@@ -567,7 +655,7 @@
                         checkRowComplete(row);
                     }
                 }
-                
+
                 document.body.removeChild(draggedTile);
                 draggedTile = null;
             }
@@ -581,19 +669,17 @@
         function drag(ev) {
             ev.dataTransfer.setData("text", ev.target.textContent);
         }
-        
+
         function allowDrop(ev) {
             ev.preventDefault();
         }
-        
-        function drop(ev) {
-            ev.preventDefault();
-            const data = ev.dataTransfer.getData("text");
-            if (ev.target.classList.contains('dent') && ev.target.children.length === 0) {
-                const row = ev.target.parentElement;
-                if (parseInt(row.dataset.row) === attempts && row.classList.contains('active')) {
-                    placeTile(data, ev.target);
-                }
+
+        function drop(event) {
+            event.preventDefault();
+            const data = event.dataTransfer.getData("text");
+            const dent = event.target.closest('.dent');
+            if (dent && dent.closest('.row').classList.contains('active')) {
+                placeTile(data, dent);
             }
         }
 
@@ -604,18 +690,27 @@
         }
 
         function checkRow(rowIndex) {
-            if (!gameActive || rowIndex !== attempts) return;
-            
+            console.log(`Checking row ${rowIndex}`);
+            if (!gameActive) {
+                console.log('Row check aborted: game not active');
+                return;
+            }
+
             const row = document.querySelector(`.row[data-row="${rowIndex}"]`);
-            const tiles = row.querySelectorAll('.tile');
+            const tiles = row.querySelectorAll('.dent .tile');
+            console.log(`Found ${tiles.length} tiles in row ${rowIndex}`);
+
             if (tiles.length === 4) {
                 const guess = Array.from(tiles).map(tile => parseInt(tile.textContent));
+                console.log(`Guess: ${guess.join(', ')}`);
                 const feedback = checkGuess(guess);
                 updateFeedbackDisplay(rowIndex, feedback);
                 row.classList.remove('active');
                 attempts++;
                 if (attempts < maxAttempts) {
-                    document.querySelector(`.row[data-row="${attempts}"]`).classList.add('active');
+                    const nextRow = document.querySelector(`.row[data-row="${attempts}"]`);
+                    nextRow.classList.add('active');
+                    updateSubmitButtonState(nextRow); // This line ensures the submit button is properly initialized
                 }
                 if (feedback.black === 4) {
                     gameActive = false;
@@ -623,11 +718,16 @@
                 } else if (attempts === maxAttempts) {
                     gameActive = false;
                     updateMessage(translations[currentLanguage].lose + secretCode.join(''));
+                } else {
+                    updateMessage(translations[currentLanguage].computerTurn);
                 }
+            } else {
+                updateMessage(translations[currentLanguage].incompleteRow);
             }
         }
 
         function checkGuess(guess) {
+            console.log('checking ' + guess);
             let black = 0;
             let white = 0;
             const codeCopy = [...secretCode];
@@ -649,11 +749,12 @@
                     }
                 }
             }
-
+            console.log('black=' + black + ' white=' + white);
             return { black, white };
         }
 
         function updateFeedbackDisplay(rowIndex, feedback) {
+            console.log('Updating feedback at ' + rowIndex + ' with:' + feedback);
             const row = document.querySelector(`.row[data-row="${rowIndex}"]`);
             const feedbackArea = row.querySelector('.feedback-area');
             feedbackArea.innerHTML = '';
@@ -675,6 +776,7 @@
                 peg.className = 'peg';
                 feedbackDiv.appendChild(peg);
             }
+            console.log('Now applying feedback');
             feedbackArea.appendChild(feedbackDiv);
         }
 
@@ -684,7 +786,7 @@
             if (!gameActive || !selectedDent) {
                 return;
             }
-            
+
             if (event.key >= '1' && event.key <= '9') {
                 placeTile(event.key);
             } else if (event.key === 'Backspace' || event.key === 'Delete') {
@@ -692,22 +794,33 @@
             }
         }
 
-        function placeTile(digit, target = null) {
-            const dent = target || selectedDent;
-            if (dent && dent.children.length === 0 && dent.closest('.row').classList.contains('active')) {
+        function placeTile(digit, dent = null) {
+            const targetDent = dent || selectedDent;
+            if (targetDent && targetDent.closest('.row').classList.contains('active')) {
+                targetDent.innerHTML = ''; // Clear existing tile if any
                 const tile = document.createElement('div');
                 tile.className = 'tile';
                 tile.textContent = digit;
-                dent.appendChild(tile);
-                checkRowComplete(dent.parentElement);
+                tile.draggable = true;
+                tile.addEventListener('dragstart', drag);
+                targetDent.appendChild(tile);
+
+                updateSubmitButtonState(targetDent.closest('.row'));
             }
         }
 
         function clearTile() {
-            if (selectedDent.children.length > 0) {
+            if (selectedDent && selectedDent.closest('.row').classList.contains('active')) {
                 selectedDent.innerHTML = '';
-                checkRowComplete(selectedDent.parentElement);
+                updateSubmitButtonState(selectedDent.closest('.row'));
             }
+        }
+
+        function updateSubmitButtonState(row) {
+            const submitGuess = row.querySelector('.submit-guess');
+            const isFull = row.querySelectorAll('.dent .tile').length === 4;
+            submitGuess.style.cursor = isFull ? 'pointer' : 'not-allowed';
+            submitGuess.style.opacity = isFull ? '1' : '0.5';
         }
 
         function updateMessage(message) {
@@ -747,7 +860,9 @@
                     row.style.display = 'none';
                 }
             });
-            rows[0].classList.add('active');
+            const firstRow = rows[0];
+            firstRow.classList.add('active');
+            updateSubmitButtonState(firstRow);
         }
 
         function updateDifficultySelector() {
@@ -758,8 +873,8 @@
         createLanguageButtons();
         createDigitSelector();
         createGameBoard();
-        
-        const initialLanguage = detectBrowserLanguage();
+
+        const initialLanguage = detectLanguage();
         setLanguage(initialLanguage);
 
         document.getElementById('difficulty-selector').addEventListener('change', startNewGame);
@@ -774,5 +889,78 @@
                     .catch((err) => console.log('Service worker registration failed:', err));
             });
         }
+
+        function toggleReleaseNotes() {
+            console.log("toggleReleaseNotes called");
+            const notes = document.getElementById('release-notes');
+            if (notes.style.display === 'none') {
+                console.log("Showing release notes");
+                notes.style.display = 'block';
+                populateReleaseNotes();
+            } else {
+                console.log("Hiding release notes");
+                notes.style.display = 'none';
+            }
+        }
+
+        function populateReleaseNotes() {
+            console.log("Populating release notes");
+            const notes = document.getElementById('release-notes');
+            notes.innerHTML = `
+                <strong>Version ${releaseInfo.version}</strong> - ${releaseInfo.notes}
+                <ul style="margin: 5px 0 0 20px; padding: 0;">
+                    ${releaseInfo.features.map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        function initReleaseNotes() {
+            console.log("Initializing release notes");
+            const releaseTag = document.getElementById('release-tag');
+            if (releaseTag) {
+                console.log("Release tag found, adding event listener");
+                releaseTag.addEventListener('click', toggleReleaseNotes);
+                releaseTag.addEventListener('touchstart', function (event) {
+                    event.preventDefault();
+                    toggleReleaseNotes();
+                });
+            } else {
+                console.error("Release tag not found");
+            }
+        }
+
+        // Close release notes when clicking outside
+        document.addEventListener('click', function (event) {
+            console.log("Document clicked");
+            const releaseTag = document.getElementById('release-tag');
+            const releaseNotes = document.getElementById('release-notes');
+            if (releaseTag && releaseNotes && !releaseTag.contains(event.target) && !releaseNotes.contains(event.target)) {
+                console.log("Closing release notes");
+                releaseNotes.style.display = 'none';
+            }
+        });
+
+        // Run initialization when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', initReleaseNotes);
+
+        console.log("Release notes script finished");
+
+        const releaseInfo = {
+            version: "1.0.0",
+            notes: "Initial release of Mastermind",
+            features: [
+                "Multiple difficulty levels",
+                "Drag-and-drop and click placement of pegs",
+                "Multi-language support"
+            ]
+        };
     </script>
+    <div id="release-tag"
+        style="position: fixed; bottom: 10px; right: 10px; font-size: 12px; color: #888; cursor: pointer; z-index: 1000;">
+        v1.0.0
+    </div>
+    <div id="release-notes"
+        style="display: none; position: fixed; bottom: 40px; right: 10px; background-color: #f9f9f9; border: 1px solid #ddd; padding: 10px; border-radius: 5px; font-size: 12px; max-width: 300px; z-index: 1000;">
+        <!-- Release notes content will be inserted here -->
+    </div>
 </body>

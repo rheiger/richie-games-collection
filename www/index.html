@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
             --background-color: #f0f0f0;
             --animation-speed: 20s;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -23,7 +25,7 @@
             display: flex;
             flex-direction: column;
             background-color: var(--background-color);
-            background-image: 
+            background-image:
                 linear-gradient(30deg, #f6f8fa 12%, transparent 12.5%, transparent 87%, #f6f8fa 87.5%, #f6f8fa),
                 linear-gradient(150deg, #f6f8fa 12%, transparent 12.5%, transparent 87%, #f6f8fa 87.5%, #f6f8fa),
                 linear-gradient(30deg, #f6f8fa 12%, transparent 12.5%, transparent 87%, #f6f8fa 87.5%, #f6f8fa),
@@ -34,31 +36,35 @@
             background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
             animation: moveBackground var(--animation-speed) linear infinite;
         }
+
         @keyframes moveBackground {
             0% {
                 background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
             }
+
             100% {
                 background-position: 80px 140px, 80px 140px, 120px 210px, 120px 210px, 80px 140px, 120px 210px;
             }
         }
+
         .container {
             flex-grow: 1;
             text-align: center;
             padding: 40px 20px;
             max-width: 800px;
             margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 0.6);
             border-radius: 20px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
-    
+
         .language-selector {
             text-align: center;
             padding: 10px;
             background-color: rgba(255, 255, 255, 0.8);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         .language-btn {
             background: none;
             border: none;
@@ -68,15 +74,18 @@
             opacity: 0.7;
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
+
         .language-btn:hover {
             opacity: 1;
             transform: scale(1.1);
         }
+
         .language-btn.active {
             opacity: 1;
             font-weight: bold;
             text-shadow: 0 0 10px var(--highlight-color);
         }
+
         .container {
             flex-grow: 1;
             text-align: center;
@@ -84,11 +93,13 @@
             max-width: 800px;
             margin: 0 auto;
         }
+
         h1 {
             color: var(--primary-color);
             font-size: 2.5em;
             margin-bottom: 20px;
         }
+
         .game-links {
             display: flex;
             flex-wrap: wrap;
@@ -96,6 +107,7 @@
             gap: 20px;
             margin-top: 30px;
         }
+
         .btn {
             display: inline-block;
             background: var(--primary-color);
@@ -108,16 +120,19 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
         .btn:hover {
             background: var(--secondary-color);
             transform: translateY(-3px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
+
         .coming-soon {
             margin-top: 40px;
             font-style: italic;
             color: var(--highlight-color);
         }
+
         footer {
             background-color: var(--primary-color);
             color: white;
@@ -127,29 +142,26 @@
         }
     </style>
 </head>
+
 <body>
-    <div class="language-selector" id="languageSelector">
-        <!-- Language buttons will be dynamically inserted here -->
-    </div>
 
     <div class="container">
+        <div class="language-selector" id="languageSelector">
+            <!-- Language buttons will be dynamically inserted here -->
+        </div>
         <h1 id="title">Eiger Software Game Collection</h1>
 
-        <p id="welcome">Welcome to our collection of mind-challenging games! Exercise your brain with our addictive puzzles and strategic challenges.</p>
+        <p id="welcome">Welcome to our collection of mind-challenging games! Exercise your brain with our addictive
+            puzzles and strategic challenges.</p>
 
         <div class="game-links">
-            <a href="sudoku.html" class="btn" id="sudokuBtn">Play Sudoku</a>
-            <a href="connect-four.html" class="btn" id="connectFourBtn">Play Connect Four</a>
-            <a href="mastermind.html" class="btn" id="mastermindBtn">Play Mastermind</a>
+            <a href="sudoku/index.html" class="btn" id="sudokuBtn">Sudoku</a>
+            <a href="connect-four/index.html" class="btn" id="connectFourBtn">Connect Four</a>
+            <a href="mastermind/index.html" class="btn" id="mastermindBtn">Mastermind</a>
         </div>
 
-        <p id="pwaInfo">Each game is also available as a Progressive Web App for an enhanced, offline-capable experience:</p>
-
-        <div class="game-links">
-            <a href="sudoku/index.html" class="btn" id="sudokuPwaBtn">Sudoku PWA</a>
-            <a href="connect-four/index.html" class="btn" id="connectFourPwaBtn">Connect Four PWA</a>
-            <a href="mastermind/index.html" class="btn" id="mastermindPwaBtn">Mastermind PWA</a>
-        </div>
+        <p id="pwaInfo">Each game can also be installed as a Progressive Web App on Apple or
+            Android devices, making them offline-capable</p>
 
         <p class="coming-soon" id="comingSoon">Check back soon for more exciting games!</p>
     </div>
@@ -181,7 +193,7 @@
                 sudokuBtn: 'Play Sudoku',
                 connectFourBtn: 'Play Connect Four',
                 mastermindBtn: 'Play Mastermind',
-                pwaInfo: 'Each game is also available as a Progressive Web App for an enhanced, offline-capable experience:',
+                pwaInfo: 'Each game can also be installed as a Progressive Web App on Apple or Android devices, making them offline-capable',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Connect Four PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -194,7 +206,7 @@
                 sudokuBtn: 'Sudoku spielen',
                 connectFourBtn: 'Vier gewinnt spielen',
                 mastermindBtn: 'Mastermind spielen',
-                pwaInfo: 'Jedes Spiel ist auch als Progressive Web App für ein verbessertes, offline-fähiges Erlebnis verfügbar:',
+                pwaInfo: 'Jedes Spiel kann auch als Progressive Web App auf Apple- oder Android-Geräten installiert werden, wodurch sie offline nutzbar sind',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Vier gewinnt PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -207,7 +219,7 @@
                 sudokuBtn: 'Jouer au Sudoku',
                 connectFourBtn: 'Jouer au Puissance 4',
                 mastermindBtn: 'Jouer au Mastermind',
-                pwaInfo: 'Chaque jeu est également disponible en tant qu\'application web progressive pour une expérience améliorée et hors ligne :',
+                pwaInfo: 'Chaque jeu peut également être installé comme une Application Web Progressive sur les appareils Apple ou Android, les rendant utilisables hors ligne',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Puissance 4 PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -220,7 +232,7 @@
                 sudokuBtn: 'Gioca a Sudoku',
                 connectFourBtn: 'Gioca a Forza Quattro',
                 mastermindBtn: 'Gioca a Mastermind',
-                pwaInfo: 'Ogni gioco è disponibile anche come Progressive Web App per un\'esperienza migliorata e utilizzabile offline:',
+                pwaInfo: 'Ogni gioco può essere installato anche come App Web Progressiva su dispositivi Apple o Android, rendendoli utilizzabili offline',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Forza Quattro PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -233,7 +245,7 @@
                 sudokuBtn: 'Spela Sudoku',
                 connectFourBtn: 'Spela Fyra i rad',
                 mastermindBtn: 'Spela Mastermind',
-                pwaInfo: 'Varje spel finns också tillgängligt som en Progressive Web App för en förbättrad, offline-kapabel upplevelse:',
+                pwaInfo: 'Varje spel kan också installeras som en Progressive Web App på Apple- eller Android-enheter, vilket gör dem tillgängliga offline',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Fyra i rad PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -246,7 +258,7 @@
                 sudokuBtn: 'Hrať Sudoku',
                 connectFourBtn: 'Hrať Štyri v rade',
                 mastermindBtn: 'Hrať Mastermind',
-                pwaInfo: 'Každá hra je k dispozícii aj ako progresívna webová aplikácia pre vylepšený zážitok s možnosťou offline použitia:',
+                pwaInfo: 'Každú hru je možné nainštalovať aj ako progresívnu webovú aplikáciu na zariadenia Apple alebo Android, čím sa stávajú použiteľnými offline',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Štyri v rade PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -259,7 +271,7 @@
                 sudokuBtn: 'Jugar Sudoku',
                 connectFourBtn: 'Jugar Conecta Cuatro',
                 mastermindBtn: 'Jugar Mastermind',
-                pwaInfo: 'Cada juego también está disponible como una Aplicación Web Progresiva para una experiencia mejorada y con capacidad offline:',
+                pwaInfo: 'Cada juego también se puede instalar como una Aplicación Web Progresiva en dispositivos Apple o Android, lo que los hace utilizables sin conexión',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Conecta Cuatro PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -272,7 +284,7 @@
                 sudokuBtn: 'Jogar Sudoku',
                 connectFourBtn: 'Jogar Conecta Quatro',
                 mastermindBtn: 'Jogar Mastermind',
-                pwaInfo: 'Cada jogo também está disponível como um Aplicativo Web Progressivo para uma experiência aprimorada e com capacidade offline:',
+                pwaInfo: 'Cada jogo também pode ser instalado como um Aplicativo Web Progressivo em dispositivos Apple ou Android, tornando-os utilizáveis offline',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Conecta Quatro PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -285,7 +297,7 @@
                 sudokuBtn: 'Spill Sudoku',
                 connectFourBtn: 'Spill Fire på rad',
                 mastermindBtn: 'Spill Mastermind',
-                pwaInfo: 'Hvert spill er også tilgjengelig som en Progressive Web App for en forbedret, offline-kapabel opplevelse:',
+                pwaInfo: 'Hvert spill kan også installeres som en Progressive Web App på Apple- eller Android-enheter, noe som gjør dem tilgjengelige offline',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Fire på rad PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -298,7 +310,7 @@
                 sudokuBtn: 'Pelaa Sudokua',
                 connectFourBtn: 'Pelaa Neljän suora',
                 mastermindBtn: 'Pelaa Mastermind',
-                pwaInfo: 'Jokainen peli on myös saatavilla Progressive Web Appina parannettua, offline-kykyistä kokemusta varten:',
+                pwaInfo: 'Jokainen peli voidaan myös asentaa progressiivisena verkkosovelluksena Apple- tai Android-laitteisiin, jolloin niitä voi käyttää offline-tilassa',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Neljän suora PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -311,7 +323,7 @@
                 sudokuBtn: 'Graj w Sudoku',
                 connectFourBtn: 'Graj w Cztery w rzędzie',
                 mastermindBtn: 'Graj w Mastermind',
-                pwaInfo: 'Każda gra jest również dostępna jako Progresywna Aplikacja Internetowa dla ulepszonego doświadczenia z możliwością gry offline:',
+                pwaInfo: 'Każda gra może być również zainstalowana jako Progresywna Aplikacja Internetowa na urządzeniach Apple lub Android, co umożliwia korzystanie z nich w trybie offline',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Cztery w rzędzie PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -324,7 +336,7 @@
                 sudokuBtn: 'Hrát Sudoku',
                 connectFourBtn: 'Hrát Čtyři v řadě',
                 mastermindBtn: 'Hrát Mastermind',
-                pwaInfo: 'Každá hra je také k dispozici jako progresivní webová aplikace pro vylepšený zážitek s možností offline hraní:',
+                pwaInfo: 'Každou hru lze také nainstalovat jako progresivní webovou aplikaci na zařízení Apple nebo Android, což umožňuje jejich použití offline',
                 sudokuPwaBtn: 'Sudoku PWA',
                 connectFourPwaBtn: 'Čtyři v řadě PWA',
                 mastermindPwaBtn: 'Mastermind PWA',
@@ -346,6 +358,8 @@
         }
 
         function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('preferredLanguage', lang);
             document.documentElement.lang = lang;
             const translation = translations[lang] || translations['en'];
             document.title = translation.title;
@@ -355,9 +369,6 @@
             document.getElementById('connectFourBtn').textContent = translation.connectFourBtn;
             document.getElementById('mastermindBtn').textContent = translation.mastermindBtn;
             document.getElementById('pwaInfo').textContent = translation.pwaInfo;
-            document.getElementById('sudokuPwaBtn').textContent = translation.sudokuPwaBtn;
-            document.getElementById('connectFourPwaBtn').textContent = translation.connectFourPwaBtn;
-            document.getElementById('mastermindPwaBtn').textContent = translation.mastermindPwaBtn;
             document.getElementById('comingSoon').textContent = translation.comingSoon;
             document.getElementById('footer').textContent = translation.footer;
 
@@ -367,12 +378,93 @@
         }
 
         function detectLanguage() {
+            const storedLang = localStorage.getItem('preferredLanguage');
+            if (storedLang && languages[storedLang]) {
+                return storedLang;
+            }
             const browserLang = navigator.language.split('-')[0];
             return languages[browserLang] ? browserLang : 'en';
         }
 
         createLanguageButtons();
+        const initialLanguage = detectLanguage();
         setLanguage(detectLanguage());
+
+        function toggleReleaseNotes() {
+            console.log("toggleReleaseNotes called");
+            const notes = document.getElementById('release-notes');
+            if (notes.style.display === 'none') {
+                console.log("Showing release notes");
+                notes.style.display = 'block';
+                populateReleaseNotes();
+            } else {
+                console.log("Hiding release notes");
+                notes.style.display = 'none';
+            }
+        }
+
+        function populateReleaseNotes() {
+            console.log("Populating release notes");
+            const notes = document.getElementById('release-notes');
+            notes.innerHTML = `
+                <strong>Version ${releaseInfo.version}</strong> - ${releaseInfo.notes}
+                <ul style="margin: 5px 0 0 20px; padding: 0;">
+                    ${releaseInfo.features.map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        function initReleaseNotes() {
+            console.log("Initializing release notes");
+            const releaseTag = document.getElementById('release-tag');
+            if (releaseTag) {
+                console.log("Release tag found, adding event listener");
+                releaseTag.addEventListener('click', toggleReleaseNotes);
+                releaseTag.addEventListener('touchstart', function (event) {
+                    event.preventDefault();
+                    toggleReleaseNotes();
+                });
+            } else {
+                console.error("Release tag not found");
+            }
+        }
+
+        // Close release notes when clicking outside
+        document.addEventListener('click', function (event) {
+            console.log("Document clicked");
+            const releaseTag = document.getElementById('release-tag');
+            const releaseNotes = document.getElementById('release-notes');
+            if (releaseTag && releaseNotes && !releaseTag.contains(event.target) && !releaseNotes.contains(event.target)) {
+                console.log("Closing release notes");
+                releaseNotes.style.display = 'none';
+            }
+        });
+
+        // Run initialization when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', initReleaseNotes);
+
+        console.log("Release notes script finished");
+
+        releaseInfo = {
+            version: "1.0.0",
+            notes: "Initial release Games",
+            features: [
+                "Simplified entry page",
+                "Hints to enable offline installation on supported devices",
+                "Multi-language support",
+                "Language selection remains persistant across all pages"
+            ]
+        };
     </script>
+    <div id="release-tag"
+        style="position: fixed; bottom: 10px; right: 10px; font-size: 12px; color: #888; cursor: pointer; z-index: 1000;">
+        v1.0.0
+    </div>
+    <div id="release-notes"
+        style="display: none; position: fixed; bottom: 40px; right: 10px; background-color: #f9f9f9; border: 1px solid #ddd; padding: 10px; border-radius: 5px; font-size: 12px; max-width: 300px; z-index: 1000;">
+        <!-- Release notes content will be inserted here -->
+    </div>
+
 </body>
+
 </html>
