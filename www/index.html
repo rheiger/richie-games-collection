@@ -4,96 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/common.css">
     <title>Eiger Software Game Collection</title>
     <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --text-color: #34495e;
-            --highlight-color: #e74c3c;
-            --background-color: #f0f0f0;
-            --animation-speed: 20s;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--background-color);
-            background-image:
-                linear-gradient(30deg, #f6f8fa 12%, transparent 12.5%, transparent 87%, #f6f8fa 87.5%, #f6f8fa),
-                linear-gradient(150deg, #f6f8fa 12%, transparent 12.5%, transparent 87%, #f6f8fa 87.5%, #f6f8fa),
-                linear-gradient(30deg, #f6f8fa 12%, transparent 12.5%, transparent 87%, #f6f8fa 87.5%, #f6f8fa),
-                linear-gradient(150deg, #f6f8fa 12%, transparent 12.5%, transparent 87%, #f6f8fa 87.5%, #f6f8fa),
-                linear-gradient(60deg, #e3e7eb 25%, transparent 25.5%, transparent 75%, #e3e7eb 75%, #e3e7eb),
-                linear-gradient(60deg, #e3e7eb 25%, transparent 25.5%, transparent 75%, #e3e7eb 75%, #e3e7eb);
-            background-size: 80px 140px;
-            background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
-            animation: moveBackground var(--animation-speed) linear infinite;
-        }
-
-        @keyframes moveBackground {
-            0% {
-                background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
-            }
-
-            100% {
-                background-position: 80px 140px, 80px 140px, 120px 210px, 120px 210px, 80px 140px, 120px 210px;
-            }
-        }
-
-        .container {
-            flex-grow: 1;
-            text-align: center;
-            padding: 40px 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.6);
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .language-selector {
-            text-align: center;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .language-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2em;
-            margin: 0 5px;
-            opacity: 0.7;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-
-        .language-btn:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-
-        .language-btn.active {
-            opacity: 1;
-            font-weight: bold;
-            text-shadow: 0 0 10px var(--highlight-color);
-        }
-
-        .container {
-            flex-grow: 1;
-            text-align: center;
-            padding: 40px 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
         h1 {
             color: var(--primary-color);
             font-size: 2.5em;
@@ -144,47 +57,34 @@
 </head>
 
 <body>
+    <script src="./js/common.js"></script>
 
     <div class="container">
         <div class="language-selector" id="languageSelector">
             <!-- Language buttons will be dynamically inserted here -->
         </div>
-        <h1 id="title">Eiger Software Game Collection</h1>
+        <h1 id="title" data-i18n="title">Eiger Software Game Collection</h1>
 
-        <p id="welcome">Welcome to our collection of mind-challenging games! Exercise your brain with our addictive
+        <p id="welcome" data-i18n="welcome">Welcome to our collection of mind-challenging games! Exercise your brain with our addictive
             puzzles and strategic challenges.</p>
 
         <div class="game-links">
-            <a href="sudoku/index.html" class="btn" id="sudokuBtn">Sudoku</a>
-            <a href="connect-four/index.html" class="btn" id="connectFourBtn">Connect Four</a>
-            <a href="mastermind/index.html" class="btn" id="mastermindBtn">Mastermind</a>
+            <a href="sudoku/index.html" class="btn" id="sudokuBtn" data-i18n="sudokuBtn">Sudoku</a>
+            <a href="connect-four/index.html" class="btn" id="connectFourBtn" data-i18n="connectFourBtn">Connect Four</a>
+            <a href="mastermind/index.html" class="btn" id="mastermindBtn" data-i18n="mastermindBtn">Mastermind</a>
         </div>
 
-        <p id="pwaInfo">Each game can also be installed as a Progressive Web App on Apple or
+        <p id="pwaInfo" data-i18n="pwaInfo">Each game can also be installed as a Progressive Web App on Apple or
             Android devices, making them offline-capable</p>
 
-        <p class="coming-soon" id="comingSoon">Check back soon for more exciting games!</p>
+        <p class="coming-soon" id="comingSoon" data-i18n="comingSoon">Check back soon for more exciting games!</p>
     </div>
 
     <footer>
-        <p id="footer">Created with ❤️ by Eiger Software. Challenge your mind daily!</p>
+        <p id="footer" data-i18n="footer">Created with ❤️ by Eiger Software. Challenge your mind daily!</p>
     </footer>
 
     <script>
-        const languages = {
-            'en': { emoji: '🇬🇧', name: 'English' },
-            'de': { emoji: '🇩🇪', name: 'Deutsch' },
-            'fr': { emoji: '🇫🇷', name: 'Français' },
-            'it': { emoji: '🇮🇹', name: 'Italiano' },
-            'sv': { emoji: '🇸🇪', name: 'Svenska' },
-            'sk': { emoji: '🇸🇰', name: 'Slovenčina' },
-            'es': { emoji: '🇪🇸', name: 'Español' },
-            'pt': { emoji: '🇵🇹', name: 'Português' },
-            'no': { emoji: '🇳🇴', name: 'Norsk' },
-            'fi': { emoji: '🇫🇮', name: 'Suomi' },
-            'pl': { emoji: '🇵🇱', name: 'Polski' },
-            'cs': { emoji: '🇨🇿', name: 'Čeština' }
-        };
 
         const translations = {
             'en': {
@@ -344,50 +244,7 @@
                 footer: 'Vytvořeno s ❤️ mnou, Richiem, s velkou pomocí od Claude.ai. Denně si procvičujte svou mysl!'
             }
         };
-
-        function createLanguageButtons() {
-            const languageSelector = document.getElementById('languageSelector');
-            for (const [langCode, langInfo] of Object.entries(languages)) {
-                const btn = document.createElement('button');
-                btn.innerHTML = `${langInfo.emoji} ${langInfo.name}`;
-                btn.className = 'language-btn';
-                btn.setAttribute('data-lang', langCode);
-                btn.onclick = () => setLanguage(langCode);
-                languageSelector.appendChild(btn);
-            }
-        }
-
-        function setLanguage(lang) {
-            currentLanguage = lang;
-            localStorage.setItem('preferredLanguage', lang);
-            document.documentElement.lang = lang;
-            const translation = translations[lang] || translations['en'];
-            document.title = translation.title;
-            document.getElementById('title').textContent = translation.title;
-            document.getElementById('welcome').textContent = translation.welcome;
-            document.getElementById('sudokuBtn').textContent = translation.sudokuBtn;
-            document.getElementById('connectFourBtn').textContent = translation.connectFourBtn;
-            document.getElementById('mastermindBtn').textContent = translation.mastermindBtn;
-            document.getElementById('pwaInfo').textContent = translation.pwaInfo;
-            document.getElementById('comingSoon').textContent = translation.comingSoon;
-            document.getElementById('footer').textContent = translation.footer;
-
-            document.querySelectorAll('.language-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-            });
-        }
-
-        function detectLanguage() {
-            const storedLang = localStorage.getItem('preferredLanguage');
-            if (storedLang && languages[storedLang]) {
-                return storedLang;
-            }
-            const browserLang = navigator.language.split('-')[0];
-            return languages[browserLang] ? browserLang : 'en';
-        }
-
         createLanguageButtons();
-        const initialLanguage = detectLanguage();
         setLanguage(detectLanguage());
 
         function toggleReleaseNotes() {
