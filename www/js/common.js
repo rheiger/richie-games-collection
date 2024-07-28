@@ -57,3 +57,61 @@ function detectLanguage() {
     const browserLang = navigator.language.split('-')[0];
     return languages[browserLang] ? browserLang : 'en';
 }
+
+// release-notes.js
+
+function toggleReleaseNotes() {
+    console.log("toggleReleaseNotes called");
+    const notes = document.getElementById('release-notes');
+    if (notes.style.display === 'none') {
+        console.log("Showing release notes");
+        notes.style.display = 'block';
+        populateReleaseNotes();
+    } else {
+        console.log("Hiding release notes");
+        notes.style.display = 'none';
+    }
+}
+
+function populateReleaseNotes() {
+    console.log("Populating release notes");
+    const notes = document.getElementById('release-notes');
+    notes.innerHTML = `
+        <strong>Version ${releaseInfo.version}</strong> - ${releaseInfo.notes}
+        <ul style="margin: 5px 0 0 20px; padding: 0;">
+            ${releaseInfo.features.map(feature => `<li>${feature}</li>`).join('')}
+        </ul>
+    `;
+}
+
+function initReleaseNotes() {
+    console.log("Initializing release notes");
+    const releaseTag = document.getElementById('release-tag');
+    if (releaseTag) {
+        console.log("Release tag found, adding event listener");
+        releaseTag.addEventListener('click', toggleReleaseNotes);
+        releaseTag.addEventListener('touchstart', function (event) {
+            event.preventDefault();
+            toggleReleaseNotes();
+        });
+    } else {
+        console.error("Release tag not found");
+    }
+}
+
+// Close release notes when clicking outside
+document.addEventListener('click', function (event) {
+    console.log("Document clicked");
+    const releaseTag = document.getElementById('release-tag');
+    const releaseNotes = document.getElementById('release-notes');
+    if (releaseTag && releaseNotes && !releaseTag.contains(event.target) && !releaseNotes.contains(event.target)) {
+        console.log("Closing release notes");
+        releaseNotes.style.display = 'none';
+    }
+});
+
+// Run initialization when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', initReleaseNotes);
+
+// Export the functions if using modules
+// export { detectLanguage, createLanguageButtons, toggleReleaseNotes, populateReleaseNotes, initReleaseNotes };

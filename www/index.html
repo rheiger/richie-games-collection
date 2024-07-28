@@ -247,63 +247,10 @@
         createLanguageButtons();
         setLanguage(detectLanguage());
 
-        function toggleReleaseNotes() {
-            console.log("toggleReleaseNotes called");
-            const notes = document.getElementById('release-notes');
-            if (notes.style.display === 'none') {
-                console.log("Showing release notes");
-                notes.style.display = 'block';
-                populateReleaseNotes();
-            } else {
-                console.log("Hiding release notes");
-                notes.style.display = 'none';
-            }
-        }
-
-        function populateReleaseNotes() {
-            console.log("Populating release notes");
-            const notes = document.getElementById('release-notes');
-            notes.innerHTML = `
-                <strong>Version ${releaseInfo.version}</strong> - ${releaseInfo.notes}
-                <ul style="margin: 5px 0 0 20px; padding: 0;">
-                    ${releaseInfo.features.map(feature => `<li>${feature}</li>`).join('')}
-                </ul>
-            `;
-        }
-
-        function initReleaseNotes() {
-            console.log("Initializing release notes");
-            const releaseTag = document.getElementById('release-tag');
-            if (releaseTag) {
-                console.log("Release tag found, adding event listener");
-                releaseTag.addEventListener('click', toggleReleaseNotes);
-                releaseTag.addEventListener('touchstart', function (event) {
-                    event.preventDefault();
-                    toggleReleaseNotes();
-                });
-            } else {
-                console.error("Release tag not found");
-            }
-        }
-
-        // Close release notes when clicking outside
-        document.addEventListener('click', function (event) {
-            console.log("Document clicked");
-            const releaseTag = document.getElementById('release-tag');
-            const releaseNotes = document.getElementById('release-notes');
-            if (releaseTag && releaseNotes && !releaseTag.contains(event.target) && !releaseNotes.contains(event.target)) {
-                console.log("Closing release notes");
-                releaseNotes.style.display = 'none';
-            }
-        });
-
-        // Run initialization when the DOM is fully loaded
-        document.addEventListener('DOMContentLoaded', initReleaseNotes);
-
         console.log("Release notes script finished");
 
         releaseInfo = {
-            version: "1.0.0",
+            version: "Release: v1.0.3",
             notes: "Initial release Games",
             features: [
                 "Simplified entry page",
@@ -316,7 +263,7 @@
     </script>
     <div id="release-tag"
         style="position: fixed; bottom: 10px; right: 10px; font-size: 12px; color: #888; cursor: pointer; z-index: 1000;">
-        Release: v1.0.2
+        Release: v1.0.3
     </div>
     <div id="release-notes"
         style="display: none; position: fixed; bottom: 40px; right: 10px; background-color: #f9f9f9; border: 1px solid #ddd; padding: 10px; border-radius: 5px; font-size: 12px; max-width: 300px; z-index: 1000;">
