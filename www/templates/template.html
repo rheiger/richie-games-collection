@@ -15,6 +15,23 @@
     <meta name="theme-color" content="#3498db">
     <title>TEMPLATE</title>
     <style>
+        /* Add any page specific styles
+        we import `:root` block as: 
+            :root {
+                --primary-color: #3498db;
+                --secondary-color: #2ecc71;
+                --text-color: #34495e;
+                --highlight-color: #e74c3c;
+                --background-color: #f0f0f0;
+                --animation-speed: 20s;
+                --grid-border-color: #000;
+                --tile-color: #e67e22;
+                --tile-text-color: #ffffff;
+                --feedback-black: #2c3e50;
+                --feedback-white: #bdc3c7;
+                --dent-color: #bdc3c7;
+            }
+        */
         h1 {
             color: var(--primary-color);
         }
@@ -24,137 +41,88 @@
 <body>
     <script src="../js/common.js"></script>
     <div class="container">
+        <div id="languageSelector" class="language-selector"></div>
+        <h1 id="title" data-i18n="title">Sudoku Challenge</h1>
+        <!-- Any page specific elements in here -->
+        <button id="new-game" data-i18n="newGame">New Game</button>
     </div>
     <script>
+        // Add translations for all `data-i18n` multilingual elements on page
         const translations = {
             'en': {
                 title: 'Connect Four',
                 newGame: 'New Game',
-                yourTurn: 'Your turn',
-                computerTurn: 'Computer\'s turn',
-                youWin: 'You win!',
-                computerWins: 'Computer wins!',
-                draw: 'It\'s a draw!',
                 footer: 'Created with ❤️ by me, Richie with great help from Claude.ai. Challenge your mind daily!'
             },
             'de': {
                 title: 'Vier gewinnt',
                 newGame: 'Neues Spiel',
-                yourTurn: 'Du bist dran',
-                computerTurn: 'Computer ist dran',
-                youWin: 'Du gewinnst!',
-                computerWins: 'Computer gewinnt!',
-                draw: 'Unentschieden!',
                 footer: 'Mit ❤️ erstellt von mir, Richie, mit großer Hilfe von Claude.ai. Fordern Sie Ihren Verstand täglich heraus!'
             },
             'fr': {
                 title: 'Puissance 4',
                 newGame: 'Nouvelle partie',
-                yourTurn: 'À votre tour',
-                computerTurn: 'Tour de l\'ordinateur',
-                youWin: 'Vous gagnez !',
-                computerWins: 'L\'ordinateur gagne !',
-                draw: 'Match nul !',
                 footer: 'Créé avec ❤️ par moi, Richie, avec l\'aide précieuse de Claude.ai. Défiez votre esprit quotidiennement !'
             },
             'it': {
                 title: 'Forza Quattro',
                 newGame: 'Nuova Partita',
-                yourTurn: 'È il tuo turno',
-                computerTurn: 'Turno del computer',
-                youWin: 'Hai vinto!',
-                computerWins: 'Il computer ha vinto!',
-                draw: 'È un pareggio!',
                 footer: 'Creato con ❤️ da me, Richie, con il grande aiuto di Claude.ai. Sfida la tua mente ogni giorno!'
             },
             'sv': {
                 title: 'Fyra i rad',
-                newGame: 'Nytt spel',
-                yourTurn: 'Din tur',
-                computerTurn: 'Datorns tur',
-                youWin: 'Du vinner!',
-                computerWins: 'Datorn vinner!',
-                draw: 'Det är oavgjort!',
                 footer: 'Skapad med ❤️ av mig, Richie, med stor hjälp från Claude.ai. Utmana ditt sinne dagligen!'
             },
             'sk': {
                 title: 'Štyri v rade',
                 newGame: 'Nová hra',
-                yourTurn: 'Tvoj ťah',
-                computerTurn: 'Ťah počítača',
-                youWin: 'Vyhrávaš!',
-                computerWins: 'Počítač vyhráva!',
-                draw: 'Je to remíza!',
                 footer: 'Vytvorené s ❤️ mnou, Richiem, s veľkou pomocou od Claude.ai. Denne si precvičujte svoju myseľ!'
             },
             'es': {
                 title: 'Conecta Cuatro',
                 newGame: 'Nuevo juego',
-                yourTurn: 'Tu turno',
-                computerTurn: 'Turno del ordenador',
-                youWin: '¡Ganaste!',
-                computerWins: '¡Gana el ordenador!',
-                draw: '¡Es un empate!',
                 footer: 'Creado con ❤️ por mí, Richie, con gran ayuda de Claude.ai. ¡Desafía tu mente diariamente!'
             },
             'pt': {
                 title: 'Conecta Quatro',
                 newGame: 'Novo jogo',
-                yourTurn: 'Sua vez',
-                computerTurn: 'Vez do computador',
-                youWin: 'Você venceu!',
-                computerWins: 'O computador venceu!',
-                draw: 'É um empate!',
                 footer: 'Criado com ❤️ por mim, Richie, com grande ajuda de Claude.ai. Desafie sua mente diariamente!'
             },
             'no': {
                 title: 'Fire på rad',
                 newGame: 'Nytt spill',
-                yourTurn: 'Din tur',
-                computerTurn: 'Datamaskinens tur',
-                youWin: 'Du vinner!',
-                computerWins: 'Datamaskinen vinner!',
-                draw: 'Det er uavgjort!',
                 footer: 'Laget med ❤️ av meg, Richie, med stor hjelp fra Claude.ai. Utfordre sinnet ditt daglig!'
             },
             'fi': {
                 title: 'Neljän suora',
                 newGame: 'Uusi peli',
-                yourTurn: 'Sinun vuorosi',
-                computerTurn: 'Tietokoneen vuoro',
-                youWin: 'Sinä voitat!',
-                computerWins: 'Tietokone voittaa!',
-                draw: 'Tasapeli!',
                 footer: 'Luotu ❤️:llä minun, Richien toimesta, Claude.ai:n suurella avustuksella. Haasta mielesi päivittäin!'
             },
             'pl': {
                 title: 'Cztery w rzędzie',
                 newGame: 'Nowa gra',
-                yourTurn: 'Twoja kolej',
-                computerTurn: 'Kolej komputera',
-                youWin: 'Wygrywasz!',
-                computerWins: 'Komputer wygrywa!',
-                draw: 'Remis!',
                 footer: 'Stworzone z ❤️ przeze mnie, Richiego, z wielką pomocą Claude.ai. Codziennie rzucaj wyzwanie swojemu umysłowi!'
             },
             'cs': {
                 title: 'Čtyři v řadě',
-                newGame: 'Nová hra',
-                yourTurn: 'Jste na tahu',
-                computerTurn: 'Tah počítače',
-                youWin: 'Vyhráli jste!',
-                computerWins: 'Počítač vyhrál!',
-                draw: 'Je to remíza!',
                 footer: 'Vytvořeno s ❤️ mnou, Richiem, s velkou pomocí od Claude.ai. Denně si procvičujte svou mysl!'
             }
         };
 
+        /***********************
+        ** Any page logic in here
+        ***********************/
+
+        // Mandatory calls to setup language handling
         createLanguageButtons();
         let currentLang = detectLanguage();
         setLanguage(currentLang);
+
+        // Sample of initializing page
         createBoard();
         updateMessage(translations[currentLang].yourTurn);
 
+        // Mandatory code to make page PWA enabled for offline usage on mobile device
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
@@ -167,16 +135,15 @@
             });
         }
 
-        console.log("Release notes script finished");
-
+        // Add your release info
         const releaseInfo = {
             version: "Release: v1.0.6",
-            notes: "Initial release of Connect-four",
+            notes: "TEMPLATE",
             features: [
-                "Improved Computer opponent",
-                "Drop of discs improved",
-                "Multi-language support",
-                "Some ressources centralized"
+                "FEATURE 1",
+                "FEATURE 2",
+                "FEATURE 3",
+                "FINAL FEATURE"
             ]
         };
     </script>
