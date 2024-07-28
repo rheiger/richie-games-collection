@@ -1,6 +1,10 @@
 const CACHE_NAME = 'sudoku-pwa-v1';
 const urlsToCache = [
   './',
+  '../css/',
+  '../css/common.css',
+  '../js/',
+  '../js/common.js',
   './index.html',
   './manifest.json',
   './icon-192x192.png',

@@ -1,6 +1,10 @@
 const CACHE_NAME = 'mastermind-v1';
 const urlsToCache = [
     './',
+    '../css/',
+    '../css/common.css',
+    '../js/',
+    '../js/common.js',
     './index.html',
     './icon-192x192.png',
     './icon-512x512.png'
