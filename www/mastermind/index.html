@@ -9,245 +9,37 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <link rel="apple-touch-icon" href="icon-192x192.png">
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="game.css">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Sudoku">
     <meta name="theme-color" content="#3498db">
     <title>Mastermind</title>
-    <style>
-        h1 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-        #game-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 500px;
-        }
-        #game-board {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-        .row {
-            display: flex;
-            margin-bottom: 5px;
-            align-items: center;
-            opacity: 0.5;
-            transition: opacity 0.3s ease;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .row.active {
-            opacity: 1;
-        }
-
-        .dent {
-            width: 30px;
-            height: 30px;
-            background-color: var(--dent-color);
-            border-radius: 50%;
-            margin-right: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .dent.selected {
-            border: 2px solid var(--highlight-color);
-        }
-
-        .tile {
-            width: 28px;
-            height: 28px;
-            margin: 5px;
-            background-color: var(--tile-color);
-            color: var(--tile-text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 50%;
-            cursor: move;
-        }
-
-        .dent .tile {
-            width: 26px;
-            height: 26px;
-            margin: 0;
-            font-size: 16px;
-        }
-
-        .feedback-area {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-left: 10px;
-            border: 2px solid var(--primary-color);
-            border-radius: 5px;
-        }
-
-        .feedback {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 2px;
-            padding: 2px;
-        }
-
-        .peg {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .black {
-            background-color: var(--feedback-black);
-        }
-
-        .white {
-            background-color: var(--feedback-white);
-        }
-
-        #digit-selector {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            max-width: 200px;
-        }
-
-        #digit-selector .tile {
-            margin: 5px;
-        }
-
-        select,
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            font-size: 14px;
-            cursor: pointer;
-            margin: 5px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        select:hover,
-        button:hover {
-            background-color: var(--secondary-color);
-        }
-
-        #message {
-            font-weight: bold;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .submit-guess {
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .digit-btn {
-            width: 40px;
-            height: 40px;
-            margin: 5px;
-            font-size: 18px;
-            background-color: var(--tile-color);
-            color: var(--tile-text-color);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .clear-btn {
-            width: auto;
-            padding: 0 10px;
-        }
-
-        .digit-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .tile-container,
-        .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        @media (max-width: 480px) {
-            .dent {
-                width: 25px;
-                height: 25px;
-            }
-
-            .dent .tile {
-                width: 23px;
-                height: 23px;
-                font-size: 14px;
-            }
-
-            .feedback-area {
-                width: 35px;
-                height: 35px;
-            }
-
-            .peg {
-                width: 10px;
-                height: 10px;
-            }
-
-            .digit-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 16px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .tile-container {
-                display: none;
-            }
-        }
-
-        @media (min-width: 601px) {
-            .button-container {
-                display: none;
-            }
-        }
-    </style>
 </head>
-
 <body>
     <script src="../js/common.js"></script>
     <div class="container">
-        <div id="game-container">
             <div id="languageSelector" class="language-selector"></div>
             <h1 id="title" data-i18n="title">Mastermind</h1>
-            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <select id="difficulty-selector">
-                    <option value="easy" id="easy" data-i18n="easy">Easy (12 attempts)</option>
-                    <option value="medium" id="medium" data-i18n="medium">Medium (10 attempts)</option>
-                    <option value="hard" id="hard" data-i18n="hard" selected>Hard (8 attempts)</option>
-                </select>
-                <button id="new-game" data-i18n="newGame">New Game</button>
+            <div id="game-options">
+                <button onclick="toggleGameMode('useColors')" data-i18n="useColors">Use Colors</button>
+                <button onclick="toggleGameMode('useDigits')" data-i18n="useDigits">Use Digits</button>
+                <button onclick="toggleGameMode('allowDuplicates')" data-i18n="allowDuplicates">Allow Duplicates</button>
             </div>
+    
+            <div id="difficulty-selector">
+                <button onclick="initGame('easy')" data-i18n="easy">Easy (12 attempts)</button>
+                <button onclick="initGame('medium')" data-i18n="medium">Medium (10 attempts)</button>
+                <button onclick="initGame('hard')" data-i18n="hard">Hard (8 attempts)</button>
+                <button onclick="toggleGameMode('unlimitedGuesses')" data-i18n="unlimitedGuesses">Unlimited Guesses</button>
+            </div>
+    
             <div id="game-board"></div>
-            <div id="digit-selector"></div>
+            <div id="input-selector"></div>
+            <button onclick="submitGuess()" data-i18n="submitGuess">Submit Guess</button>
+            <button onclick="giveUp()" data-i18n="giveUp">I Give Up</button>
+    
             <div id="message" data-i18n="message"></div>
-        </div>
     </div>
 
     <script>
@@ -261,7 +53,13 @@
                 win: 'Congratulations! You\'ve cracked the code!',
                 lose: 'Game over! The code was: ',
                 incompleteRow: 'Please fill all four positions before submitting.',
-                selectDifficulty: 'Select difficulty to start a new game.'
+                selectDifficulty: 'Select difficulty to start a new game.',
+                useColors: 'Use Colors',
+                useDigits: 'Use Digits',
+                allowDuplicates: 'Allow Duplicates',
+                unlimitedGuesses: 'Unlimited Guesses',
+                submitGuess: 'Submit Guess',
+                giveUp: 'I Give Up'
             },
             'de': {
                 title: 'Mastermind',
@@ -271,7 +69,14 @@
                 newGame: 'Neues Spiel',
                 win: 'Glückwunsch! Du hast den Code geknackt!',
                 lose: 'Spiel vorbei! Der Code war: ',
-                selectDifficulty: 'Wähle den Schwierigkeitsgrad, um ein neues Spiel zu starten.'
+                incompleteRow: 'Bitte füllen Sie alle vier Positionen aus, bevor Sie absenden.',
+                selectDifficulty: 'Wähle den Schwierigkeitsgrad, um ein neues Spiel zu starten.',
+                useColors: 'Farben verwenden',
+                useDigits: 'Ziffern verwenden',
+                allowDuplicates: 'Duplikate erlauben',
+                unlimitedGuesses: 'Unbegrenzte Versuche',
+                submitGuess: 'Tipp abgeben',
+                giveUp: 'Ich gebe auf'
             },
             'fr': {
                 title: 'Mastermind',
@@ -281,7 +86,14 @@
                 newGame: 'Nouvelle Partie',
                 win: 'Félicitations ! Vous avez déchiffré le code !',
                 lose: 'Partie terminée ! Le code était : ',
-                selectDifficulty: 'Sélectionnez la difficulté pour commencer une nouvelle partie.'
+                incompleteRow: 'Veuillez remplir les quatre positions avant de soumettre.',
+                selectDifficulty: 'Sélectionnez la difficulté pour commencer une nouvelle partie.',
+                useColors: 'Utiliser les couleurs',
+                useDigits: 'Utiliser les chiffres',
+                allowDuplicates: 'Autoriser les doublons',
+                unlimitedGuesses: 'Essais illimités',
+                submitGuess: 'Soumettre',
+                giveUp: 'J\'abandonne'
             },
             'it': {
                 title: 'Mastermind',
@@ -291,7 +103,14 @@
                 newGame: 'Nuova Partita',
                 win: 'Congratulazioni! Hai decifrato il codice!',
                 lose: 'Game over! Il codice era: ',
-                selectDifficulty: 'Seleziona la difficoltà per iniziare una nuova partita.'
+                incompleteRow: 'Si prega di riempire tutte e quattro le posizioni prima di inviare.',
+                selectDifficulty: 'Seleziona la difficoltà per iniziare una nuova partita.',
+                useColors: 'Usa colori',
+                useDigits: 'Usa cifre',
+                allowDuplicates: 'Consenti duplicati',
+                unlimitedGuesses: 'Tentativi illimitati',
+                submitGuess: 'Invia tentativo',
+                giveUp: 'Mi arrendo'
             },
             'sv': {
                 title: 'Mastermind',
@@ -301,7 +120,14 @@
                 newGame: 'Nytt Spel',
                 win: 'Grattis! Du har knäckt koden!',
                 lose: 'Spelet är över! Koden var: ',
-                selectDifficulty: 'Välj svårighetsgrad för att starta ett nytt spel.'
+                incompleteRow: 'Vänligen fyll i alla fyra positioner innan du skickar in.',
+                selectDifficulty: 'Välj svårighetsgrad för att starta ett nytt spel.',
+                useColors: 'Använd färger',
+                useDigits: 'Använd siffror',
+                allowDuplicates: 'Tillåt dubletter',
+                unlimitedGuesses: 'Obegränsade gissningar',
+                submitGuess: 'Skicka gissning',
+                giveUp: 'Jag ger upp'
             },
             'sk': {
                 title: 'Mastermind',
@@ -311,7 +137,14 @@
                 newGame: 'Nová Hra',
                 win: 'Blahoželáme! Rozlúštili ste kód!',
                 lose: 'Hra skončila! Kód bol: ',
-                selectDifficulty: 'Vyberte obtiažnosť pre začatie novej hry.'
+                incompleteRow: 'Prosím, vyplňte všetky štyri pozície pred odoslaním.',
+                selectDifficulty: 'Vyberte obtiažnosť pre začatie novej hry.',
+                useColors: 'Použiť farby',
+                useDigits: 'Použiť čísla',
+                allowDuplicates: 'Povoliť duplikáty',
+                unlimitedGuesses: 'Neobmedzené pokusy',
+                submitGuess: 'Odoslať tip',
+                giveUp: 'Vzdávam sa'
             },
             'es': {
                 title: 'Mastermind',
@@ -321,7 +154,14 @@
                 newGame: 'Nuevo Juego',
                 win: '¡Felicidades! ¡Has descifrado el código!',
                 lose: '¡Juego terminado! El código era: ',
-                selectDifficulty: 'Selecciona la dificultad para comenzar un nuevo juego.'
+                incompleteRow: 'Por favor, complete las cuatro posiciones antes de enviar.',
+                selectDifficulty: 'Selecciona la dificultad para comenzar un nuevo juego.',
+                useColors: 'Usar colores',
+                useDigits: 'Usar dígitos',
+                allowDuplicates: 'Permitir duplicados',
+                unlimitedGuesses: 'Intentos ilimitados',
+                submitGuess: 'Enviar intento',
+                giveUp: 'Me rindo'
             },
             'pt': {
                 title: 'Mastermind',
@@ -331,7 +171,14 @@
                 newGame: 'Novo Jogo',
                 win: 'Parabéns! Você decifrou o código!',
                 lose: 'Fim de jogo! O código era: ',
-                selectDifficulty: 'Selecione a dificuldade para iniciar um novo jogo.'
+                incompleteRow: 'Por favor, preencha todas as quatro posições antes de enviar.',
+                selectDifficulty: 'Selecione a dificuldade para iniciar um novo jogo.',
+                useColors: 'Usar cores',
+                useDigits: 'Usar dígitos',
+                allowDuplicates: 'Permitir duplicatas',
+                unlimitedGuesses: 'Tentativas ilimitadas',
+                submitGuess: 'Enviar palpite',
+                giveUp: 'Desisto'
             },
             'no': {
                 title: 'Mastermind',
@@ -341,7 +188,14 @@
                 newGame: 'Nytt Spill',
                 win: 'Gratulerer! Du har knekket koden!',
                 lose: 'Spillet er over! Koden var: ',
-                selectDifficulty: 'Velg vanskelighetsgrad for å starte et nytt spill.'
+                incompleteRow: 'Vennligst fyll alle fire posisjoner før du sender inn.',
+                selectDifficulty: 'Velg vanskelighetsgrad for å starte et nytt spill.',
+                useColors: 'Bruk farger',
+                useDigits: 'Bruk tall',
+                allowDuplicates: 'Tillat duplikater',
+                unlimitedGuesses: 'Ubegrensede gjetninger',
+                submitGuess: 'Send gjetning',
+                giveUp: 'Jeg gir opp'
             },
             'fi': {
                 title: 'Mastermind',
@@ -351,7 +205,14 @@
                 newGame: 'Uusi Peli',
                 win: 'Onnittelut! Olet murtanut koodin!',
                 lose: 'Peli päättyi! Koodi oli: ',
-                selectDifficulty: 'Valitse vaikeustaso aloittaaksesi uuden pelin.'
+                incompleteRow: 'Täytä kaikki neljä paikkaa ennen lähettämistä.',
+                selectDifficulty: 'Valitse vaikeustaso aloittaaksesi uuden pelin.',
+                useColors: 'Käytä värejä',
+                useDigits: 'Käytä numeroita',
+                allowDuplicates: 'Salli kopiot',
+                unlimitedGuesses: 'Rajattomat arvaukset',
+                submitGuess: 'Lähetä arvaus',
+                giveUp: 'Luovutan'
             },
             'pl': {
                 title: 'Mastermind',
@@ -361,7 +222,14 @@
                 newGame: 'Nowa Gra',
                 win: 'Gratulacje! Rozszyfrowałeś kod!',
                 lose: 'Koniec gry! Kod to: ',
-                selectDifficulty: 'Wybierz poziom trudności, aby rozpocząć nową grę.'
+                incompleteRow: 'Proszę wypełnić wszystkie cztery pozycje przed wysłaniem.',
+                selectDifficulty: 'Wybierz poziom trudności, aby rozpocząć nową grę.',
+                useColors: 'Użyj kolorów',
+                useDigits: 'Użyj cyfr',
+                allowDuplicates: 'Zezwól na duplikaty',
+                unlimitedGuesses: 'Nieograniczone próby',
+                submitGuess: 'Wyślij próbę',
+                giveUp: 'Poddaję się'
             },
             'cs': {
                 title: 'Mastermind',
@@ -371,407 +239,20 @@
                 newGame: 'Nová Hra',
                 win: 'Gratulujeme! Rozluštili jste kód!',
                 lose: 'Hra skončila! Kód byl: ',
-                selectDifficulty: 'Vyberte obtížnost pro zahájení nové hry.'
+                incompleteRow: 'Před odesláním prosím vyplňte všechny čtyři pozice.',
+                selectDifficulty: 'Vyberte obtížnost pro zahájení nové hry.',
+                useColors: 'Použít barvy',
+                useDigits: 'Použít číslice',
+                allowDuplicates: 'Povolit duplicity',
+                unlimitedGuesses: 'Neomezené pokusy',
+                submitGuess: 'Odeslat tip',
+                giveUp: 'Vzdávám to'
             }
         };
 
-        let secretCode = [];
-        let attempts = 0;
-        let maxAttempts = 0;
-        let gameActive = false;
-
-
-        function generateSecretCode() {
-            secretCode = [];
-            for (let i = 0; i < 4; i++) {
-                secretCode.push(Math.floor(Math.random() * 9) + 1);
-            }
-        }
-
-        function createGameBoard() {
-            console.log('Generating board');
-            const gameBoard = document.getElementById('game-board');
-            gameBoard.innerHTML = '';
-            for (let i = 0; i < 12; i++) {
-                const row = document.createElement('div');
-                row.className = 'row';
-                row.dataset.row = i;
-                for (let j = 0; j < 4; j++) {
-                    const dent = document.createElement('div');
-                    dent.className = 'dent';
-                    dent.dataset.col = j;
-                    dent.addEventListener('drop', drop);
-                    dent.addEventListener('dragover', allowDrop);
-                    row.appendChild(dent);
-                }
-                const feedbackArea = document.createElement('div');
-                feedbackArea.className = 'feedback-area';
-                const submitGuess = document.createElement('div');
-                submitGuess.className = 'submit-guess';
-                submitGuess.textContent = '?';
-                feedbackArea.appendChild(submitGuess);
-                row.appendChild(feedbackArea);
-                gameBoard.appendChild(row);
-            }
-
-            // Add event listeners
-            gameBoard.addEventListener('click', handleBoardClick);
-
-            // Set the first row as active
-            const firstRow = document.querySelector('.row[data-row="0"]');
-            firstRow.classList.add('active');
-            updateSubmitButtonState(firstRow);
-        }
-
-        function handleBoardClick(event) {
-            const clickedElement = event.target;
-
-            if (clickedElement.classList.contains('dent') || clickedElement.classList.contains('tile')) {
-                selectDent(clickedElement.closest('.dent'));
-            } else if (clickedElement.classList.contains('submit-guess')) {
-                handleSubmitGuess(clickedElement);
-            }
-        }
-
-        function handleSubmitGuess(submitButton) {
-            const row = submitButton.closest('.row');
-            if (row.classList.contains('active') && row.querySelectorAll('.dent .tile').length === 4) {
-                checkRow(parseInt(row.dataset.row));
-            }
-        }
-
-        function verifyEventListeners() {
-            for (let i = 0; i < 12; i++) {
-                const submitGuess = document.getElementById(`submit-guess-${i}`);
-                if (submitGuess) {
-                    // Add a temporary click event to check if it's working
-                    submitGuess.addEventListener('click', function () {
-                        console.log(`Verification click on submit-guess-${i}`);
-                    });
-                    // Simulate a click to verify
-                    submitGuess.click();
-                } else {
-                    console.log(`submit-guess-${i} not found`);
-                }
-            }
-        }
-
-        let selectedDent = null;
-
-        function selectDent(dent) {
-            const row = dent.closest('.row');
-            if (row.classList.contains('active')) {
-                if (selectedDent) {
-                    selectedDent.classList.remove('selected');
-                }
-                selectedDent = dent;
-                selectedDent.classList.add('selected');
-            }
-        }
-
-        function createDigitSelector() {
-            const digitSelector = document.getElementById('digit-selector');
-            digitSelector.innerHTML = '';
-
-            // Draggable tiles
-            const tileContainer = document.createElement('div');
-            tileContainer.className = 'tile-container';
-            for (let i = 1; i <= 9; i++) {
-                const tile = document.createElement('div');
-                tile.className = 'tile';
-                tile.textContent = i;
-                tile.draggable = true;
-                tile.ondragstart = drag;
-                tile.ontouchstart = touchStart;
-                tile.ontouchmove = touchMove;
-                tile.ontouchend = touchEnd;
-                tileContainer.appendChild(tile);
-            }
-            digitSelector.appendChild(tileContainer);
-
-            // Buttons for touch/click input
-            const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'button-container';
-            for (let i = 1; i <= 9; i++) {
-                const button = document.createElement('button');
-                button.className = 'digit-btn';
-                button.textContent = i;
-                button.onclick = () => placeTile(i);
-                buttonContainer.appendChild(button);
-            }
-            const clearButton = document.createElement('button');
-            clearButton.className = 'digit-btn clear-btn';
-            clearButton.textContent = 'Clear';
-            clearButton.onclick = clearTile;
-            buttonContainer.appendChild(clearButton);
-            digitSelector.appendChild(buttonContainer);
-        }
-
-        let draggedTile = null;
-        let touchStartX, touchStartY;
-
-        function touchStart(event) {
-            event.preventDefault();
-            draggedTile = event.target.cloneNode(true);
-            draggedTile.style.position = 'absolute';
-            draggedTile.style.zIndex = 1000;
-            document.body.appendChild(draggedTile);
-
-            const touch = event.touches[0];
-            touchStartX = touch.clientX - event.target.offsetLeft;
-            touchStartY = touch.clientY - event.target.offsetTop;
-
-            positionDraggedTile(touch.clientX, touch.clientY);
-        }
-
-        function touchMove(event) {
-            event.preventDefault();
-            if (draggedTile) {
-                const touch = event.touches[0];
-                positionDraggedTile(touch.clientX, touch.clientY);
-            }
-        }
-
-        function touchEnd(event) {
-            event.preventDefault();
-            if (draggedTile) {
-                const touch = event.changedTouches[0];
-                const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-
-                if (dropTarget && dropTarget.classList.contains('dent')) {
-                    const row = dropTarget.parentElement;
-                    if (parseInt(row.dataset.row) === attempts && row.classList.contains('active')) {
-                        dropTarget.innerHTML = '';
-                        dropTarget.appendChild(draggedTile.cloneNode(true));
-                        checkRowComplete(row);
-                    }
-                }
-
-                document.body.removeChild(draggedTile);
-                draggedTile = null;
-            }
-        }
-
-        function positionDraggedTile(x, y) {
-            draggedTile.style.left = (x - touchStartX) + 'px';
-            draggedTile.style.top = (y - touchStartY) + 'px';
-        }
-
-        function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.textContent);
-        }
-
-        function allowDrop(ev) {
-            ev.preventDefault();
-        }
-
-        function drop(event) {
-            event.preventDefault();
-            const data = event.dataTransfer.getData("text");
-            const dent = event.target.closest('.dent');
-            if (dent && dent.closest('.row').classList.contains('active')) {
-                placeTile(data, dent);
-            }
-        }
-
-        function checkRowComplete(row) {
-            const submitGuess = row.querySelector('.submit-guess');
-            submitGuess.style.cursor = row.querySelectorAll('.tile').length === 4 ? 'pointer' : 'not-allowed';
-            submitGuess.style.opacity = row.querySelectorAll('.tile').length === 4 ? '1' : '0.5';
-        }
-
-        function checkRow(rowIndex) {
-            console.log(`Checking row ${rowIndex}`);
-            if (!gameActive) {
-                console.log('Row check aborted: game not active');
-                return;
-            }
-
-            const row = document.querySelector(`.row[data-row="${rowIndex}"]`);
-            const tiles = row.querySelectorAll('.dent .tile');
-            console.log(`Found ${tiles.length} tiles in row ${rowIndex}`);
-
-            if (tiles.length === 4) {
-                const guess = Array.from(tiles).map(tile => parseInt(tile.textContent));
-                console.log(`Guess: ${guess.join(', ')}`);
-                const feedback = checkGuess(guess);
-                updateFeedbackDisplay(rowIndex, feedback);
-                row.classList.remove('active');
-                attempts++;
-                if (attempts < maxAttempts) {
-                    const nextRow = document.querySelector(`.row[data-row="${attempts}"]`);
-                    nextRow.classList.add('active');
-                    updateSubmitButtonState(nextRow); // This line ensures the submit button is properly initialized
-                }
-                if (feedback.black === 4) {
-                    gameActive = false;
-                    updateMessage(translations[currentLanguage].win);
-                } else if (attempts === maxAttempts) {
-                    gameActive = false;
-                    updateMessage(translations[currentLanguage].lose + secretCode.join(''));
-                } else {
-                    updateMessage(translations[currentLanguage].computerTurn);
-                }
-            } else {
-                updateMessage(translations[currentLanguage].incompleteRow);
-            }
-        }
-
-        function checkGuess(guess) {
-            console.log('checking ' + guess);
-            let black = 0;
-            let white = 0;
-            const codeCopy = [...secretCode];
-            const guessCopy = [...guess];
-
-            for (let i = 0; i < 4; i++) {
-                if (guessCopy[i] === codeCopy[i]) {
-                    black++;
-                    codeCopy[i] = guessCopy[i] = null;
-                }
-            }
-
-            for (let i = 0; i < 4; i++) {
-                if (guessCopy[i] !== null) {
-                    const index = codeCopy.indexOf(guessCopy[i]);
-                    if (index !== -1) {
-                        white++;
-                        codeCopy[index] = null;
-                    }
-                }
-            }
-            console.log('black=' + black + ' white=' + white);
-            return { black, white };
-        }
-
-        function updateFeedbackDisplay(rowIndex, feedback) {
-            console.log('Updating feedback at ' + rowIndex + ' with:' + feedback);
-            const row = document.querySelector(`.row[data-row="${rowIndex}"]`);
-            const feedbackArea = row.querySelector('.feedback-area');
-            feedbackArea.innerHTML = '';
-            const feedbackDiv = document.createElement('div');
-            feedbackDiv.className = 'feedback';
-
-            for (let i = 0; i < feedback.black; i++) {
-                const peg = document.createElement('div');
-                peg.className = 'peg black';
-                feedbackDiv.appendChild(peg);
-            }
-            for (let i = 0; i < feedback.white; i++) {
-                const peg = document.createElement('div');
-                peg.className = 'peg white';
-                feedbackDiv.appendChild(peg);
-            }
-            for (let i = 0; i < 4 - feedback.black - feedback.white; i++) {
-                const peg = document.createElement('div');
-                peg.className = 'peg';
-                feedbackDiv.appendChild(peg);
-            }
-            console.log('Now applying feedback');
-            feedbackArea.appendChild(feedbackDiv);
-        }
-
-        document.addEventListener('keydown', handleKeyPress);
-
-        function handleKeyPress(event) {
-            if (!gameActive || !selectedDent) {
-                return;
-            }
-
-            if (event.key >= '1' && event.key <= '9') {
-                placeTile(event.key);
-            } else if (event.key === 'Backspace' || event.key === 'Delete') {
-                clearTile();
-            }
-        }
-
-        function placeTile(digit, dent = null) {
-            const targetDent = dent || selectedDent;
-            if (targetDent && targetDent.closest('.row').classList.contains('active')) {
-                targetDent.innerHTML = ''; // Clear existing tile if any
-                const tile = document.createElement('div');
-                tile.className = 'tile';
-                tile.textContent = digit;
-                tile.draggable = true;
-                tile.addEventListener('dragstart', drag);
-                targetDent.appendChild(tile);
-
-                updateSubmitButtonState(targetDent.closest('.row'));
-            }
-        }
-
-        function clearTile() {
-            if (selectedDent && selectedDent.closest('.row').classList.contains('active')) {
-                selectedDent.innerHTML = '';
-                updateSubmitButtonState(selectedDent.closest('.row'));
-            }
-        }
-
-        function updateSubmitButtonState(row) {
-            const submitGuess = row.querySelector('.submit-guess');
-            const isFull = row.querySelectorAll('.dent .tile').length === 4;
-            submitGuess.style.cursor = isFull ? 'pointer' : 'not-allowed';
-            submitGuess.style.opacity = isFull ? '1' : '0.5';
-        }
-
-        function updateMessage(message) {
-            document.getElementById('message').textContent = message;
-        }
-
-        function startNewGame() {
-            const difficulty = document.getElementById('difficulty-selector').value;
-            switch (difficulty) {
-                case 'easy':
-                    maxAttempts = 12;
-                    break;
-                case 'medium':
-                    maxAttempts = 10;
-                    break;
-                case 'hard':
-                default:
-                    maxAttempts = 8;
-                    break;
-            }
-            attempts = 0;
-            generateSecretCode();
-            updateGameBoard();
-            gameActive = true;
-            updateMessage('');
-        }
-
-        function updateGameBoard() {
-            const rows = document.querySelectorAll('.row');
-            rows.forEach((row, index) => {
-                row.querySelectorAll('.dent').forEach(dent => dent.innerHTML = '');
-                row.querySelector('.feedback-area').innerHTML = '<div class="submit-guess">?</div>';
-                if (index < maxAttempts) {
-                    row.style.display = 'flex';
-                    row.classList.remove('active');
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-            const firstRow = rows[0];
-            firstRow.classList.add('active');
-            updateSubmitButtonState(firstRow);
-        }
-
-        function updateDifficultySelector() {
-            const selector = document.getElementById('difficulty-selector');
-            selector.value = maxAttempts === 12 ? 'easy' : (maxAttempts === 10 ? 'medium' : 'hard');
-        }
-
         createLanguageButtons();
-        createDigitSelector();
-        createGameBoard();
-
         const initialLanguage = detectLanguage();
         setLanguage(initialLanguage);
-
-        document.getElementById('difficulty-selector').addEventListener('change', startNewGame);
-        document.getElementById('new-game').addEventListener('click', startNewGame);
-        startNewGame();
-        updateDifficultySelector();
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -781,21 +262,23 @@
             });
         }
 
-        console.log("Release notes script finished");
-
         const releaseInfo = {
-            version: "Release: v1.0.6",
+            version: "Release: v1.1.0",
             notes: "Some improvements to come",
             features: [
                 "Multiple difficulty levels",
                 "Drag-and-drop and click placement of pegs",
                 "Multi-language support",
-                "Some ressources centralized"
+                "Use coloured tiles instead of digits",
+                "Option to limit digits from 1..6",
+                "Option to allow/disallow digit repetition",
+                "Option for unlimited guesses with 'give-up' button"
             ]
         };
     </script>
+    <script src="./game.js"></script>
     <div id="release-tag" class="release-tag">
-        Release: v1.0.6
+        Release: v1.1.0
     </div>
     <div id="release-notes" class="release-notes">
         <!-- Release notes content will be inserted here -->
