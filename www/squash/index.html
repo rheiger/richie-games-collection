@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touchicon" href="icon-192x192.png">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="./game.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sudoku">
+    <meta name="theme-color" content="#3498db">
+    <title>Squash Challenge</title>
+</head>
+
+<body>
+    <script src="../js/common.js"></script>
+    <div class="container">
+        <div id="languageSelector" class="language-selector"></div>
+        <h1 id="title" data-i18n="title">Squash Challenge</h1>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div id="score" data-i18n="score">Score: <span id="scoreValue">0</span></div>
+        <button id="startButton" data-i18n="startGame">Start Game</button>
+    </div>
+
+    <div id="release-tag" class="release-tag">
+        Release: v1.2.0
+    </div>
+
+    <div id="release-notes" class="release-notes"></div>
+
+    <script>
+        // Translations for the game
+        const translations = {
+            'en': {
+                'title': 'Squash Challenge',
+                'score': 'Score: ',
+                'startGame': 'Start Game'
+            },
+            'de': {
+                'title': 'Squash-Herausforderung',
+                'score': 'Punktzahl: ',
+                'startGame': 'Spiel starten'
+            },
+            'fr': {
+                'title': 'Défi de Squash',
+                'score': 'Score : ',
+                'startGame': 'Commencer le jeu'
+            },
+            'it': {
+                'title': 'Sfida di Squash',
+                'score': 'Punteggio: ',
+                'startGame': 'Inizia il gioco'
+            },
+            'sv': {
+                'title': 'Squash-utmaning',
+                'score': 'Poäng: ',
+                'startGame': 'Starta spelet'
+            },
+            'sk': {
+                'title': 'Squashová výzva',
+                'score': 'Skóre: ',
+                'startGame': 'Začať hru'
+            },
+            'es': {
+                'title': 'Desafío de Squash',
+                'score': 'Puntuación: ',
+                'startGame': 'Iniciar juego'
+            },
+            'pt': {
+                'title': 'Desafio de Squash',
+                'score': 'Pontuação: ',
+                'startGame': 'Iniciar jogo'
+            },
+            'no': {
+                'title': 'Squash-utfordring',
+                'score': 'Poengsum: ',
+                'startGame': 'Start spillet'
+            },
+            'fi': {
+                'title': 'Squash-haaste',
+                'score': 'Pisteet: ',
+                'startGame': 'Aloita peli'
+            },
+            'pl': {
+                'title': 'Wyzwanie Squasha',
+                'score': 'Wynik: ',
+                'startGame': 'Rozpocznij grę'
+            },
+            'cs': {
+                'title': 'Squashová výzva',
+                'score': 'Skóre: ',
+                'startGame': 'Začít hru'
+            }
+        };
+
+        createLanguageButtons();
+        const initialLanguage = detectLanguage();
+        setLanguage(initialLanguage);
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then((reg) => console.log('Service worker registered.', reg))
+                    .catch((err) => console.log('Service worker registration failed:', err));
+            });
+        }
+
+        const releaseInfo = {
+            version: "Release: v1.2.0",
+            notes: "Some improvements yet to come",
+            features: [
+                "Initial squash game",
+                "Controllable with cursor keys or better with mouse movement",
+                "Initially very boring, no speed changes or angle changes"
+            ]
+        };
+    </script>
+    <script src="./game.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+{
+    "name": "Mastermind",
+    "short_name": "Mastermind",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#ecf0f1",
+    "theme_color": "#3498db",
+    "description": "Play Mastermind with adjustable difficulty levels!",
+    "icons": [
+        {
+            "src": "icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
