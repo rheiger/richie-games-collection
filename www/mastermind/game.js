@@ -16,6 +16,12 @@ let selectedDent = null;
 let activeRowIndex = gameConfig.maxAttempts - 1;
 
 function initGame() {
+    // Check the gameMode value and update gameConfig accordingly
+    const mode = document.getElementById('gameMode').value;
+    gameConfig.useColors = mode.startsWith('color');
+    gameConfig.allowDuplicates = mode.endsWith('Repeat');
+    gameConfig.maxDigit = mode.includes('6') ? 6 : 9;
+
     secretCode = generateSecretCode();
     currentGuess = new Array(gameConfig.codeLength).fill(null);
     attempts = [];
@@ -38,7 +44,6 @@ function generateSecretCode() {
         } while (!gameConfig.allowDuplicates && code.includes(item));
         code.push(item);
     }
-    console.log('created code:'+code);
     return code;
 }
 
@@ -148,7 +153,6 @@ function renderInputSelector() {
 }
 
 function submitGuessFromFeedback(row) {
-    console.log('submitted guess for row='+row);
     if (row === gameConfig.maxAttempts - attempts.length - 1) {
         submitGuess();
     }
@@ -223,19 +227,24 @@ function addKeyboardListeners() {
     document.addEventListener('keydown', (e) => {
         if (!selectedDent) return;
         const key = e.key.toLowerCase();
-        if (gameConfig.useDigits && digits.includes(key)) {
-            placeTile(key, selectedDent.row, selectedDent.col);
-        } else if (gameConfig.useColors) {
+        if (!gameConfig.useColors) {
+            // For number mode
+            const maxDigit = gameConfig.maxDigit;
+            if (['1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(key) && parseInt(key) <= maxDigit) {
+                placeTile(key, activeRowIndex, selectedDent.col);
+            }
+        } else {
+            // For color mode (unchanged)
             const colorIndex = 'rbgywo'.indexOf(key);
             if (colorIndex !== -1) {
-                placeTile(colors[colorIndex], selectedDent.row, selectedDent.col);
+                placeTile(colors[colorIndex], activeRowIndex, selectedDent.col);
             }
         }
     });
 }
 
+
 function submitGuess() {
-    console.log('submit guess is called');
     const activeRow = document.querySelector(`.game-row[data-row="${activeRowIndex}"]`);
     const activeDents = activeRow.querySelectorAll('.dent');
     
@@ -260,7 +269,7 @@ function submitGuess() {
         }
         updateFeedbackStates();
     } else {
-        alert('Please fill all positions before submitting.');
+        alert(getMessage('fillAllPositions', currentLanguage));
     }
 }
 
@@ -293,7 +302,7 @@ function changeGameMode() {
     gameConfig.useColors = mode.startsWith('color');
     gameConfig.allowDuplicates = mode.endsWith('Repeat');
     gameConfig.maxDigit = mode.includes('6') ? 6 : 9;
-    restartGame();
+    initGame(); // This will reset the game with the new settings
 }
 
 function restartGame() {

@@ -58,23 +58,21 @@ function detectLanguage() {
     return languages[browserLang] ? browserLang : 'en';
 }
 
-// release-notes.js
+function getMessage(key, lang = 'en') {
+    return translations[lang][key] || messages['en'][key]; // Fallback to English if key or language not found
+}
 
 function toggleReleaseNotes() {
-    console.log("toggleReleaseNotes called");
     const notes = document.getElementById('release-notes');
     if (notes.style.display === 'none') {
-        console.log("Showing release notes");
         notes.style.display = 'block';
         populateReleaseNotes();
     } else {
-        console.log("Hiding release notes");
         notes.style.display = 'none';
     }
 }
 
 function populateReleaseNotes() {
-    console.log("Populating release notes");
     const notes = document.getElementById('release-notes');
     notes.innerHTML = `
         <strong>Version ${releaseInfo.version}</strong> - ${releaseInfo.notes}
@@ -85,10 +83,8 @@ function populateReleaseNotes() {
 }
 
 function initReleaseNotes() {
-    console.log("Initializing release notes");
     const releaseTag = document.getElementById('release-tag');
     if (releaseTag) {
-        console.log("Release tag found, adding event listener");
         releaseTag.addEventListener('click', toggleReleaseNotes);
         releaseTag.addEventListener('touchstart', function (event) {
             event.preventDefault();
@@ -101,11 +97,9 @@ function initReleaseNotes() {
 
 // Close release notes when clicking outside
 document.addEventListener('click', function (event) {
-    console.log("Document clicked");
     const releaseTag = document.getElementById('release-tag');
     const releaseNotes = document.getElementById('release-notes');
     if (releaseTag && releaseNotes && !releaseTag.contains(event.target) && !releaseNotes.contains(event.target)) {
-        console.log("Closing release notes");
         releaseNotes.style.display = 'none';
     }
 });

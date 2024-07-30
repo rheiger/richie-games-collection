@@ -16,28 +16,29 @@
     <meta name="theme-color" content="#3498db">
     <title>Mastermind</title>
 </head>
+
 <body>
     <script src="../js/common.js"></script>
     <div class="container">
-            <div id="languageSelector" class="language-selector"></div>
-            <h1 id="title" data-i18n="title">Mastermind</h1>
-            <div id="game-options">
-                <select id="gameMode" onchange="changeGameMode()">
-                    <option value="colorNoRepeat">Colored tiles</option>
-                    <option value="colorRepeat">Colored tiles with repetition</option>
-                    <option value="digit6NoRepeat">Digits 1-6</option>
-                    <option value="digit6Repeat">Digits 1-6 with repetition</option>
-                    <option value="digit9NoRepeat">Digits 1-9</option>
-                    <option value="digit9Repeat">Digits 1-9 with repetition</option>
-                </select>
-                <button onclick="restartGame()">Restart Game</button>
-            </div>
-            <div id="game-board"></div>
-            <div id="input-selector"></div>
-            <button onclick="submitGuess()" data-i18n="submitGuess">Submit Guess</button>
-            <button onclick="giveUp()" data-i18n="giveUp">I Give Up</button>
-    
-            <div id="message" data-i18n="message"></div>
+        <div id="languageSelector" class="language-selector"></div>
+        <h1 id="title" data-i18n="title">Mastermind</h1>
+        <div id="game-options">
+            <select id="gameMode" onchange="changeGameMode()">
+                <option value="colorNoRepeat" data-i18n="coloredTiles">Colored tiles</option>
+                <option value="colorRepeat" data-i18n="coloredTilesRepeat">Colored tiles with repetition</option>
+                <option value="digit6NoRepeat" data-i18n="digits16">Digits 1-6</option>
+                <option value="digit6Repeat" data-i18n="digits16Repeat">Digits 1-6 with repetition</option>
+                <option value="digit9NoRepeat" data-i18n="digits19">Digits 1-9</option>
+                <option value="digit9Repeat" data-i18n="digits19Repeat">Digits 1-9 with repetition</option>
+            </select>
+            <button onclick="restartGame()" data-i18n="restartGame">Restart Game</button>
+        </div>
+        <div id="game-board"></div>
+        <div id="input-selector"></div>
+        <button onclick="submitGuess()" data-i18n="submitGuess">Submit Guess</button>
+        <button onclick="giveUp()" data-i18n="giveUp">I Give Up</button>
+
+        <div id="message" data-i18n="message"></div>
     </div>
 
     <script>
@@ -57,7 +58,15 @@
                 allowDuplicates: 'Allow Duplicates',
                 unlimitedGuesses: 'Unlimited Guesses',
                 submitGuess: 'Submit Guess',
-                giveUp: 'I Give Up'
+                giveUp: 'I Give Up',
+                coloredTiles: 'Colored tiles',
+                coloredTilesRepeat: 'Colored tiles with repetition',
+                digits16: 'Digits 1-6',
+                digits16Repeat: 'Digits 1-6 with repetition',
+                digits19: 'Digits 1-9',
+                digits19Repeat: 'Digits 1-9 with repetition',
+                restartGame: 'Restart Game',
+                fillAllPositions: 'Please fill all positions before submitting.',
             },
             'de': {
                 title: 'Mastermind',
@@ -74,7 +83,15 @@
                 allowDuplicates: 'Duplikate erlauben',
                 unlimitedGuesses: 'Unbegrenzte Versuche',
                 submitGuess: 'Tipp abgeben',
-                giveUp: 'Ich gebe auf'
+                giveUp: 'Ich gebe auf',
+                coloredTiles: 'Farbige Kacheln',
+                coloredTilesRepeat: 'Farbige Kacheln mit Wiederholung',
+                digits16: 'Ziffern 1-6',
+                digits16Repeat: 'Ziffern 1-6 mit Wiederholung',
+                digits19: 'Ziffern 1-9',
+                digits19Repeat: 'Ziffern 1-9 mit Wiederholung',
+                restartGame: 'Spiel neu starten',
+                fillAllPositions: 'Bitte füllen Sie alle Positionen aus, bevor Sie absenden.',
             },
             'fr': {
                 title: 'Mastermind',
@@ -91,7 +108,15 @@
                 allowDuplicates: 'Autoriser les doublons',
                 unlimitedGuesses: 'Essais illimités',
                 submitGuess: 'Soumettre',
-                giveUp: 'J\'abandonne'
+                giveUp: 'J\'abandonne',
+                coloredTiles: 'Tuiles colorées',
+                coloredTilesRepeat: 'Tuiles colorées avec répétition',
+                digits16: 'Chiffres 1-6',
+                digits16Repeat: 'Chiffres 1-6 avec répétition',
+                digits19: 'Chiffres 1-9',
+                digits19Repeat: 'Chiffres 1-9 avec répétition',
+                restartGame: 'Redémarrer la partie',
+                fillAllPositions: 'Veuillez remplir toutes les positions avant de soumettre.',
             },
             'it': {
                 title: 'Mastermind',
@@ -108,7 +133,15 @@
                 allowDuplicates: 'Consenti duplicati',
                 unlimitedGuesses: 'Tentativi illimitati',
                 submitGuess: 'Invia tentativo',
-                giveUp: 'Mi arrendo'
+                giveUp: 'Mi arrendo',
+                coloredTiles: 'Tessere colorate',
+                coloredTilesRepeat: 'Tessere colorate con ripetizione',
+                digits16: 'Cifre 1-6',
+                digits16Repeat: 'Cifre 1-6 con ripetizione',
+                digits19: 'Cifre 1-9',
+                digits19Repeat: 'Cifre 1-9 con ripetizione',
+                restartGame: 'Riavvia partita',
+                fillAllPositions: 'Per favore, compila tutte le posizioni prima di inviare.',
             },
             'sv': {
                 title: 'Mastermind',
@@ -125,7 +158,15 @@
                 allowDuplicates: 'Tillåt dubletter',
                 unlimitedGuesses: 'Obegränsade gissningar',
                 submitGuess: 'Skicka gissning',
-                giveUp: 'Jag ger upp'
+                giveUp: 'Jag ger upp',
+                coloredTiles: 'Färgade brickor',
+                coloredTilesRepeat: 'Färgade brickor med upprepning',
+                digits16: 'Siffror 1-6',
+                digits16Repeat: 'Siffror 1-6 med upprepning',
+                digits19: 'Siffror 1-9',
+                digits19Repeat: 'Siffror 1-9 med upprepning',
+                fillAllPositions: 'Vänligen fyll i alla positioner innan du skickar in.',
+                restartGame: 'Starta om spelet'
             },
             'sk': {
                 title: 'Mastermind',
@@ -142,7 +183,15 @@
                 allowDuplicates: 'Povoliť duplikáty',
                 unlimitedGuesses: 'Neobmedzené pokusy',
                 submitGuess: 'Odoslať tip',
-                giveUp: 'Vzdávam sa'
+                giveUp: 'Vzdávam sa',
+                coloredTiles: 'Farebné dlaždice',
+                coloredTilesRepeat: 'Farebné dlaždice s opakovaním',
+                digits16: 'Číslice 1-6',
+                digits16Repeat: 'Číslice 1-6 s opakovaním',
+                digits19: 'Číslice 1-9',
+                digits19Repeat: 'Číslice 1-9 s opakovaním',
+                fillAllPositions: 'Prosím vyplňte všetky pozície pred odoslaním.',
+                restartGame: 'Reštartovať hru'
             },
             'es': {
                 title: 'Mastermind',
@@ -159,7 +208,15 @@
                 allowDuplicates: 'Permitir duplicados',
                 unlimitedGuesses: 'Intentos ilimitados',
                 submitGuess: 'Enviar intento',
-                giveUp: 'Me rindo'
+                giveUp: 'Me rindo',
+                coloredTiles: 'Fichas de colores',
+                coloredTilesRepeat: 'Fichas de colores con repetición',
+                digits16: 'Dígitos 1-6',
+                digits16Repeat: 'Dígitos 1-6 con repetición',
+                digits19: 'Dígitos 1-9',
+                digits19Repeat: 'Dígitos 1-9 con repetición',
+                fillAllPositions: 'Por favor, complete todas las posiciones antes de enviar.',
+                restartGame: 'Reiniciar juego'
             },
             'pt': {
                 title: 'Mastermind',
@@ -176,7 +233,15 @@
                 allowDuplicates: 'Permitir duplicatas',
                 unlimitedGuesses: 'Tentativas ilimitadas',
                 submitGuess: 'Enviar palpite',
-                giveUp: 'Desisto'
+                giveUp: 'Desisto',
+                coloredTiles: 'Peças coloridas',
+                coloredTilesRepeat: 'Peças coloridas com repetição',
+                digits16: 'Dígitos 1-6',
+                digits16Repeat: 'Dígitos 1-6 com repetição',
+                digits19: 'Dígitos 1-9',
+                digits19Repeat: 'Dígitos 1-9 com repetição',
+                fillAllPositions: 'Por favor, preencha todas as posições antes de submeter.',
+                restartGame: 'Reiniciar jogo'
             },
             'no': {
                 title: 'Mastermind',
@@ -193,7 +258,15 @@
                 allowDuplicates: 'Tillat duplikater',
                 unlimitedGuesses: 'Ubegrensede gjetninger',
                 submitGuess: 'Send gjetning',
-                giveUp: 'Jeg gir opp'
+                giveUp: 'Jeg gir opp',
+                coloredTiles: 'Fargede brikker',
+                coloredTilesRepeat: 'Fargede brikker med gjentakelse',
+                digits16: 'Tall 1-6',
+                digits16Repeat: 'Tall 1-6 med gjentakelse',
+                digits19: 'Tall 1-9',
+                digits19Repeat: 'Tall 1-9 med gjentakelse',
+                fillAllPositions: 'Vennligst fyll ut alle posisjoner før du sender inn.',
+                restartGame: 'Start spillet på nytt'
             },
             'fi': {
                 title: 'Mastermind',
@@ -210,7 +283,15 @@
                 allowDuplicates: 'Salli kopiot',
                 unlimitedGuesses: 'Rajattomat arvaukset',
                 submitGuess: 'Lähetä arvaus',
-                giveUp: 'Luovutan'
+                giveUp: 'Luovutan',
+                coloredTiles: 'Värilliset laatat',
+                coloredTilesRepeat: 'Värilliset laatat toistolla',
+                digits16: 'Numerot 1-6',
+                digits16Repeat: 'Numerot 1-6 toistolla',
+                digits19: 'Numerot 1-9',
+                digits19Repeat: 'Numerot 1-9 toistolla',
+                fillAllPositions: 'Täytä kaikki kentät ennen lähettämistä.',
+                restartGame: 'Aloita peli uudelleen'
             },
             'pl': {
                 title: 'Mastermind',
@@ -227,7 +308,15 @@
                 allowDuplicates: 'Zezwól na duplikaty',
                 unlimitedGuesses: 'Nieograniczone próby',
                 submitGuess: 'Wyślij próbę',
-                giveUp: 'Poddaję się'
+                giveUp: 'Poddaję się',
+                coloredTiles: 'Kolorowe pola',
+                coloredTilesRepeat: 'Kolorowe pola z powtórzeniami',
+                digits16: 'Cyfry 1-6',
+                digits16Repeat: 'Cyfry 1-6 z powtórzeniami',
+                digits19: 'Cyfry 1-9',
+                digits19Repeat: 'Cyfry 1-9 z powtórzeniami',
+                fillAllPositions: 'Proszę wypełnić wszystkie pola przed wysłaniem.',
+                restartGame: 'Rozpocznij grę od nowa'
             },
             'cs': {
                 title: 'Mastermind',
@@ -244,7 +333,15 @@
                 allowDuplicates: 'Povolit duplicity',
                 unlimitedGuesses: 'Neomezené pokusy',
                 submitGuess: 'Odeslat tip',
-                giveUp: 'Vzdávám to'
+                giveUp: 'Vzdávám to',
+                coloredTiles: 'Barevné dílky',
+                coloredTilesRepeat: 'Barevné dílky s opakováním',
+                digits16: 'Číslice 1-6',
+                digits16Repeat: 'Číslice 1-6 s opakováním',
+                digits19: 'Číslice 1-9',
+                digits19Repeat: 'Číslice 1-9 s opakováním',
+                fillAllPositions: 'Vyplňte všechny pozice před odesláním.',
+                restartGame: 'Restartovat hru'
             }
         };
 
@@ -261,22 +358,22 @@
         }
 
         const releaseInfo = {
-            version: "Release: v1.1.1",
+            version: "Release: v1.1.2",
             notes: "Some improvements to come",
             features: [
-                "Multiple difficulty levels",
+                "Allow up to fixed 12 guesses",
                 "Drag-and-drop and click placement of pegs",
                 "Multi-language support",
                 "Use coloured tiles instead of digits",
-                "Option to limit digits from 1..6",
+                "Option to limit digits from 1..6 or 1..9",
                 "Option to allow/disallow digit repetition",
-                "Option for unlimited guesses with 'give-up' button"
+                "Implemented 'give-up' button"
             ]
         };
     </script>
     <script src="./game.js"></script>
     <div id="release-tag" class="release-tag">
-        Release: v1.1.1
+        Release: v1.1.2
     </div>
     <div id="release-notes" class="release-notes">
         <!-- Release notes content will be inserted here -->
