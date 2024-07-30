@@ -1,6 +1,8 @@
 #gameCanvas {
     border: 2px solid var(--primary-color);
     background-color: #fff;
+    max-width: 100%;
+    height: auto;
     margin-top: 20px;
 }
 
@@ -23,4 +25,24 @@
 #score {
     font-size: 24px;
     margin-top: 20px;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+
+    #gameCanvas {
+        width: 100%;
+        height: auto;
+    }
+
+    #startButton {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+
+    #score {
+        font-size: 20px;
+    }
 }
