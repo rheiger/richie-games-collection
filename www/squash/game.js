@@ -14,9 +14,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let dy = -3;
     let score = 0;
     let gameRunning = false;
+    let gameOver = false;
     let spin = 0;
     let maxSpeed = 8;
     let speedIncreaseFactor = 1.0005;
+    let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    let usingDeviceOrientation = false;
 
     function drawBall() {
         ctx.beginPath();
@@ -40,7 +43,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
         ctx.fillStyle = "black";
         ctx.font = "16px Arial";
-        ctx.fillText(`Score: ${score}`, canvas.width - 80, 20);
+        const scoreText = `${getMessage('score', currentLanguage)}${score}`;
+        ctx.fillText(scoreText, canvas.width - ctx.measureText(scoreText).width - 10, 20);
+    }
+
+    function centerText(ctx, text, y) {
+        const measurement = ctx.measureText(text);
+        const x = (canvas.width - measurement.width) / 2;
+        ctx.fillText(text, x, y);
     }
 
     function draw() {
@@ -71,9 +81,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     score++;
                     spin = 0;
                 } else {
-                    gameRunning = false;
-                    if (startButton) startButton.style.display = 'inline-block';
-                    return;
+                    endGame();
                 }
             }
 
@@ -82,18 +90,34 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
             if (spin > 0) spin = Math.max(0, spin - 0.1);
             if (spin < 0) spin = Math.min(0, spin + 0.1);
+        } else if (gameOver) {
+            ctx.fillStyle = "red";
+            ctx.font = "30px Arial";
+            centerText(ctx, getMessage('gameOver', currentLanguage), canvas.height / 2);
+            ctx.font = "20px Arial";
+            centerText(ctx, `${getMessage('finalScore', currentLanguage)}${score}`, canvas.height / 2 + 40);
         } else {
-            // Display "Click Start to Begin" message
             ctx.fillStyle = "black";
             ctx.font = "20px Arial";
-            ctx.fillText("Click Start to Begin", canvas.width / 2 - 80, canvas.height / 2);
+            centerText(ctx, getMessage('clickToBegin', currentLanguage), canvas.height / 2);
+            if (isMobile) {
+                ctx.font = "16px Arial";
+                centerText(ctx, getMessage('mobileInstructions', currentLanguage), canvas.height / 2 + 30);
+            }
         }
 
         requestAnimationFrame(draw);
     }
 
+    function endGame() {
+        // console.log("Game Over");
+        gameRunning = false;
+        gameOver = true;
+        if (startButton) startButton.style.display = 'inline-block';
+    }
+
     function keyDownHandler(e) {
-        if (!gameRunning) return; // Ignore key presses if game hasn't started
+        if (!gameRunning) return;
         if (e.key === "Right" || e.key === "ArrowRight") {
             paddleX = Math.min(paddleX + 7, canvas.width - paddleWidth);
             spin = 1;
@@ -104,7 +128,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function keyUpHandler(e) {
-        if (!gameRunning) return; // Ignore key releases if game hasn't started
+        if (!gameRunning) return;
         if ((e.key === "Right" || e.key === "ArrowRight") && spin > 0) {
             spin = 0;
         } else if ((e.key === "Left" || e.key === "ArrowLeft") && spin < 0) {
@@ -113,8 +137,19 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function mouseMoveHandler(e) {
-        if (!gameRunning) return; // Ignore mouse movement if game hasn't started
+        if (!gameRunning) return;
         const relativeX = e.clientX - canvas.offsetLeft;
+        movePaddle(relativeX);
+    }
+
+    function touchMoveHandler(e) {
+        if (!gameRunning) return;
+        e.preventDefault();
+        const relativeX = e.touches[0].clientX - canvas.offsetLeft;
+        movePaddle(relativeX);
+    }
+
+    function movePaddle(relativeX) {
         if (relativeX > 0 && relativeX < canvas.width) {
             let newPaddleX = relativeX - paddleWidth / 2;
             spin = (newPaddleX - paddleX) / 5;
@@ -122,27 +157,76 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
+    function handleOrientation(event) {
+        if (!gameRunning || !usingDeviceOrientation) return;
+        const gamma = event.gamma; // Left-right tilt in degree, range: -90 to 90
+        const maxTilt = 45; // Maximum tilt angle we'll use
+        const tiltPercentage = (gamma + maxTilt) / (maxTilt * 2); // Convert to 0-1 range
+        paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, tiltPercentage * canvas.width));
+    }
+
     function startGame() {
-        if (!gameRunning) {
-            gameRunning = true;
-            score = 0;
-            x = canvas.width / 2;
-            y = canvas.height - 30;
-            dx = 3;
-            dy = -3;
-            paddleX = (canvas.width - paddleWidth) / 2;
-            spin = 0;
-            if (startButton) startButton.style.display = 'none';
+        // console.log("Starting game");
+        gameRunning = true;
+        gameOver = false;
+        score = 0;
+        x = canvas.width / 2;
+        y = canvas.height - 30;
+        dx = 3;
+        dy = -3;
+        paddleX = (canvas.width - paddleWidth) / 2;
+        spin = 0;
+        if (startButton) {
+            startButton.style.display = 'none';
+            startButton.textContent = getMessage('startGame');
+        } 
+        
+        if (isMobile && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        usingDeviceOrientation = true;
+                        window.addEventListener('deviceorientation', handleOrientation);
+                    }
+                })
+                .catch(console.error);
         }
+        // console.log("Game started, gameRunning:", gameRunning, "gameOver:", gameOver);
     }
 
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
     document.addEventListener("mousemove", mouseMoveHandler, false);
-    if (startButton) startButton.addEventListener("click", startGame);
+    document.addEventListener("touchmove", touchMoveHandler, false);
+    if (startButton) {
+        startButton.addEventListener("click", startGame);
+    } else {
+        console.error("Start button not found");
+    }
 
-    // Start the draw loop immediately, but don't move anything until game starts
+    // Prevent scrolling when touching the canvas
+    document.body.addEventListener("touchstart", function (e) {
+        if (e.target == canvas) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    document.body.addEventListener("touchend", function (e) {
+        if (e.target == canvas) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    document.body.addEventListener("touchmove", function (e) {
+        if (e.target == canvas) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    if (startButton) {
+        startButton.textContent = getMessage('startGame');
+    }
+    document.getElementById('title').textContent = getMessage('title');
+
     draw();
 
-    console.log("Script loaded and initialized");
+    // console.log("Script loaded and initialized");
 });
