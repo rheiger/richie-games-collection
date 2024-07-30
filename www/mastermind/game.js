@@ -1,50 +1,35 @@
 const gameConfig = {
     useColors: true,
-    useDigits: false,
-    allowDuplicates: true,
-    maxAttempts: 10,
-    codeLength: 4
+    allowDuplicates: false,
+    codeLength: 4,
+    maxAttempts: 12
 };
 
 const colors = ['red', 'blue', 'green', 'yellow', 'white', 'black'];
-const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const digits6 = ['1', '2', '3', '4', '5', '6'];
+const digits9 = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 let secretCode = [];
 let currentGuess = [];
 let attempts = [];
 let selectedDent = null;
+let activeRowIndex = gameConfig.maxAttempts - 1;
 
 function initGame() {
     secretCode = generateSecretCode();
     currentGuess = new Array(gameConfig.codeLength).fill(null);
     attempts = [];
     selectedDent = null;
+    activeRowIndex = 0; // Start from the top row
     renderGameBoard();
-    renderInputSelector(); // Add this line
+    renderInputSelector();
     addKeyboardListeners();
-}
-
-function renderInputSelector() {
-    const inputSelector = document.getElementById('input-selector');
-    inputSelector.innerHTML = '';
-    const items = gameConfig.useColors ? colors : digits;
-    items.forEach(item => {
-        const button = document.createElement('button');
-        button.className = 'input-tile';
-        button.draggable = true;
-        if (gameConfig.useColors) {
-            button.style.backgroundColor = item;
-        } else {
-            button.textContent = item;
-        }
-        button.addEventListener('click', () => handleTileClick(item));
-        button.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', item));
-        inputSelector.appendChild(button);
-    });
+    setActiveRow(activeRowIndex);
+    updateFeedbackStates();
 }
 
 function generateSecretCode() {
-    const codeSet = gameConfig.useColors ? colors : digits;
+    const codeSet = getCodeSet();
     const code = [];
     for (let i = 0; i < gameConfig.codeLength; i++) {
         let item;
@@ -53,7 +38,13 @@ function generateSecretCode() {
         } while (!gameConfig.allowDuplicates && code.includes(item));
         code.push(item);
     }
+    console.log('created code:'+code);
     return code;
+}
+
+function getCodeSet() {
+    if (gameConfig.useColors) return colors;
+    return gameConfig.maxDigit === 6 ? digits6 : digits9;
 }
 
 function renderGameBoard() {
@@ -75,36 +66,85 @@ function renderGameBoard() {
         const feedback = document.createElement('div');
         feedback.className = 'feedback';
         feedback.textContent = '?';
+        feedback.dataset.row = i;
         row.appendChild(feedback);
         gameBoard.appendChild(row);
+    }
+    addFeedbackClickListeners();
+    updateFeedbackStates();
+}
+
+function addFeedbackClickListeners() {
+    const feedbackElements = document.querySelectorAll('.feedback');
+    feedbackElements.forEach(feedback => {
+        feedback.addEventListener('click', (e) => {
+            const clickedRow = parseInt(e.target.dataset.row);
+            if (clickedRow === activeRowIndex) {
+                submitGuess();
+            }
+        });
+    });
+}
+
+function submitGuessFromFeedback(row) {
+    if (row === activeRowIndex) {
+        submitGuess();
     }
 }
 
-function renderGameBoard() {
-    const gameBoard = document.getElementById('game-board');
-    gameBoard.innerHTML = '';
-    for (let i = 0; i < gameConfig.maxAttempts; i++) {
-        const row = document.createElement('div');
-        row.className = 'game-row';
-        if (i === gameConfig.maxAttempts - 1) {
-            row.classList.add('active-row');
+function updateFeedbackStates() {
+    const rows = document.querySelectorAll('.game-row');
+    rows.forEach((row, index) => {
+        const feedback = row.querySelector('.feedback');
+        const dents = row.querySelectorAll('.dent');
+        const isRowFilled = Array.from(dents).every(dent => dent.style.backgroundColor !== '' || dent.textContent !== '');
+        
+        if (index < activeRowIndex) {
+            // Validated rows
+            // Don't clear the content, as it should contain the validation pegs
+            feedback.classList.remove('clickable', 'incomplete');
+        } else if (index === activeRowIndex) {
+            // Current active row
+            if (!feedback.querySelector('.peg-container')) {
+                // Only set to '?' if there are no validation pegs
+                feedback.textContent = '?';
+            }
+            feedback.classList.add('clickable');
+            feedback.classList.toggle('incomplete', !isRowFilled);
+        } else {
+            // Future rows
+            feedback.textContent = '?';
+            feedback.classList.remove('clickable');
+            feedback.classList.add('incomplete');
         }
-        row.dataset.row = i;
-        for (let j = 0; j < gameConfig.codeLength; j++) {
-            const dent = document.createElement('div');
-            dent.className = 'peg dent';
-            dent.dataset.col = j;
-            dent.addEventListener('click', () => selectDent(i, j));
-            dent.addEventListener('dragover', (e) => e.preventDefault());
-            dent.addEventListener('drop', (e) => handleDrop(e, i, j));
-            row.appendChild(dent);
+    });
+}
+
+function setActiveRow(rowIndex) {
+    activeRowIndex = rowIndex;
+    document.querySelectorAll('.game-row').forEach((row, index) => {
+        row.classList.toggle('active-row', index === activeRowIndex);
+    });
+    updateFeedbackStates();
+}
+
+function renderInputSelector() {
+    const inputSelector = document.getElementById('input-selector');
+    inputSelector.innerHTML = '';
+    const items = getCodeSet();
+    items.forEach(item => {
+        const button = document.createElement('button');
+        button.className = 'input-tile';
+        button.draggable = true;
+        if (gameConfig.useColors) {
+            button.style.backgroundColor = item;
+        } else {
+            button.textContent = item;
         }
-        const feedback = document.createElement('div');
-        feedback.className = 'feedback';
-        feedback.addEventListener('click', () => submitGuessFromFeedback(i));
-        row.appendChild(feedback);
-        gameBoard.appendChild(row);
-    }
+        button.addEventListener('click', () => handleTileClick(item));
+        button.addEventListener('dragstart', (e) => e.dataTransfer.setData('text/plain', item));
+        inputSelector.appendChild(button);
+    });
 }
 
 function submitGuessFromFeedback(row) {
@@ -114,35 +154,8 @@ function submitGuessFromFeedback(row) {
     }
 }
 
-function updateFeedback(feedback, rowIndex) {
-    const feedbackElement = document.querySelectorAll('.game-row')[rowIndex].querySelector('.feedback');
-    feedbackElement.innerHTML = '';
-    feedbackElement.className = 'feedback feedback-pegs';
-
-    // Create a container for the pegs
-    const pegContainer = document.createElement('div');
-    pegContainer.className = 'peg-container';
-
-    // Add black pegs for correct guesses
-    for (let i = 0; i < feedback.correct; i++) {
-        const peg = document.createElement('div');
-        peg.className = 'feedback-peg black-peg';
-        pegContainer.appendChild(peg);
-    }
-
-    // Add white pegs for misplaced guesses
-    for (let i = 0; i < feedback.misplaced; i++) {
-        const peg = document.createElement('div');
-        peg.className = 'feedback-peg white-peg';
-        pegContainer.appendChild(peg);
-    }
-
-    // Append the peg container to the feedback element
-    feedbackElement.appendChild(pegContainer);
-}
-
 function selectDent(row, col) {
-    if (row !== gameConfig.maxAttempts - attempts.length - 1) return;
+    if (row !== activeRowIndex) return;
     const dents = document.querySelectorAll('.dent');
     dents.forEach(dent => dent.classList.remove('selected'));
     const selectedDentElement = document.querySelector(`.game-row[data-row="${row}"] .dent[data-col="${col}"]`);
@@ -152,7 +165,7 @@ function selectDent(row, col) {
 
 function handleDrop(e, row, col) {
     e.preventDefault();
-    if (row !== gameConfig.maxAttempts - attempts.length - 1) return;
+    if (row !== activeRowIndex) return;
     const item = e.dataTransfer.getData('text');
     placeTile(item, row, col);
 }
@@ -164,11 +177,20 @@ function handleTileClick(item) {
 }
 
 function placeTile(item, row, col) {
-    if (row !== gameConfig.maxAttempts - attempts.length - 1) return;
+    if (row !== activeRowIndex) return;
+    const activeRow = document.querySelector(`.game-row[data-row="${activeRowIndex}"]`);
+    const dent = activeRow.querySelector(`.dent[data-col="${col}"]`);
+    if (gameConfig.useColors) {
+        dent.style.backgroundColor = item;
+        dent.textContent = '';
+    } else {
+        dent.textContent = item;
+        dent.style.backgroundColor = '';
+    }
     currentGuess[col] = item;
-    updateActiveRow();
     selectedDent = null;
-    document.querySelectorAll('.dent').forEach(dent => dent.classList.remove('selected'));
+    document.querySelectorAll('.dent').forEach(d => d.classList.remove('selected'));
+    updateFeedbackStates();
 }
 
 function addToGuess(item) {
@@ -179,14 +201,16 @@ function addToGuess(item) {
 }
 
 function updateActiveRow() {
-    const activeRow = document.querySelectorAll('.game-row')[gameConfig.maxAttempts - attempts.length - 1];
+    const activeRow = document.querySelector(`.game-row[data-row="${activeRowIndex}"]`);
     const dents = activeRow.querySelectorAll('.dent');
     currentGuess.forEach((item, index) => {
         if (item) {
             if (gameConfig.useColors) {
                 dents[index].style.backgroundColor = item;
+                dents[index].textContent = '';
             } else {
                 dents[index].textContent = item;
+                dents[index].style.backgroundColor = '';
             }
         } else {
             dents[index].style.backgroundColor = '';
@@ -211,17 +235,14 @@ function addKeyboardListeners() {
 }
 
 function submitGuess() {
-    console.log('submitGuess called');
-    const activeRowIndex = gameConfig.maxAttempts - attempts.length - 1;
-    const activeRow = document.querySelectorAll('.game-row')[activeRowIndex];
+    console.log('submit guess is called');
+    const activeRow = document.querySelector(`.game-row[data-row="${activeRowIndex}"]`);
     const activeDents = activeRow.querySelectorAll('.dent');
     
-    // Check if all dents in the active row are filled
     const isRowComplete = Array.from(activeDents).every(dent => 
         dent.style.backgroundColor !== '' || dent.textContent !== '');
 
     if (isRowComplete) {
-        // Collect the guess from the active row
         currentGuess = Array.from(activeDents).map(dent => 
             gameConfig.useColors ? dent.style.backgroundColor : dent.textContent);
 
@@ -234,19 +255,57 @@ function submitGuess() {
         } else if (attempts.length >= gameConfig.maxAttempts) {
             endGame(false);
         } else {
-            // Prepare for the next guess
             currentGuess = new Array(gameConfig.codeLength).fill(null);
-            // Move the 'active-row' class to the new active row
-            activeRow.classList.remove('active-row');
-            const nextActiveRow = document.querySelectorAll('.game-row')[activeRowIndex - 1];
-            if (nextActiveRow) {
-                nextActiveRow.classList.add('active-row');
-            }
+            setActiveRow(activeRowIndex + 1); // Move to the next row down
         }
+        updateFeedbackStates();
     } else {
-        console.log('Current row is not completely filled');
-        // Optionally, display a message to the user
+        alert('Please fill all positions before submitting.');
     }
+}
+
+function updateFeedback(feedback, rowIndex) {
+    const feedbackElement = document.querySelector(`.game-row[data-row="${rowIndex}"]`).querySelector('.feedback');
+    feedbackElement.innerHTML = '';
+    feedbackElement.className = 'feedback feedback-pegs';
+
+    const pegContainer = document.createElement('div');
+    pegContainer.className = 'peg-container';
+
+    for (let i = 0; i < feedback.correct; i++) {
+        const peg = document.createElement('div');
+        peg.className = 'feedback-peg black-peg';
+        pegContainer.appendChild(peg);
+    }
+
+    for (let i = 0; i < feedback.misplaced; i++) {
+        const peg = document.createElement('div');
+        peg.className = 'feedback-peg white-peg';
+        pegContainer.appendChild(peg);
+    }
+
+    feedbackElement.appendChild(pegContainer);
+    updateFeedbackStates(); // Call this to ensure proper styling
+}
+
+function changeGameMode() {
+    const mode = document.getElementById('gameMode').value;
+    gameConfig.useColors = mode.startsWith('color');
+    gameConfig.allowDuplicates = mode.endsWith('Repeat');
+    gameConfig.maxDigit = mode.includes('6') ? 6 : 9;
+    restartGame();
+}
+
+function restartGame() {
+    initGame();
+    document.getElementById('message').textContent = '';
+    document.querySelectorAll('.game-row').forEach(row => {
+        row.querySelectorAll('.dent').forEach(dent => {
+            dent.style.backgroundColor = '';
+            dent.textContent = '';
+        });
+        row.querySelector('.feedback').innerHTML = '';
+    });
 }
 
 function calculateFeedback() {
@@ -282,38 +341,11 @@ function endGame(isWin) {
     } else {
         message.textContent = `Game over. The secret code was: ${secretCode.join(', ')}`;
     }
-    // Disable inputs or show a new game button
+    document.querySelectorAll('.dent').forEach(dent => dent.style.pointerEvents = 'none');
 }
 
 function giveUp() {
     endGame(false);
-}
-
-function toggleGameMode(mode) {
-    gameConfig[mode] = !gameConfig[mode];
-    if (mode === 'useColors' || mode === 'useDigits') {
-        gameConfig.useColors = mode === 'useColors';
-        gameConfig.useDigits = !gameConfig.useColors;
-    }
-    initGame();
-}
-
-function setDifficulty(level) {
-    switch (level) {
-        case 'easy':
-            gameConfig.maxAttempts = 12;
-            break;
-        case 'medium':
-            gameConfig.maxAttempts = 10;
-            break;
-        case 'hard':
-            gameConfig.maxAttempts = 8;
-            break;
-        case 'unlimited':
-            gameConfig.maxAttempts = Infinity;
-            break;
-    }
-    initGame();
 }
 
 // Initialize the game when the script loads

@@ -22,18 +22,16 @@
             <div id="languageSelector" class="language-selector"></div>
             <h1 id="title" data-i18n="title">Mastermind</h1>
             <div id="game-options">
-                <button onclick="toggleGameMode('useColors')" data-i18n="useColors">Use Colors</button>
-                <button onclick="toggleGameMode('useDigits')" data-i18n="useDigits">Use Digits</button>
-                <button onclick="toggleGameMode('allowDuplicates')" data-i18n="allowDuplicates">Allow Duplicates</button>
+                <select id="gameMode" onchange="changeGameMode()">
+                    <option value="colorNoRepeat">Colored tiles</option>
+                    <option value="colorRepeat">Colored tiles with repetition</option>
+                    <option value="digit6NoRepeat">Digits 1-6</option>
+                    <option value="digit6Repeat">Digits 1-6 with repetition</option>
+                    <option value="digit9NoRepeat">Digits 1-9</option>
+                    <option value="digit9Repeat">Digits 1-9 with repetition</option>
+                </select>
+                <button onclick="restartGame()">Restart Game</button>
             </div>
-    
-            <div id="difficulty-selector">
-                <button onclick="initGame('easy')" data-i18n="easy">Easy (12 attempts)</button>
-                <button onclick="initGame('medium')" data-i18n="medium">Medium (10 attempts)</button>
-                <button onclick="initGame('hard')" data-i18n="hard">Hard (8 attempts)</button>
-                <button onclick="toggleGameMode('unlimitedGuesses')" data-i18n="unlimitedGuesses">Unlimited Guesses</button>
-            </div>
-    
             <div id="game-board"></div>
             <div id="input-selector"></div>
             <button onclick="submitGuess()" data-i18n="submitGuess">Submit Guess</button>
@@ -263,7 +261,7 @@
         }
 
         const releaseInfo = {
-            version: "Release: v1.1.0",
+            version: "Release: v1.1.1",
             notes: "Some improvements to come",
             features: [
                 "Multiple difficulty levels",
@@ -278,7 +276,7 @@
     </script>
     <script src="./game.js"></script>
     <div id="release-tag" class="release-tag">
-        Release: v1.1.0
+        Release: v1.1.1
     </div>
     <div id="release-notes" class="release-notes">
         <!-- Release notes content will be inserted here -->
