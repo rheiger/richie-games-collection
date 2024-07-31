@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let y = canvas.height - 30;
     let dx = 2;
     let dy = -2;
+    let initialSpeed = 2;
+    let maxSpeed = 8;
+    let speedIncreaseFactor = 1.0005;
 
     // Paddle properties
     let paddleHeight = 10;
@@ -144,7 +147,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 dy = -dy;
             } else if (y + dy > canvas.height - ballRadius) {
                 if (x > paddleX && x < paddleX + paddleWidth) {
-                    dy = -dy;
+                    // Calculate where the ball hit the paddle
+                    let hitPos = (x - paddleX) / paddleWidth;
+                    
+                    // Adjust the angle based on where the ball hit the paddle
+                    dx = 8 * (hitPos - 0.5);
+                    dy = -Math.abs(dy); // Ensure the ball always bounces up
+                    
+                    // Increase speed
+                    let speed = Math.sqrt(dx*dx + dy*dy);
+                    dx *= speedIncreaseFactor;
+                    dy *= speedIncreaseFactor;
+                    
+                    // Cap the speed
+                    if (speed > maxSpeed) {
+                        dx *= maxSpeed / speed;
+                        dy *= maxSpeed / speed;
+                    }
                 } else {
                     lives--;
                     if (!lives) {
@@ -153,8 +172,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     } else {
                         x = canvas.width / 2;
                         y = canvas.height - 30;
-                        dx = 2;
-                        dy = -2;
+                        dx = initialSpeed;
+                        dy = -initialSpeed;
                         paddleX = (canvas.width - paddleWidth) / 2;
                     }
                 }
@@ -219,8 +238,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         lives = 3;
         x = canvas.width / 2;
         y = canvas.height - 30;
-        dx = 2;
-        dy = -2;
+        dx = initialSpeed;
+        dy = -initialSpeed;
         paddleX = (canvas.width - paddleWidth) / 2;
         
         createBricks();
