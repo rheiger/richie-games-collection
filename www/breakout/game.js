@@ -41,6 +41,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let lives = 3;
     let gameRunning = false;
     let gameOver = false;
+    let gamePaused = false;
+    let gameWon = false;
+
+    // Brick colors and values
+    const brickColors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF'];
+    const brickValues = [5, 4, 3, 2, 1];
 
     function calculateBrickWidth() {
         const availableWidth = canvas.width - 2 * brickOffsetLeft - (brickColumnCount - 1) * brickPadding;
@@ -55,7 +61,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
         for (let c = 0; c < brickColumnCount; c++) {
             bricks[c] = [];
             for (let r = 0; r < brickRowCount; r++) {
-                bricks[c][r] = { x: 0, y: 0, status: 1 };
+                bricks[c][r] = { 
+                    x: 0, 
+                    y: 0, 
+                    status: 1, 
+                    color: brickColors[r], 
+                    value: brickValues[r] 
+                };
             }
         }
     }
@@ -88,7 +100,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     bricks[c][r].y = brickY;
                     ctx.beginPath();
                     ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--tile-color') || '#e67e22';
+                    ctx.fillStyle = bricks[c][r].color;
                     ctx.fill();
                     ctx.closePath();
                 }
@@ -119,8 +131,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                         dy = -dy;
                         b.status = 0;
-                        score++;
-                        if (score == brickRowCount * brickColumnCount) {
+                        score += b.value;
+                        if (score == brickRowCount * brickColumnCount * 3) {  // Average brick value is 3
+                            gameWon = true;
                             gameOver = true;
                             gameRunning = false;
                         }
@@ -139,7 +152,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         drawLives();
         collisionDetection();
 
-        if (gameRunning) {
+        if (gameRunning && !gamePaused) {
             if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
                 dx = -dx;
             }
@@ -147,19 +160,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 dy = -dy;
             } else if (y + dy > canvas.height - ballRadius) {
                 if (x > paddleX && x < paddleX + paddleWidth) {
-                    // Calculate where the ball hit the paddle
                     let hitPos = (x - paddleX) / paddleWidth;
-                    
-                    // Adjust the angle based on where the ball hit the paddle
                     dx = 8 * (hitPos - 0.5);
-                    dy = -Math.abs(dy); // Ensure the ball always bounces up
-                    
-                    // Increase speed
+                    dy = -Math.abs(dy);
                     let speed = Math.sqrt(dx*dx + dy*dy);
                     dx *= speedIncreaseFactor;
                     dy *= speedIncreaseFactor;
-                    
-                    // Cap the speed
                     if (speed > maxSpeed) {
                         dx *= maxSpeed / speed;
                         dy *= maxSpeed / speed;
@@ -175,6 +181,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         dx = initialSpeed;
                         dy = -initialSpeed;
                         paddleX = (canvas.width - paddleWidth) / 2;
+                        gamePaused = true;
                     }
                 }
             }
@@ -189,10 +196,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         } else if (gameOver) {
             ctx.font = "30px Arial";
-            ctx.fillStyle = "red";
-            centerText(ctx, getMessage('gameOver', currentLanguage), canvas.height / 2);
+            ctx.fillStyle = gameWon ? "green" : "red";
+            centerText(ctx, gameWon ? getMessage('congratulations', currentLanguage) : getMessage('gameOver', currentLanguage), canvas.height / 2);
             ctx.font = "20px Arial";
             centerText(ctx, `${getMessage('finalScore', currentLanguage)}${score}`, canvas.height / 2 + 40);
+        } else if (gamePaused) {
+            ctx.font = "20px Arial";
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#34495e';
+            centerText(ctx, getMessage('clickToContinue', currentLanguage), canvas.height / 2);
         } else {
             ctx.font = "20px Arial";
             ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#34495e';
@@ -231,9 +242,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
+    function clickHandler(e) {
+        if (gamePaused) {
+            gamePaused = false;
+            gameRunning = true;
+        }
+    }
+
     function startGame() {
         gameRunning = true;
         gameOver = false;
+        gameWon = false;
+        gamePaused = false;
         score = 0;
         lives = 3;
         x = canvas.width / 2;
@@ -252,6 +272,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
     document.addEventListener("mousemove", mouseMoveHandler, false);
+    canvas.addEventListener("click", clickHandler, false);
     if (startButton) {
         startButton.addEventListener("click", startGame);
     }
