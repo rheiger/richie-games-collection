@@ -201,6 +201,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             ctx.font = "20px Arial";
             centerText(ctx, `${getMessage('finalScore', currentLanguage)}${score}`, canvas.height / 2 + 40);
         } else if (gamePaused) {
+            x = paddleX + paddleWidth / 2;
+            y = canvas.height - paddleHeight - ballRadius;
             ctx.font = "20px Arial";
             ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-color') || '#34495e';
             centerText(ctx, getMessage('clickToContinue', currentLanguage), canvas.height / 2);
@@ -239,6 +241,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const relativeX = e.clientX - canvas.offsetLeft;
         if (relativeX > 0 && relativeX < canvas.width) {
             paddleX = relativeX - paddleWidth / 2;
+            
+            // Ensure the paddle stays within the canvas
+            paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, paddleX));
+
+            // If the game is paused, move the ball with the paddle
+            if (gamePaused) {
+                x = paddleX + paddleWidth / 2;
+            }
         }
     }
 
@@ -246,6 +256,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (gamePaused) {
             gamePaused = false;
             gameRunning = true;
+            // Set initial ball direction when resuming
+            dx = initialSpeed * (Math.random() > 0.5 ? 1 : -1);
+            dy = -initialSpeed;
         }
     }
 
