@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- This is the index.html of squash -->
+<!-- This is the index.html of breakout -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -38,112 +38,124 @@
         // Translations for the game
         const translations = {
             'en': {
-                'title': 'Squash Challenge',
+                'title': 'Breakout Challenge',
                 'score': 'Score: ',
+                'lives': 'Lives: ',
                 'startGame': 'Start Game',
                 'gameOver': 'Game Over!',
                 'finalScore': 'Final Score: ',
                 'clickToBegin': 'Click Start to Begin',
-                'mobileInstructions': 'Tilt device or touch to move'
+                'mobileInstructions': 'Touch and drag to move'
             },
             'de': {
-                'title': 'Squash-Herausforderung',
+                'title': 'Breakout-Herausforderung',
                 'score': 'Punktzahl: ',
+                'lives': 'Leben: ',
                 'startGame': 'Spiel starten',
                 'gameOver': 'Spiel vorbei!',
                 'finalScore': 'Endpunktzahl: ',
                 'clickToBegin': 'Klicken Sie auf Start, um zu beginnen',
-                'mobileInstructions': 'Gerät neigen oder berühren, um zu bewegen'
+                'mobileInstructions': 'Berühren und ziehen, um zu bewegen'
             },
             'fr': {
-                'title': 'Défi de Squash',
+                'title': 'Défi Breakout',
                 'score': 'Score : ',
+                'lives': 'Vies : ',
                 'startGame': 'Commencer le jeu',
                 'gameOver': 'Partie terminée !',
                 'finalScore': 'Score final : ',
                 'clickToBegin': 'Cliquez sur Démarrer pour commencer',
-                'mobileInstructions': 'Inclinez l\'appareil ou touchez pour déplacer'
+                'mobileInstructions': 'Touchez et faites glisser pour déplacer'
             },
             'it': {
-                'title': 'Sfida di Squash',
+                'title': 'Sfida Breakout',
                 'score': 'Punteggio: ',
+                'lives': 'Vite: ',
                 'startGame': 'Inizia il gioco',
                 'gameOver': 'Game Over!',
                 'finalScore': 'Punteggio finale: ',
                 'clickToBegin': 'Clicca su Inizia per cominciare',
-                'mobileInstructions': 'Inclina il dispositivo o tocca per muovere'
+                'mobileInstructions': 'Tocca e trascina per muovere'
             },
             'sv': {
-                'title': 'Squash-utmaning',
+                'title': 'Breakout-utmaning',
                 'score': 'Poäng: ',
+                'lives': 'Liv: ',
                 'startGame': 'Starta spelet',
                 'gameOver': 'Spelet är slut!',
                 'finalScore': 'Slutpoäng: ',
                 'clickToBegin': 'Klicka på Start för att börja',
-                'mobileInstructions': 'Luta enheten eller rör för att flytta'
+                'mobileInstructions': 'Rör och dra för att flytta'
             },
             'sk': {
-                'title': 'Squashová výzva',
+                'title': 'Breakout výzva',
                 'score': 'Skóre: ',
+                'lives': 'Životy: ',
                 'startGame': 'Začať hru',
                 'gameOver': 'Koniec hry!',
                 'finalScore': 'Konečné skóre: ',
                 'clickToBegin': 'Kliknite na Štart pre začatie',
-                'mobileInstructions': 'Nakloňte zariadenie alebo sa dotknite pre pohyb'
+                'mobileInstructions': 'Dotknite sa a ťahajte pre pohyb'
             },
             'es': {
-                'title': 'Desafío de Squash',
+                'title': 'Desafío Breakout',
                 'score': 'Puntuación: ',
+                'lives': 'Vidas: ',
                 'startGame': 'Iniciar juego',
                 'gameOver': '¡Juego terminado!',
                 'finalScore': 'Puntuación final: ',
                 'clickToBegin': 'Haz clic en Iniciar para comenzar',
-                'mobileInstructions': 'Inclina el dispositivo o toca para mover'
+                'mobileInstructions': 'Toca y arrastra para mover'
             },
             'pt': {
-                'title': 'Desafio de Squash',
+                'title': 'Desafio Breakout',
                 'score': 'Pontuação: ',
+                'lives': 'Vidas: ',
                 'startGame': 'Iniciar jogo',
                 'gameOver': 'Fim de jogo!',
                 'finalScore': 'Pontuação final: ',
                 'clickToBegin': 'Clique em Iniciar para começar',
-                'mobileInstructions': 'Incline o dispositivo ou toque para mover'
+                'mobileInstructions': 'Toque e arraste para mover'
             },
             'no': {
-                'title': 'Squash-utfordring',
+                'title': 'Breakout-utfordring',
                 'score': 'Poengsum: ',
+                'lives': 'Liv: ',
                 'startGame': 'Start spillet',
                 'gameOver': 'Spillet er over!',
                 'finalScore': 'Endelig poengsum: ',
                 'clickToBegin': 'Klikk på Start for å begynne',
-                'mobileInstructions': 'Vipp enheten eller berør for å flytte'
+                'mobileInstructions': 'Berør og dra for å flytte'
             },
             'fi': {
-                'title': 'Squash-haaste',
+                'title': 'Breakout-haaste',
                 'score': 'Pisteet: ',
+                'lives': 'Elämät: ',
                 'startGame': 'Aloita peli',
                 'gameOver': 'Peli päättyi!',
                 'finalScore': 'Loppupisteet: ',
                 'clickToBegin': 'Klikkaa Aloita aloittaaksesi',
-                'mobileInstructions': 'Kallista laitetta tai kosketa liikkuaksesi'
+                'mobileInstructions': 'Kosketa ja vedä liikkuaksesi'
             },
             'pl': {
-                'title': 'Wyzwanie Squasha',
+                'title': 'Wyzwanie Breakout',
                 'score': 'Wynik: ',
+                'lives': 'Życia: ',
                 'startGame': 'Rozpocznij grę',
                 'gameOver': 'Koniec gry!',
                 'finalScore': 'Wynik końcowy: ',
                 'clickToBegin': 'Kliknij Start, aby rozpocząć',
-                'mobileInstructions': 'Przechyl urządzenie lub dotknij, aby się poruszać'
+                'mobileInstructions': 'Dotknij i przeciągnij, aby się poruszać'
             },
             'cs': {
-                'title': 'Squashová výzva',
+                'title': 'Breakout výzva',
                 'score': 'Skóre: ',
+                'lives': 'Životy: ',
                 'startGame': 'Začít hru',
                 'gameOver': 'Konec hry!',
                 'finalScore': 'Konečné skóre: ',
                 'clickToBegin': 'Klikněte na Start pro zahájení',
-                'mobileInstructions': 'Nakloňte zařízení nebo se dotkněte pro pohyb'
+                'mobileInstructions': 'Dotkněte se a táhněte pro pohyb'
             }
         };
 
@@ -161,9 +173,9 @@
 
         const releaseInfo = {
             version: "Release: v1.3.0",
-            notes: "Some improvements yet to come",
+            notes: "Initial Release",
             features: [
-                "Initial squash game",
+                "Initial breakout game",
                 "Controllable with cursor keys or better with mouse movement",
                 "Improved with adding sping and speed increase",
                 "Added support for mobile devices, even moving paddle by position"
