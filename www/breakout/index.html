@@ -13,13 +13,13 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Sudoku">
     <meta name="theme-color" content="#3498db">
-    <title>Squash Challenge</title>
+    <title>Breakout</title>
 </head>
 
 <body>
     <script src="../js/common.js"></script>
     <div class="container">
-        <div id="languageSelector" class="language-selector"></div>
+        <!-- <div id="languageSelector" class="language-selector"></div> -->
         <h1 id="title" data-i18n="title">Squash Challenge</h1>
         <canvas id="gameCanvas" width="400" height="400"></canvas>
         <!-- <div id="score" data-i18n="score">Score: <span id="scoreValue">0</span></div> -->
@@ -39,7 +39,7 @@
     <script>
 
 
-        createLanguageButtons();
+        //createLanguageButtons();
         let currentLanguage = detectLanguage();
         setLanguage(currentLanguage);
 

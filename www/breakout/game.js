@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const startButton = document.getElementById('startButton');
     const scoreElement = document.getElementById('scoreValue');
 
+    let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    let usingDeviceOrientation = false;
+
     // Canvas dimensions
     canvas.width = 400;
     canvas.height = 400;
@@ -200,6 +203,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
             centerText(ctx, gameWon ? getMessage('congratulations', currentLanguage) : getMessage('gameOver', currentLanguage), canvas.height / 2);
             ctx.font = "20px Arial";
             centerText(ctx, `${getMessage('finalScore', currentLanguage)}${score}`, canvas.height / 2 + 40);
+            if (startButton) {
+                startButton.style.display = 'inline-block';
+            }
         } else if (gamePaused) {
             x = paddleX + paddleWidth / 2;
             y = canvas.height - paddleHeight - ballRadius;
@@ -239,6 +245,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function mouseMoveHandler(e) {
         const relativeX = e.clientX - canvas.offsetLeft;
+        movePaddle(relativeX);
+    }
+
+    function touchMoveHandler(e) {
+        e.preventDefault();
+        const relativeX = e.touches[0].clientX - canvas.offsetLeft;
+        movePaddle(relativeX);
+    }
+
+    function movePaddle(relativeX) {
         if (relativeX > 0 && relativeX < canvas.width) {
             paddleX = relativeX - paddleWidth / 2;
             
@@ -252,6 +268,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
+    function handleOrientation(event) {
+        if (!gameRunning || !usingDeviceOrientation) return;
+        const gamma = event.gamma; // Left-right tilt in degree, range: -90 to 90
+        const maxTilt = 45; // Maximum tilt angle we'll use
+        const tiltPercentage = (gamma + maxTilt) / (maxTilt * 2); // Convert to 0-1 range
+        const newPaddleX = tiltPercentage * (canvas.width - paddleWidth);
+        movePaddle(newPaddleX + paddleWidth / 2);
+    }
     function clickHandler(e) {
         if (gamePaused) {
             gamePaused = false;
@@ -259,6 +283,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             // Set initial ball direction when resuming
             dx = initialSpeed * (Math.random() > 0.5 ? 1 : -1);
             dy = -initialSpeed;
+        } else if (!gameRunning && !gameOver) {
+            startGame();
         }
     }
 
@@ -282,19 +308,59 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
+    function requestOrientationPermission() {
+        if (isMobile && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        usingDeviceOrientation = true;
+                        window.addEventListener('deviceorientation', handleOrientation);
+                    }
+                })
+                .catch(console.error);
+        } else if (isMobile) {
+            // For devices that don't need permission
+            usingDeviceOrientation = true;
+            window.addEventListener('deviceorientation', handleOrientation);
+        }
+    }
+
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
     document.addEventListener("mousemove", mouseMoveHandler, false);
     canvas.addEventListener("click", clickHandler, false);
+    canvas.addEventListener("touchmove", touchMoveHandler, false);
+    canvas.addEventListener("touchstart", function(e) { e.preventDefault(); }, false);
+
     if (startButton) {
         startButton.addEventListener("click", startGame);
     }
+
+    // Prevent scrolling when touching the canvas
+    document.body.addEventListener("touchstart", function (e) {
+        if (e.target == canvas) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    document.body.addEventListener("touchend", function (e) {
+        if (e.target == canvas) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    document.body.addEventListener("touchmove", function (e) {
+        if (e.target == canvas) {
+            e.preventDefault();
+        }
+    }, { passive: false });
 
     // Initial setup
     if (startButton) {
         startButton.textContent = getMessage('startGame', currentLanguage);
     }
     document.getElementById('title').textContent = getMessage('title', currentLanguage);
+
+    // Request device orientation permission after loading
+    requestOrientationPermission();
 
     draw();
 });
