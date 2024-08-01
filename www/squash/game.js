@@ -158,7 +158,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function handleOrientation(event) {
-        if (!gameRunning || !usingDeviceOrientation) return;
+        if (event.gamma == null) {
+            // Device orientation is not supported or not available
+            window.removeEventListener('deviceorientation', handleOrientation);
+            usingDeviceOrientation = false;
+            displayOrientationMessage("Device orientation not available. Using touch controls.");
+            return;
+        }
+        
+        usingDeviceOrientation = true;
+        
+        if (!gameRunning && !gamePaused) return;
         const gamma = event.gamma; // Left-right tilt in degree, range: -90 to 90
         const maxTilt = 45; // Maximum tilt angle we'll use
         const tiltPercentage = (gamma + maxTilt) / (maxTilt * 2); // Convert to 0-1 range
@@ -181,17 +191,43 @@ document.addEventListener('DOMContentLoaded', (event) => {
             startButton.textContent = getMessage('startGame');
         } 
         
-        if (isMobile && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-            DeviceOrientationEvent.requestPermission()
-                .then(permissionState => {
-                    if (permissionState === 'granted') {
-                        usingDeviceOrientation = true;
+        if (isMobile) {
+            if (window.DeviceOrientationEvent) {
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    // iOS 13+ devices
+                    DeviceOrientationEvent.requestPermission()
+                        .then(permissionState => {
+                            if (permissionState === 'granted') {
+                                window.addEventListener('deviceorientation', handleOrientation);
+                                usingDeviceOrientation = true;
+                            } else {
+                                displayOrientationMessage("Permission denied. Using touch controls.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error requesting device orientation permission:', error);
+                            displayOrientationMessage("Couldn't request permission. Using touch controls.");
+                        });
+                } else {
+                    // Android devices or older iOS versions
+                    try {
                         window.addEventListener('deviceorientation', handleOrientation);
+                        usingDeviceOrientation = true;
+                        // Trigger a deviceorientation event to check if it's supported
+                        setTimeout(() => {
+                            if (!usingDeviceOrientation) {
+                                displayOrientationMessage("Device orientation not available. Using touch controls.");
+                            }
+                        }, 500);
+                    } catch (e) {
+                        console.error('Error setting up device orientation:', e);
+                        displayOrientationMessage("Device orientation not supported. Using touch controls.");
                     }
-                })
-                .catch(console.error);
+                }
+            } else {
+                displayOrientationMessage("Device orientation not supported. Using touch controls.");
+            }
         }
-        // console.log("Game started, gameRunning:", gameRunning, "gameOver:", gameOver);
     }
 
     document.addEventListener("keydown", keyDownHandler, false);
