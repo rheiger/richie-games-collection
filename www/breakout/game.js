@@ -306,18 +306,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (startButton) {
             startButton.style.display = 'none';
         }
+        if (isMobile && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+            .then(permissionState => {
+                if (permissionState === 'granted') {
+                    usingDeviceOrientation = true;
+                    window.addEventListener('deviceorientation', handleOrientation);
+                }
+            })
+            .catch(console.error);
+        }
     }
 
-    if (isMobile && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission()
-        .then(permissionState => {
-            if (permissionState === 'granted') {
-                usingDeviceOrientation = true;
-                window.addEventListener('deviceorientation', handleOrientation);
-            }
-        })
-        .catch(console.error);
-    }
 // console.log("Game started, gameRunning:", gameRunning, "gameOver:", gameOver);
 
 
@@ -325,6 +325,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.addEventListener("keyup", keyUpHandler, false);
     document.addEventListener("mousemove", mouseMoveHandler, false);
     canvas.addEventListener("click", clickHandler, false);
+    canvas.addEventListener('touchstart', clickHandler, false);
     canvas.addEventListener("touchmove", touchMoveHandler, false);
     canvas.addEventListener("touchstart", function(e) { e.preventDefault(); }, false);
 
