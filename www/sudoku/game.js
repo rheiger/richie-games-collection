@@ -167,7 +167,7 @@ function displaySudoku(puzzle) {
         board.appendChild(row);
     }
 
-    resizeSudokuBoard();
+    // resizeSudokuBoard();
 }
 
 function handleFocus(e) {
@@ -466,6 +466,6 @@ function toggleSolution() {
     });
 }
 
-window.addEventListener('resize', resizeSudokuBoard);
+// window.addEventListener('resize', resizeSudokuBoard);
 
 

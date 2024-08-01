@@ -308,22 +308,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     }
 
-    function requestOrientationPermission() {
-        if (isMobile && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-            DeviceOrientationEvent.requestPermission()
-                .then(permissionState => {
-                    if (permissionState === 'granted') {
-                        usingDeviceOrientation = true;
-                        window.addEventListener('deviceorientation', handleOrientation);
-                    }
-                })
-                .catch(console.error);
-        } else if (isMobile) {
-            // For devices that don't need permission
-            usingDeviceOrientation = true;
-            window.addEventListener('deviceorientation', handleOrientation);
-        }
+    if (isMobile && typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+        .then(permissionState => {
+            if (permissionState === 'granted') {
+                usingDeviceOrientation = true;
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+        })
+        .catch(console.error);
     }
+// console.log("Game started, gameRunning:", gameRunning, "gameOver:", gameOver);
+
 
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
@@ -358,9 +354,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         startButton.textContent = getMessage('startGame', currentLanguage);
     }
     document.getElementById('title').textContent = getMessage('title', currentLanguage);
-
-    // Request device orientation permission after loading
-    requestOrientationPermission();
 
     draw();
 });
