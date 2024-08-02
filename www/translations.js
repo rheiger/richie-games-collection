@@ -7,6 +7,7 @@ const translations = {
         mastermindBtn: 'Play Mastermind 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Each game can also be installed as a Progressive Web App on Apple or Android devices, making them offline-capable',
         comingSoon: 'Check back soon for more exciting games!',
         footer: 'Created with ❤️ by me, Richie with great help from Claude.ai. Challenge your mind daily!'
@@ -19,6 +20,7 @@ const translations = {
         mastermindBtn: 'Mastermind spielen 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Jedes Spiel kann auch als Progressive Web App auf Apple- oder Android-Geräten installiert werden, wodurch sie offline nutzbar sind',
         comingSoon: 'Schauen Sie bald wieder vorbei für weitere spannende Spiele!',
         footer: 'Mit ❤️ erstellt von mir, Richie, mit großer Hilfe von Claude.ai. Fordern Sie Ihren Verstand täglich heraus!'
@@ -31,6 +33,7 @@ const translations = {
         mastermindBtn: 'Jouer au Mastermind 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Chaque jeu peut également être installé comme une Application Web Progressive sur les appareils Apple ou Android, les rendant utilisables hors ligne',
         comingSoon: 'Revenez bientôt pour découvrir plus de jeux passionnants !',
         footer: 'Créé avec ❤️ par moi, Richie, avec l\'aide précieuse de Claude.ai. Défiez votre esprit quotidiennement !'
@@ -43,6 +46,7 @@ const translations = {
         mastermindBtn: 'Gioca a Mastermind 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Ogni gioco può essere installato anche come App Web Progressiva su dispositivi Apple o Android, rendendoli utilizzabili offline',
         comingSoon: 'Torna presto per scoprire altri giochi entusiasmanti!',
         footer: 'Creato con ❤️ da me, Richie, con il grande aiuto di Claude.ai. Sfida la tua mente ogni giorno!'
@@ -55,6 +59,7 @@ const translations = {
         mastermindBtn: 'Spela Mastermind 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Varje spel kan också installeras som en Progressive Web App på Apple- eller Android-enheter, vilket gör dem tillgängliga offline',
         comingSoon: 'Kom tillbaka snart för fler spännande spel!',
         footer: 'Skapad med ❤️ av mig, Richie, med stor hjälp från Claude.ai. Utmana ditt sinne dagligen!'
@@ -67,6 +72,7 @@ const translations = {
         mastermindBtn: 'Hrať Mastermind 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Každú hru je možné nainštalovať aj ako progresívnu webovú aplikáciu na zariadenia Apple alebo Android, čím sa stávajú použiteľnými offline',
         comingSoon: 'Čoskoro sa vráťte pre ďalšie vzrušujúce hry!',
         footer: 'Vytvorené s ❤️ mnou, Richiem, s veľkou pomocou od Claude.ai. Denne si precvičujte svoju myseľ!'
@@ -79,6 +85,7 @@ const translations = {
         mastermindBtn: 'Jugar Mastermind 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Cada juego también se puede instalar como una Aplicación Web Progresiva en dispositivos Apple o Android, lo que los hace utilizables sin conexión',
         comingSoon: '¡Vuelve pronto para descubrir más juegos emocionantes!',
         footer: 'Creado con ❤️ por mí, Richie, con gran ayuda de Claude.ai. ¡Desafía tu mente diariamente!'
@@ -91,6 +98,7 @@ const translations = {
         mastermindBtn: 'Jogar Mastermind 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Cada jogo também pode ser instalado como um Aplicativo Web Progressivo em dispositivos Apple ou Android, tornando-os utilizáveis offline',
         comingSoon: 'Volte em breve para mais jogos emocionantes!',
         footer: 'Criado com ❤️ por mim, Richie, com grande ajuda de Claude.ai. Desafie sua mente diariamente!'
@@ -103,6 +111,7 @@ const translations = {
         mastermindBtn: 'Spill Mastermind 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Hvert spill kan også installeres som en Progressive Web App på Apple- eller Android-enheter, noe som gjør dem tilgjengelige offline',
         comingSoon: 'Kom tilbake snart for flere spennende spill!',
         footer: 'Laget med ❤️ av meg, Richie, med stor hjelp fra Claude.ai. Utfordre sinnet ditt daglig!'
@@ -115,6 +124,7 @@ const translations = {
         mastermindBtn: 'Pelaa Mastermind 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Jokainen peli voidaan myös asentaa progressiivisena verkkosovelluksena Apple- tai Android-laitteisiin, jolloin niitä voi käyttää offline-tilassa',
         comingSoon: 'Palaa pian takaisin löytääksesi lisää jännittäviä pelejä!',
         footer: 'Luotu ❤️:llä minun, Richien toimesta, Claude.ai:n suurella avustuksella. Haasta mielesi päivittäin!'
@@ -127,6 +137,7 @@ const translations = {
         mastermindBtn: 'Graj w Mastermind 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Każda gra może być również zainstalowana jako Progresywna Aplikacja Internetowa na urządzeniach Apple lub Android, co umożliwia korzystanie z nich w trybie offline',
         comingSoon: 'Wróć wkrótce po więcej ekscytujących gier!',
         footer: 'Stworzone z ❤️ przeze mnie, Richiego, z wielką pomocą Claude.ai. Codziennie rzucaj wyzwanie swojemu umysłowi!'
@@ -139,6 +150,7 @@ const translations = {
         mastermindBtn: 'Hrát Mastermind 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
+        conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Každou hru lze také nainstalovat jako progresivní webovou aplikaci na zařízení Apple nebo Android, což umožňuje jejich použití offline',
         comingSoon: 'Vraťte se brzy pro více vzrušujících her!',
         footer: 'Vytvořeno s ❤️ mnou, Richiem, s velkou pomocí od Claude.ai. Denně si procvičujte svou mysl!'

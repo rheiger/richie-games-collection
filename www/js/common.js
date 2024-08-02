@@ -26,6 +26,7 @@ function createLanguageButtons() {
 }
 
 function setLanguage(lang) {
+    console.log('setting language to ',lang);
     currentLanguage = lang;
     localStorage.setItem('preferredLanguage', lang);
     document.querySelectorAll('[data-i18n]').forEach(element => {
@@ -50,11 +51,14 @@ function setLanguage(lang) {
 }
 
 function detectLanguage() {
+    console.log('Detecting language');
     const storedLang = localStorage.getItem('preferredLanguage');
     if (storedLang && languages[storedLang]) {
+        console.log('returning stored language ',storedLang);
         return storedLang;
     }
     const browserLang = navigator.language.split('-')[0];
+    console.log('returning browser language ',browserLang);
     return languages[browserLang] ? browserLang : 'en';
 }
 
