@@ -73,19 +73,53 @@ function initializeGrid() {
     
     canvas.width = canvas.height = size;
 
-    grid = new Array(cols).fill(null).map(() => new Array(rows).fill(0));
+    grid = new Array(cols).fill(null).map(() => 
+        new Array(rows).fill(null).map(() => ({alive: 0, age: 0}))
+    );
+}
+
+function getColorForAge(age) {
+    // This function returns a color based on the cell's age
+    const hue = (age * 10) % 360; // Cycle through hues
+    return `hsl(${hue}, 100%, 50%)`;
 }
 
 function drawGrid() {
     ctx.clearRect(0, 0, size, size);
     for (let i = 0; i < cols; i++) {
         for (let j = 0; j < rows; j++) {
-            if (grid[i][j] === 1) {
-                ctx.fillStyle = 'black';
+            if (grid[i][j].alive) {
+                ctx.fillStyle = getColorForAge(grid[i][j].age);
                 ctx.fillRect(i * cellSize, j * cellSize, cellSize - 1, cellSize - 1);
             }
         }
     }
+}
+
+function updateGrid() {
+    let next = new Array(cols).fill(null).map(() => 
+        new Array(rows).fill(null).map(() => ({alive: 0, age: 0}))
+    );
+
+    for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+            let state = grid[i][j].alive;
+            let neighbors = countNeighbors(i, j);
+
+            if (state === 0 && neighbors === 3) {
+                next[i][j].alive = 1;
+            } else if (state === 1 && (neighbors < 2 || neighbors > 3)) {
+                next[i][j].alive = 0;
+            } else {
+                next[i][j].alive = state;
+                if (state === 1) {
+                    next[i][j].age = grid[i][j].age + 1;
+                }
+            }
+        }
+    }
+
+    grid = next;
 }
 
 function countNeighbors(x, y) {
@@ -94,38 +128,17 @@ function countNeighbors(x, y) {
         for (let j = -1; j < 2; j++) {
             let col = (x + i + cols) % cols;
             let row = (y + j + rows) % rows;
-            sum += grid[col][row];
+            sum += grid[col][row].alive;
         }
     }
-    sum -= grid[x][y];
+    sum -= grid[x][y].alive;
     return sum;
-}
-
-function updateGrid() {
-    let next = new Array(cols).fill(null).map(() => new Array(rows).fill(0));
-
-    for (let i = 0; i < cols; i++) {
-        for (let j = 0; j < rows; j++) {
-            let state = grid[i][j];
-            let neighbors = countNeighbors(i, j);
-
-            if (state === 0 && neighbors === 3) {
-                next[i][j] = 1;
-            } else if (state === 1 && (neighbors < 2 || neighbors > 3)) {
-                next[i][j] = 0;
-            } else {
-                next[i][j] = state;
-            }
-        }
-    }
-
-    grid = next;
 }
 
 function areGridsEqual(grid1, grid2) {
     for (let i = 0; i < cols; i++) {
       for (let j = 0; j < rows; j++) {
-        if (grid1[i][j] !== grid2[i][j]) {
+        if (grid1[i][j].alive !== grid2[i][j].alive) {
           return false;
         }
       }
@@ -136,7 +149,7 @@ function areGridsEqual(grid1, grid2) {
   function isExtinct(grid) {
     for (let i = 0; i < cols; i++) {
       for (let j = 0; j < rows; j++) {
-        if (grid[i][j] === 1) {
+        if (grid[i][j].alive === 1) {
           return false;
         }
       }
@@ -149,24 +162,29 @@ function areGridsEqual(grid1, grid2) {
   
   function checkSteadyState() {
     if (isExtinct(grid)) {
-      return "Extinction";
+      return translations[currentLanguage].extinction;
     }
   
-    gridHistory.push(JSON.parse(JSON.stringify(grid)));
+    // Create a copy of the current grid state (only the 'alive' property)
+    const currentState = grid.map(row => row.map(cell => ({alive: cell.alive})));
+    
+    gridHistory.push(currentState);
     if (gridHistory.length > MAX_HISTORY) {
       gridHistory.shift();
     }
   
     for (let i = 0; i < gridHistory.length - 1; i++) {
-      if (areGridsEqual(grid, gridHistory[i])) {
-        return i === gridHistory.length - 2 ? "Still Life" : `Oscillator (period ${gridHistory.length - 1 - i})`;
+      if (areGridsEqual(currentState, gridHistory[i])) {
+        return i === gridHistory.length - 2 
+          ? translations[currentLanguage].stillLifeState 
+          : translations[currentLanguage].oscillatorState.replace("{0}", gridHistory.length - 1 - i);
       }
     }
   
     return null; // No steady state detected
   }
   
-function gameLoop() {
+  function gameLoop() {
     updateGrid();
     drawGrid();
     generationCount++;
@@ -177,9 +195,9 @@ function gameLoop() {
       clearInterval(intervalId);
       isRunning = false;
       document.getElementById('startStop').textContent = translations[currentLanguage].start;
-      alert(translations[currentLanguage].steadyStateReached + ' ' + steadyState);
+      alert(`${translations[currentLanguage].steadyStateReached} ${steadyState}`);
     }
-  }  
+  }
 
 function startStop() {
     if (isRunning) {
@@ -193,7 +211,9 @@ function startStop() {
 }
 
 function clearGrid() {
-    grid = new Array(cols).fill(null).map(() => new Array(rows).fill(0));
+    grid = new Array(cols).fill(null).map(() => 
+        new Array(rows).fill(null).map(() => ({alive: 0, age: 0}))
+    );
     generationCount = 0;
     updateGenerationCounter();
     drawGrid();
@@ -262,11 +282,12 @@ function toggleCell(event) {
     const rect = canvas.getBoundingClientRect();
     const x = Math.floor((event.clientX - rect.left) / cellSize);
     const y = Math.floor((event.clientY - rect.top) / cellSize);
-
+    
     if (x >= 0 && x < cols && y >= 0 && y < rows) {
         const cellKey = `${x},${y}`;
         if (cellKey !== lastCellToggled) {
-            grid[x][y] = 1 - grid[x][y];
+            grid[x][y].alive = 1 - grid[x][y].alive;
+            grid[x][y].age = 0;
             drawGrid();
             lastCellToggled = cellKey;
         }
@@ -284,11 +305,11 @@ function showExplanation() {
 
 function randomizeGrid(patternType = 'random') {
     clearGrid();
-
+    
     if (patternType === 'random') {
         for (let i = 0; i < cols; i++) {
             for (let j = 0; j < rows; j++) {
-                grid[i][j] = Math.random() > 0.8 ? 1 : 0;
+                grid[i][j].alive = Math.random() > 0.8 ? 1 : 0;
             }
         }
     } else {
@@ -296,14 +317,14 @@ function randomizeGrid(patternType = 'random') {
         const selectedPattern = patternList[Math.floor(Math.random() * patternList.length)];
         const startX = Math.floor(Math.random() * (cols - 20));
         const startY = Math.floor(Math.random() * (rows - 20));
-
+        
         selectedPattern.pattern.forEach(([x, y]) => {
             if (startX + x < cols && startY + y < rows) {
-                grid[startX + x][startY + y] = 1;
+                grid[startX + x][startY + y].alive = 1;
             }
         });
     }
-
+    
     drawGrid();
 }
 
