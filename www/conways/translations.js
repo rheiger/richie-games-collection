@@ -18,7 +18,8 @@ const translations = {
         extinction: "Extinction",
         stillLifeState: "Still Life",
         oscillatorState: "Oscillator (period: {0})",
-        generation: "Generation"
+        generation: "Generation",
+        infinite: "Infinite (Never reaches steady state)"
     },
     de: {
         start: "Start",
@@ -39,7 +40,8 @@ const translations = {
         extinction: "Aussterben",
         stillLifeState: "Stilleben",
         oscillatorState: "Oszillator (Periode: {0})",
-        generation: "Generation"
+        generation: "Generation",
+        infinite: "Unendlich (Erreicht nie einen stabilen Zustand)"
     },
     fr: {
         start: "Démarrer",
@@ -60,7 +62,8 @@ const translations = {
         extinction: "Extinction",
         stillLifeState: "Vie stable",
         oscillatorState: "Oscillateur (période : {0})",
-        generation: "Génération"
+        generation: "Génération",
+        infinite: "Infini (N'atteint jamais un état stable)"
     },
     it: {
         start: "Inizia",
@@ -81,7 +84,8 @@ const translations = {
         extinction: "Estinzione",
         stillLifeState: "Vita stabile",
         oscillatorState: "Oscillatore (periodo: {0})",
-        generation: "Generazione"
+        generation: "Generazione",
+        infinite: "Infinito (Non raggiunge mai uno stato stabile)"
     },
     sv: {
         start: "Starta",
@@ -102,7 +106,8 @@ const translations = {
         extinction: "Utrotning",
         stillLifeState: "Stilleben",
         oscillatorState: "Oscillator (period: {0})",
-        generation: "Generation"
+        generation: "Generation",
+        infinite: "Oändlig (Når aldrig ett stabilt tillstånd)"
     },
     sk: {
         start: "Štart",
@@ -123,7 +128,8 @@ const translations = {
         extinction: "Vymretie",
         stillLifeState: "Nehybný život",
         oscillatorState: "Oscilátor (perióda: {0})",
-        generation: "Generácia"
+        generation: "Generácia",
+        infinite: "Nekonečný (Nikdy nedosiahne ustálený stav)"
     },
     es: {
         start: "Iniciar",
@@ -144,7 +150,8 @@ const translations = {
         extinction: "Extinción",
         stillLifeState: "Vida estática",
         oscillatorState: "Oscilador (período: {0})",
-        generation: "Generación"
+        generation: "Generación",
+        infinite: "Infinito (Nunca alcanza un estado estable)"
     },
     pt: {
         start: "Iniciar",
@@ -165,7 +172,8 @@ const translations = {
         extinction: "Extinção",
         stillLifeState: "Vida estática",
         oscillatorState: "Oscilador (período: {0})",
-        generation: "Geração"
+        generation: "Geração",
+        infinite: "Infinito (Nunca atinge um estado estável)"
     },
     no: {
         start: "Start",
@@ -186,7 +194,8 @@ const translations = {
         extinction: "Utdøing",
         stillLifeState: "Stilleben",
         oscillatorState: "Oscillator (periode: {0})",
-        generation: "Generasjon"
+        generation: "Generasjon",
+        infinite: "Uendelig (Når aldri en stabil tilstand)"
     },
     fi: {
         start: "Aloita",
@@ -207,7 +216,8 @@ const translations = {
         extinction: "Sukupuutto",
         stillLifeState: "Pysyvä elämä",
         oscillatorState: "Oskillaattori (jakso: {0})",
-        generation: "Sukupolvi"
+        generation: "Sukupolvi",
+        infinite: "Ääretön (Ei koskaan saavuta vakaata tilaa)"
     },
     pl: {
         start: "Start",
@@ -228,7 +238,8 @@ const translations = {
         extinction: "Wymarcie",
         stillLifeState: "Martwa natura",
         oscillatorState: "Oscylator (okres: {0})",
-        generation: "Generacja"
+        generation: "Generacja",
+        infinite: "Nieskończony (Nigdy nie osiąga stanu ustalonego)"
     },
     cs: {
         start: "Start",
@@ -249,6 +260,7 @@ const translations = {
         extinction: "Vyhynutí",
         stillLifeState: "Nehybný život",
         oscillatorState: "Oscilátor (perioda: {0})",
-        generation: "Generace"
+        generation: "Generace",
+        infinite: "Nekonečný (Nikdy nedosáhne ustáleného stavu)"
     }
 };

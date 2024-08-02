@@ -32,6 +32,14 @@ const patterns = {
         { name: "Lightweight spaceship", pattern: [[1, 1], [1, 4], [2, 5], [3, 1], [3, 5], [4, 2], [4, 3], [4, 4], [4, 5]] },
         { name: "Middleweight spaceship", pattern: [[1, 1], [1, 5], [2, 6], [3, 1], [3, 6], [4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [5, 3], [5, 4], [5, 5], [5, 6]] },
         { name: "Heavyweight spaceship", pattern: [[1, 1], [1, 6], [2, 7], [3, 1], [3, 7], [4, 2], [4, 3], [4, 4], [4, 5], [4, 6], [4, 7], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7], [6, 4], [6, 5], [6, 6]] }
+    ],
+    infinite: [
+        {
+            name: "Gosper Glider Gun",
+            pattern: [
+                [1, 5], [1, 6], [2, 5], [2, 6], [11, 5], [11, 6], [11, 7], [12, 4], [12, 8], [13, 3], [13, 9], [14, 3], [14, 9], [15, 6], [16, 4], [16, 8], [17, 5], [17, 6], [17, 7], [18, 6], [21, 3], [21, 4], [21, 5], [22, 3], [22, 4], [22, 5], [23, 2], [23, 6], [25, 1], [25, 2], [25, 6], [25, 7], [35, 3], [35, 4], [36, 3], [36, 4]
+            ]
+        }
     ]
 };
 
@@ -55,26 +63,26 @@ function initializeGrid() {
     const gameContainer = document.getElementById('gameContainer');
     const controls = document.getElementById('controls');
     const generationCounter = document.getElementById('generationCounter');
-    
+
     // Calculate available height
-    const availableHeight = window.innerHeight 
-        - gameContainer.offsetTop 
-        - controls.offsetHeight 
-        - generationCounter.offsetHeight 
+    const availableHeight = window.innerHeight
+        - gameContainer.offsetTop
+        - controls.offsetHeight
+        - generationCounter.offsetHeight
         - 40; // Additional margin
 
     const availableWidth = window.innerWidth - 40; // 20px margin on each side
 
     // Use the smaller of the two to ensure it fits on screen
     const maxSize = Math.min(availableHeight, availableWidth);
-    
+
     size = Math.floor(maxSize / cellSize) * cellSize; // Ensure it's divisible by cellSize
     cols = rows = size / cellSize;
-    
+
     canvas.width = canvas.height = size;
 
-    grid = new Array(cols).fill(null).map(() => 
-        new Array(rows).fill(null).map(() => ({alive: 0, age: 0}))
+    grid = new Array(cols).fill(null).map(() =>
+        new Array(rows).fill(null).map(() => ({ alive: 0, age: 0 }))
     );
 }
 
@@ -97,8 +105,8 @@ function drawGrid() {
 }
 
 function updateGrid() {
-    let next = new Array(cols).fill(null).map(() => 
-        new Array(rows).fill(null).map(() => ({alive: 0, age: 0}))
+    let next = new Array(cols).fill(null).map(() =>
+        new Array(rows).fill(null).map(() => ({ alive: 0, age: 0 }))
     );
 
     for (let i = 0; i < cols; i++) {
@@ -137,67 +145,67 @@ function countNeighbors(x, y) {
 
 function areGridsEqual(grid1, grid2) {
     for (let i = 0; i < cols; i++) {
-      for (let j = 0; j < rows; j++) {
-        if (grid1[i][j].alive !== grid2[i][j].alive) {
-          return false;
+        for (let j = 0; j < rows; j++) {
+            if (grid1[i][j].alive !== grid2[i][j].alive) {
+                return false;
+            }
         }
-      }
     }
     return true;
-  }
-  
-  function isExtinct(grid) {
+}
+
+function isExtinct(grid) {
     for (let i = 0; i < cols; i++) {
-      for (let j = 0; j < rows; j++) {
-        if (grid[i][j].alive === 1) {
-          return false;
+        for (let j = 0; j < rows; j++) {
+            if (grid[i][j].alive === 1) {
+                return false;
+            }
         }
-      }
     }
     return true;
-  }
-  
-  const MAX_HISTORY = 10; // Store up to 10 previous states
-  let gridHistory = [];
-  
-  function checkSteadyState() {
+}
+
+const MAX_HISTORY = 10; // Store up to 10 previous states
+let gridHistory = [];
+
+function checkSteadyState() {
     if (isExtinct(grid)) {
-      return translations[currentLanguage].extinction;
+        return translations[currentLanguage].extinction;
     }
-  
+
     // Create a copy of the current grid state (only the 'alive' property)
-    const currentState = grid.map(row => row.map(cell => ({alive: cell.alive})));
-    
+    const currentState = grid.map(row => row.map(cell => ({ alive: cell.alive })));
+
     gridHistory.push(currentState);
     if (gridHistory.length > MAX_HISTORY) {
-      gridHistory.shift();
+        gridHistory.shift();
     }
-  
+
     for (let i = 0; i < gridHistory.length - 1; i++) {
-      if (areGridsEqual(currentState, gridHistory[i])) {
-        return i === gridHistory.length - 2 
-          ? translations[currentLanguage].stillLifeState 
-          : translations[currentLanguage].oscillatorState.replace("{0}", gridHistory.length - 1 - i);
-      }
+        if (areGridsEqual(currentState, gridHistory[i])) {
+            return i === gridHistory.length - 2
+                ? translations[currentLanguage].stillLifeState
+                : translations[currentLanguage].oscillatorState.replace("{0}", gridHistory.length - 1 - i);
+        }
     }
-  
+
     return null; // No steady state detected
-  }
-  
-  function gameLoop() {
+}
+
+function gameLoop() {
     updateGrid();
     drawGrid();
     generationCount++;
     updateGenerationCounter();
-    
+
     const steadyState = checkSteadyState();
     if (steadyState) {
-      clearInterval(intervalId);
-      isRunning = false;
-      document.getElementById('startStop').textContent = translations[currentLanguage].start;
-      alert(`${translations[currentLanguage].steadyStateReached} ${steadyState}`);
+        clearInterval(intervalId);
+        isRunning = false;
+        document.getElementById('startStop').textContent = translations[currentLanguage].start;
+        alert(`${translations[currentLanguage].steadyStateReached} ${steadyState}`);
     }
-  }
+}
 
 function startStop() {
     if (isRunning) {
@@ -211,8 +219,8 @@ function startStop() {
 }
 
 function clearGrid() {
-    grid = new Array(cols).fill(null).map(() => 
-        new Array(rows).fill(null).map(() => ({alive: 0, age: 0}))
+    grid = new Array(cols).fill(null).map(() =>
+        new Array(rows).fill(null).map(() => ({ alive: 0, age: 0 }))
     );
     generationCount = 0;
     updateGenerationCounter();
@@ -282,7 +290,7 @@ function toggleCell(event) {
     const rect = canvas.getBoundingClientRect();
     const x = Math.floor((event.clientX - rect.left) / cellSize);
     const y = Math.floor((event.clientY - rect.top) / cellSize);
-    
+
     if (x >= 0 && x < cols && y >= 0 && y < rows) {
         const cellKey = `${x},${y}`;
         if (cellKey !== lastCellToggled) {
@@ -305,7 +313,7 @@ function showExplanation() {
 
 function randomizeGrid(patternType = 'random') {
     clearGrid();
-    
+
     if (patternType === 'random') {
         for (let i = 0; i < cols; i++) {
             for (let j = 0; j < rows; j++) {
@@ -315,22 +323,27 @@ function randomizeGrid(patternType = 'random') {
     } else {
         const patternList = patterns[patternType];
         const selectedPattern = patternList[Math.floor(Math.random() * patternList.length)];
-        const startX = Math.floor(Math.random() * (cols - 20));
-        const startY = Math.floor(Math.random() * (rows - 20));
-        
+        const startX = Math.floor(Math.random() * (cols - 40)); // Increased margin for larger patterns
+        const startY = Math.floor(Math.random() * (rows - 40));
+
         selectedPattern.pattern.forEach(([x, y]) => {
             if (startX + x < cols && startY + y < rows) {
                 grid[startX + x][startY + y].alive = 1;
             }
         });
     }
-    
+
     drawGrid();
 }
 
 function showPatternSelection() {
     const selection = prompt(
-        "Choose a pattern type:\n1: Random\n2: Still Life\n3: Oscillator\n4: Spaceship"
+        `${translations[currentLanguage].choosePattern}
+  1: ${translations[currentLanguage].randomPattern}
+  2: ${translations[currentLanguage].stillLife}
+  3: ${translations[currentLanguage].oscillator}
+  4: ${translations[currentLanguage].spaceship}
+  5: ${translations[currentLanguage].infinite}`
     );
 
     switch (selection) {
@@ -346,11 +359,15 @@ function showPatternSelection() {
         case "4":
             randomizeGrid('spaceships');
             break;
+        case "5":
+            randomizeGrid('infinite');
+            break;
         default:
-            alert("Invalid selection. Using random pattern.");
+            alert(translations[currentLanguage].invalidSelection);
             randomizeGrid('random');
     }
 }
+
 
 window.addEventListener('resize', () => {
     initializeGrid();
