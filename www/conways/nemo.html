@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin: 0; padding: 0; }
+    canvas { display: block; background-color: black; }
+    #controls { position: fixed; bottom: 0; left: 0; z-index: 1; background-color: rgba(0, 0, 0, 0.5); color: white; padding: 10px; }
+    button { margin-right: 5px; }
+    @media (max-width: 600px) {
+      #controls { font-size: smaller; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="gameOfLife" width="300" height="200"></canvas>
+<div id="controls">
+  <button id="startPause">Start/Pause</button>
+  <button id="reset">Reset</button>
+  <label for="interval">Interval (ms): </label>
+  <input type="number" id="interval" min="50" max="1000" value="200">
+</div>
+
+<script>
+const canvas = document.getElementById('gameOfLife');
+const ctx = canvas.getContext('2d');
+const controls = {
+  startPause: document.getElementById('startPause'),
+  reset: document.getElementById('reset'),
+  interval: document.getElementById('interval')
+}
+
+let grid, intervalId;
+
+function createGrid(width, height) {
+  return Array.from({ length: height }, () =>
+    Array.from({ length: width }, () => Math.random() < 0.5 ? 1 : 0)
+  );
+}
+
+function drawGrid(grid) {
+  const cellSize = canvas.width / grid[0].length;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      if (grid[i][j] === 1) {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(j * cellSize, i * cellSize, cellSize - 1, cellSize - 1);
+      }
+    }
+  }
+}
+
+function getNeighborCount(grid, x, y) {
+  let count = 0;
+  const directions = [
+    [-1, -1], [-1, 0], [-1, 1],
+    [0, -1],           [0, 1],
+    [1, -1],  [1, 0],  [1, 1]
+  ];
+
+  for (const dir of directions) {
+    const newX = x + dir[0];
+    const newY = y + dir[1];
+
+    if (newX >= 0 && newX < grid[0].length &&
+      newY >= 0 && newY < grid.length &&
+      grid[newY][newX] === 1) {
+      count++;
+    }
+  }
+
+  return count;
+}
+
+function updateGrid(grid) {
+  const newGrid = createGrid(grid[0].length, grid.length);
+
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      const neighbors = getNeighborCount(grid, j, i);
+
+      if (grid[i][j] === 1 && (neighbors === 2 || neighbors === 3)) {
+        newGrid[i][j] = 1;
+      } else if (grid[i][j] === 0 && neighbors === 3) {
+        newGrid[i][j] = 1;
+      } else {
+        newGrid[i][j] = 0;
+      }
+    }
+  }
+
+  return newGrid;
+}
+
+function runSimulation() {
+  grid = updateGrid(grid);
+  drawGrid(grid);
+}
+
+function setup() {
+  const width = Math.min(canvas.width, canvas.height) * 0.8;
+  const height = width / 2;
+
+  canvas.width = width;
+  canvas.height = height;
+
+  grid = createGrid(width / 10, height / 10);
+
+  controls.startPause.addEventListener('click', () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+      controls.startPause.textContent = 'Start/Pause';
+    } else {
+      intervalId = setInterval(runSimulation, controls.interval.value);
+      controls.startPause.textContent = 'Stop';
+    }
+  });
+
+  controls.reset.addEventListener('click', () => {
+    clearInterval(intervalId);
+    intervalId = null;
+    grid = createGrid(canvas.width / 10, canvas.height / 10);
+    drawGrid(grid);
+    controls.startPause.textContent = 'Start/Pause';
+  });
+
+  controls.interval.addEventListener('change', (e) => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = setInterval(runSimulation, e.target.value);
+    }
+  });
+}
+
+setup();
+</script>
+
+</body>
+</html>

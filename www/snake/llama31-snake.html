@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        /* Global styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        
+        canvas {
+            border: 1px solid #000;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 600px) {
+            .game-container {
+                width: 90vw;
+                height: 80vh;
+            }
+            
+            .score-display {
+                font-size: 16px;
+            }
+            
+            .button-container {
+                margin-top: 10px;
+            }
+        }
+        
+        @media (min-width: 601px) and (max-width: 1200px) {
+            .game-container {
+                width: 80vw;
+                height: 70vh;
+            }
+            
+            .score-display {
+                font-size: 20px;
+            }
+            
+            .button-container {
+                margin-top: 15px;
+            }
+        }
+        
+        @media (min-width: 1201px) {
+            .game-container {
+                width: 60vw;
+                height: 50vh;
+            }
+            
+            .score-display {
+                font-size: 24px;
+            }
+            
+            .button-container {
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <canvas id="snake" width="400" height="400"></canvas>
+    </div>
+    
+    <div class="score-display">
+        Score: <span id="score">0</span>
+    </div>
+    
+    <div class="button-container">
+        <button id="pause-button" onclick="handleButtonClick()">Pause/Resume</button>
+        <button id="reset-button" onclick="handleResetButton()">Reset Game</button>
+    </div>
+    
+    <script>
+        var canvas = document.getElementById("snake");
+        var ctx = canvas.getContext("2d");
+        
+        // Initialize game variables
+        let snakeX = 200;
+        let snakeY = 200;
+        let snakeSpeed = 5;
+        let score = 0;
+        
+        function drawSnake() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw the snake's body and head
+            for (let i = 0; i < snakeX.length; i++) {
+                ctx.fillStyle = "#000";
+                ctx.fillRect(snakeX[i], snakeY[i], 10, 10);
+                
+                if (i === 0) {
+                    ctx.fillStyle = "#f00";
+                    ctx.arc(snakeX[i] + 5, snakeY[i] + 5, 5, 0, Math.PI * 2);
+                }
+            }
+        }
+        
+        function updateScore() {
+            document.getElementById("score").innerHTML = score;
+        }
+        
+        function handleWallCollision() {
+            // Handle the snake's collision with the wall
+            if (snakeX[0] < 0) {
+                snakeX.unshift(400);
+                snakeY.unshift(200);
+                score++;
+            } else if (snakeX[0] > canvas.width) {
+                snakeX.unshift(-10);
+                snakeY.unshift(200);
+                score++;
+            } else if (snakeY[0] < 0) {
+                snakeX.unshift(200);
+                snakeY.unshift(canvas.height);
+                score++;
+            } else if (snakeY[0] > canvas.height) {
+                snakeX.unshift(200);
+                snakeY.unshift(-10);
+                score++;
+            }
+        }
+        
+        function handleButtonClick() {
+            // Handle the button click event
+            let pauseButton = document.getElementById("pause-button");
+            
+            if (pauseButton.textContent === "Pause") {
+                pauseButton.textContent = "Resume";
+                clearInterval(gameInterval);
+            } else {
+                pauseButton.textContent = "Pause";
+                gameInterval = setInterval(drawSnake, 1000 / snakeSpeed);
+            }
+        }
+        
+        function handleResetButton() {
+            // Handle the reset button click event
+            score = 0;
+            snakeX = [200];
+            snakeY = [200];
+            clearInterval(gameInterval);
+            drawSnake();
+            updateScore();
+        }
+        
+        gameInterval = setInterval(drawSnake, 1000 / snakeSpeed);
+        drawSnake();
+        updateScore();
+    </script>
+</body>
+</html>

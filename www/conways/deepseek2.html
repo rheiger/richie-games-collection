@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conway's Game of Life</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let grid;
+        let rows, cols;
+        const cellSize = 10;
+
+        function createGrid() {
+            rows = Math.floor(canvas.height / cellSize);
+            cols = Math.floor(canvas.width / cellSize);
+            return Array.from({ length: rows }, () => Array(cols).fill(0));
+        }
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const cellValue = grid[row][col];
+                    ctx.fillStyle = cellValue ? 'black' : 'white';
+                    ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                }
+            }
+        }
+
+        function getNextGeneration() {
+            const nextGen = createGrid();
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    let neighbors = 0;
+                    for (let i = -1; i <= 1; i++) {
+                        for (let j = -1; j <= 1; j++) {
+                            if (i === 0 && j === 0) continue;
+                            const newRow = row + i;
+                            const newCol = col + j;
+                            if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+                                neighbors += grid[newRow][newCol];
+                            }
+                        }
+                    }
+                    if (grid[row][col] === 1) {
+                        nextGen[row][col] = neighbors === 2 || neighbors === 3 ? 1 : 0;
+                    } else {
+                        nextGen[row][col] = neighbors === 3 ? 1 : 0;
+                    }
+                }
+            }
+            return nextGen;
+        }
+
+        function randomizeGrid() {
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    grid[row][col] = Math.random() > 0.7 ? 1 : 0;
+                }
+            }
+            drawGrid();
+        }
+
+        function resizeCanvasToWindow() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            grid = createGrid();
+            randomizeGrid();
+        }
+
+        let running = false;
+        const intervalTime = 100;
+        function runSimulation() {
+            if (!running) return;
+            grid = getNextGeneration();
+            drawGrid();
+            setTimeout(runSimulation, intervalTime);
+        }
+
+        window.onload = () => {
+            resizeCanvasToWindow();
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    running = !running;
+                    if (running) runSimulation();
+                }
+            });
+        };
+
+        window.onresize = () => resizeCanvasToWindow();
+    </script>
+</body>
+</html>
