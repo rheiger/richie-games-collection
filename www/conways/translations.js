@@ -19,7 +19,15 @@ const translations = {
         stillLifeState: "Still Life",
         oscillatorState: "Oscillator (period: {0})",
         generation: "Generation",
-        infinite: "Infinite (Never reaches steady state)"
+        infinite: "Infinite (Never reaches steady state)",
+        explanationTitle: "How it Works",
+        explanation: "Conway's Game of Life is a cellular automaton simulation. Each cell on the grid can be either alive or dead, and they evolve according to the following rules:",
+        rulesTitle: "Rules",
+        rule1: "Any live cell with fewer than two live neighbours dies, as if by underpopulation.",
+        rule2: "Any live cell with two or three live neighbours lives on to the next generation.",
+        rule3: "Any live cell with more than three live neighbours dies, as if by overpopulation.",
+        rule4: "Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.",
+        clickToStart: "Click anywhere to start the simulation!"
     },
     de: {
         start: "Start",
@@ -41,7 +49,15 @@ const translations = {
         stillLifeState: "Stilleben",
         oscillatorState: "Oszillator (Periode: {0})",
         generation: "Generation",
-        infinite: "Unendlich (Erreicht nie einen stabilen Zustand)"
+        infinite: "Unendlich (Erreicht nie einen stabilen Zustand)",
+        explanationTitle: "Wie es funktioniert",
+        explanation: "Conways Spiel des Lebens ist eine zellulare Automaten-Simulation. Jede Zelle im Raster kann entweder lebendig oder tot sein, und sie entwickeln sich nach folgenden Regeln:",
+        rulesTitle: "Regeln",
+        rule1: "Eine lebende Zelle mit weniger als zwei lebenden Nachbarn stirbt an Unterbevölkerung.",
+        rule2: "Eine lebende Zelle mit zwei oder drei lebenden Nachbarn überlebt.",
+        rule3: "Eine lebende Zelle mit mehr als drei lebenden Nachbarn stirbt an Überbevölkerung.",
+        rule4: "Eine tote Zelle mit genau drei lebenden Nachbarn wird zu einer lebenden Zelle, als ob durch Fortpflanzung.",
+        clickToStart: "Klicken Sie irgendwo, um die Simulation zu starten!"
     },
     fr: {
         start: "Démarrer",
@@ -63,7 +79,15 @@ const translations = {
         stillLifeState: "Vie stable",
         oscillatorState: "Oscillateur (période : {0})",
         generation: "Génération",
-        infinite: "Infini (N'atteint jamais un état stable)"
+        infinite: "Infini (N'atteint jamais un état stable)",
+        explanationTitle: "Comment ça marche",
+        explanation: "Le Jeu de la Vie de Conway est une simulation d'automate cellulaire. Chaque cellule de la grille peut être vivante ou morte, et elles évoluent selon les règles suivantes :",
+        rulesTitle: "Règles",
+        rule1: "Une cellule vivante avec moins de deux voisines vivantes meurt, comme par sous-population.",
+        rule2: "Une cellule vivante avec deux ou trois voisines vivantes survit à la génération suivante.",
+        rule3: "Une cellule vivante avec plus de trois voisines vivantes meurt, comme par surpopulation.",
+        rule4: "Une cellule morte avec exactement trois voisines vivantes devient une cellule vivante, comme par reproduction.",
+        clickToStart: "Cliquez n'importe où pour démarrer la simulation !"
     },
     it: {
         start: "Inizia",
@@ -85,7 +109,15 @@ const translations = {
         stillLifeState: "Vita stabile",
         oscillatorState: "Oscillatore (periodo: {0})",
         generation: "Generazione",
-        infinite: "Infinito (Non raggiunge mai uno stato stabile)"
+        infinite: "Infinito (Non raggiunge mai uno stato stabile)",
+        explanationTitle: "Come funziona",
+        explanation: "Il Gioco della Vita di Conway è una simulazione di automa cellulare. Ogni cellula sulla griglia può essere viva o morta, e si evolvono secondo le seguenti regole:",
+        rulesTitle: "Regole",
+        rule1: "Ogni cellula viva con meno di due vicini vivi muore, come per sottopopolazione.",
+        rule2: "Ogni cellula viva con due o tre vicini vivi sopravvive alla generazione successiva.",
+        rule3: "Ogni cellula viva con più di tre vicini vivi muore, come per sovrappopolazione.",
+        rule4: "Ogni cellula morta con esattamente tre vicini vivi diventa una cellula viva, come per riproduzione.",
+        clickToStart: "Clicca ovunque per avviare la simulazione!"
     },
     sv: {
         start: "Starta",
@@ -107,7 +139,15 @@ const translations = {
         stillLifeState: "Stilleben",
         oscillatorState: "Oscillator (period: {0})",
         generation: "Generation",
-        infinite: "Oändlig (Når aldrig ett stabilt tillstånd)"
+        infinite: "Oändlig (Når aldrig ett stabilt tillstånd)",
+        explanationTitle: "Hur det fungerar",
+        explanation: "Conways Game of Life är en cellulär automatsimulering. Varje cell i rutnätet kan vara antingen levande eller död, och de utvecklas enligt följande regler:",
+        rulesTitle: "Regler",
+        rule1: "Varje levande cell med färre än två levande grannar dör, som av underbefolkning.",
+        rule2: "Varje levande cell med två eller tre levande grannar lever vidare till nästa generation.",
+        rule3: "Varje levande cell med mer än tre levande grannar dör, som av överbefolkning.",
+        rule4: "Varje död cell med exakt tre levande grannar blir en levande cell, som genom reproduktion.",
+        clickToStart: "Klicka var som helst för att starta simuleringen!"
     },
     sk: {
         start: "Štart",
@@ -129,7 +169,15 @@ const translations = {
         stillLifeState: "Nehybný život",
         oscillatorState: "Oscilátor (perióda: {0})",
         generation: "Generácia",
-        infinite: "Nekonečný (Nikdy nedosiahne ustálený stav)"
+        infinite: "Nekonečný (Nikdy nedosiahne ustálený stav)",
+        explanationTitle: "Ako to funguje",
+        explanation: "Conwayova Hra života je simulácia bunkového automatu. Každá bunka na mriežke môže byť buď živá alebo mŕtva a vyvíjajú sa podľa nasledujúcich pravidiel:",
+        rulesTitle: "Pravidlá",
+        rule1: "Každá živá bunka s menej ako dvoma živými susedmi zomrie akoby na podpopuláciu.",
+        rule2: "Každá živá bunka s dvoma alebo tromi živými susedmi prežije do ďalšej generácie.",
+        rule3: "Každá živá bunka s viac ako tromi živými susedmi zomrie akoby na premnoženie.",
+        rule4: "Každá mŕtva bunka s presne tromi živými susedmi sa stane živou bunkou akoby reprodukciou.",
+        clickToStart: "Kliknite kamkoľvek pre spustenie simulácie!"
     },
     es: {
         start: "Iniciar",
@@ -151,7 +199,15 @@ const translations = {
         stillLifeState: "Vida estática",
         oscillatorState: "Oscilador (período: {0})",
         generation: "Generación",
-        infinite: "Infinito (Nunca alcanza un estado estable)"
+        infinite: "Infinito (Nunca alcanza un estado estable)",
+        explanationTitle: "Cómo funciona",
+        explanation: "El Juego de la Vida de Conway es una simulación de autómata celular. Cada célula en la cuadrícula puede estar viva o muerta, y evolucionan según las siguientes reglas:",
+        rulesTitle: "Reglas",
+        rule1: "Cualquier célula viva con menos de dos vecinos vivos muere, como por subpoblación.",
+        rule2: "Cualquier célula viva con dos o tres vecinos vivos vive en la siguiente generación.",
+        rule3: "Cualquier célula viva con más de tres vecinos vivos muere, como por sobrepoblación.",
+        rule4: "Cualquier célula muerta con exactamente tres vecinos vivos se convierte en una célula viva, como por reproducción.",
+        clickToStart: "¡Haz clic en cualquier lugar para iniciar la simulación!"
     },
     pt: {
         start: "Iniciar",
@@ -173,7 +229,15 @@ const translations = {
         stillLifeState: "Vida estática",
         oscillatorState: "Oscilador (período: {0})",
         generation: "Geração",
-        infinite: "Infinito (Nunca atinge um estado estável)"
+        infinite: "Infinito (Nunca atinge um estado estável)",
+        explanationTitle: "Como funciona",
+        explanation: "O Jogo da Vida de Conway é uma simulação de autômato celular. Cada célula na grade pode estar viva ou morta, e elas evoluem de acordo com as seguintes regras:",
+        rulesTitle: "Regras",
+        rule1: "Qualquer célula viva com menos de dois vizinhos vivos morre, como por subpopulação.",
+        rule2: "Qualquer célula viva com dois ou três vizinhos vivos vive na próxima geração.",
+        rule3: "Qualquer célula viva com mais de três vizinhos vivos morre, como por superpopulação.",
+        rule4: "Qualquer célula morta com exatamente três vizinhos vivos se torna uma célula viva, como por reprodução.",
+        clickToStart: "Clique em qualquer lugar para iniciar a simulação!"
     },
     no: {
         start: "Start",
@@ -195,7 +259,15 @@ const translations = {
         stillLifeState: "Stilleben",
         oscillatorState: "Oscillator (periode: {0})",
         generation: "Generasjon",
-        infinite: "Uendelig (Når aldri en stabil tilstand)"
+        infinite: "Uendelig (Når aldri en stabil tilstand)",
+        explanationTitle: "Hvordan det fungerer",
+        explanation: "Conways Spill av Livet er en cellulær automatsimulering. Hver celle på rutenettet kan være enten levende eller død, og de utvikler seg i henhold til følgende regler:",
+        rulesTitle: "Regler",
+        rule1: "Enhver levende celle med færre enn to levende naboer dør, som av underbefolkning.",
+        rule2: "Enhver levende celle med to eller tre levende naboer lever videre til neste generasjon.",
+        rule3: "Enhver levende celle med mer enn tre levende naboer dør, som av overbefolkning.",
+        rule4: "Enhver død celle med nøyaktig tre levende naboer blir en levende celle, som ved reproduksjon.",
+        clickToStart: "Klikk hvor som helst for å starte simuleringen!"
     },
     fi: {
         start: "Aloita",
@@ -217,7 +289,15 @@ const translations = {
         stillLifeState: "Pysyvä elämä",
         oscillatorState: "Oskillaattori (jakso: {0})",
         generation: "Sukupolvi",
-        infinite: "Ääretön (Ei koskaan saavuta vakaata tilaa)"
+        infinite: "Ääretön (Ei koskaan saavuta vakaata tilaa)",
+        explanationTitle: "Miten se toimii",
+        explanation: "Conwayn Elämänpeli on soluautomaattisimulaatio. Jokainen ruudukon solu voi olla joko elävä tai kuollut, ja ne kehittyvät seuraavien sääntöjen mukaan:",
+        rulesTitle: "Säännöt",
+        rule1: "Jokainen elävä solu, jolla on vähemmän kuin kaksi elävää naapuria, kuolee alipopulaation vuoksi.",
+        rule2: "Jokainen elävä solu, jolla on kaksi tai kolme elävää naapuria, selviää seuraavaan sukupolveen.",
+        rule3: "Jokainen elävä solu, jolla on enemmän kuin kolme elävää naapuria, kuolee ylipopulaation vuoksi.",
+        rule4: "Jokainen kuollut solu, jolla on tasan kolme elävää naapuria, muuttuu eläväksi soluksi, ikään kuin lisääntymisen kautta.",
+        clickToStart: "Napsauta mitä tahansa kohtaa aloittaaksesi simulaation!"
     },
     pl: {
         start: "Start",
@@ -239,7 +319,15 @@ const translations = {
         stillLifeState: "Martwa natura",
         oscillatorState: "Oscylator (okres: {0})",
         generation: "Generacja",
-        infinite: "Nieskończony (Nigdy nie osiąga stanu ustalonego)"
+        infinite: "Nieskończony (Nigdy nie osiąga stanu ustalonego)",
+        explanationTitle: "Jak to działa",
+        explanation: "Gra w życie Conwaya to symulacja automatu komórkowego. Każda komórka na siatce może być żywa lub martwa, a ewoluują one według następujących zasad:",
+        rulesTitle: "Zasady",
+        rule1: "Każda żywa komórka z mniej niż dwoma żywymi sąsiadami umiera z powodu wyludnienia.",
+        rule2: "Każda żywa komórka z dwoma lub trzema żywymi sąsiadami żyje dalej w następnym pokoleniu.",
+        rule3: "Każda żywa komórka z więcej niż trzema żywymi sąsiadami umiera z powodu przeludnienia.",
+        rule4: "Każda martwa komórka z dokładnie trzema żywymi sąsiadami staje się żywą komórką, jakby przez reprodukcję.",
+        clickToStart: "Kliknij gdziekolwiek, aby rozpocząć symulację!"
     },
     cs: {
         start: "Start",
@@ -261,6 +349,14 @@ const translations = {
         stillLifeState: "Nehybný život",
         oscillatorState: "Oscilátor (perioda: {0})",
         generation: "Generace",
-        infinite: "Nekonečný (Nikdy nedosáhne ustáleného stavu)"
+        infinite: "Nekonečný (Nikdy nedosáhne ustáleného stavu)",
+        explanationTitle: "Jak to funguje",
+        explanation: "Conwayova Hra života je simulace buněčného automatu. Každá buňka v mřížce může být buď živá nebo mrtvá a vyvíjejí se podle následujících pravidel:",
+        rulesTitle: "Pravidla",
+        rule1: "Každá živá buňka s méně než dvěma živými sousedy zemře, jako by podpopulací.",
+        rule2: "Každá živá buňka se dvěma nebo třemi živými sousedy žije v další generaci.",
+        rule3: "Každá živá buňka s více než třemi živými sousedy zemře, jako by přelidněním.",
+        rule4: "Každá mrtvá buňka s přesně třemi živými sousedy se stane živou buňkou, jako by reprodukcí.",
+        clickToStart: "Klikněte kamkoli pro spuštění simulace!"
     }
 };

@@ -304,11 +304,12 @@ function toggleCell(event) {
 
 function showExplanation() {
     const explanation = document.getElementById('explanation');
-    explanation.textContent = translations[currentLanguage].explanation;
-    explanation.style.display = 'block';
-    setTimeout(() => {
-        explanation.style.display = 'none';
-    }, 5000);
+    explanation.style.display = 'flex';
+}
+
+function hideExplanation() {
+    const explanation = document.getElementById('explanation');
+    explanation.style.display = 'none';
 }
 
 function randomizeGrid(patternType = 'random') {
@@ -378,8 +379,10 @@ document.getElementById('startStop').addEventListener('click', startStop);
 document.getElementById('clear').addEventListener('click', clearGrid);
 document.getElementById('random').addEventListener('click', showPatternSelection);
 // document.getElementById('random').addEventListener('click', randomizeGrid);
-document.getElementById('explain').addEventListener('click', showExplanation);
-// canvas.addEventListener('click', handleCanvasClick);
+document.getElementById('explain').addEventListener('click', function(event) {
+    event.stopPropagation(); // Prevent this click from immediately hiding the explanation
+    showExplanation();
+});// canvas.addEventListener('click', handleCanvasClick);
 canvas.addEventListener('mousedown', handleMouseDown);
 canvas.addEventListener('mousemove', handleMouseMove);
 canvas.addEventListener('mouseup', handleMouseUp);
@@ -387,13 +390,21 @@ canvas.addEventListener('mouseleave', handleMouseLeave);
 canvas.addEventListener('touchstart', handleTouchStart);
 canvas.addEventListener('touchmove', handleTouchMove);
 canvas.addEventListener('touchend', handleTouchEnd);
+document.addEventListener('click', hideExplanation);
+document.addEventListener('touchstart', hideExplanation);
+
+// Prevent clicks within the explanation from closing it
+// document.getElementById('explanation').addEventListener('click', function(event) {
+//     event.stopPropagation();
+// });
 
 function initGame() {
     currentLanguage = detectLanguage();
     setLanguage(currentLanguage);
     initializeGrid();
-    clearGrid();  // This will also reset and update the generation counter
+    clearGrid();
     drawGrid();
+    showExplanation(); // Show explanation on game init
 }
 
 document.addEventListener('DOMContentLoaded', initGame);
