@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15 Puzzle Challenge</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="title" data-i18n="title">15 Puzzle Challenge</h1>
+        <div id="game-board"></div>
+        <div class="controls">
+            <button id="new-game-btn" data-i18n="newGame">New Game</button>
+            <button id="solve-btn" data-i18n="solve">Solve</button>
+        </div>
+        <div id="moves">Moves: <span id="move-count">0</span></div>
+        <div id="message"></div>
+    </div>
+    <div id="overlay" class="overlay">
+        <div class="congratulations">
+            <h2 data-i18n="congratulations">Congratulations!</h2>
+            <p data-i18n="puzzleSolved">You solved the puzzle!</p>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
