@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initializeGame() {
+        console.log("Initializing game");
         puzzleSize = parseInt(puzzleTypeSelect.value);
         gameBoard.className = `puzzle-${puzzleSize}`;
         gameBoard.innerHTML = '';
@@ -57,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         randomMovesDone = 0;
         moveCount.textContent = moves;
         randomMoveCount.textContent = randomMovesDone;
-    
+
         for (let i = 0; i < gridSize; i++) {
             for (let j = 0; j < gridSize; j++) {
                 if (i === gridSize - 1 && j === gridSize - 1) {
@@ -74,10 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-    
+
         shuffleResetBtn.textContent = getMessage('shuffle');
         shuffleResetBtn.dataset.action = 'shuffle';
         updateStats();
+        hideCongratulations();
+        console.log("Game initialized");
     }
 
     function updateStats() {
@@ -111,19 +114,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Empty tile element not found');
                 return;
             }
-    
+
             // Swap positions
             [tile.row, tile.col, emptyTile.row, emptyTile.col] = [emptyTile.row, emptyTile.col, tile.row, tile.col];
-    
+
             // Update visual positions
             setTilePosition(tile.element, tile.row, tile.col);
             setTilePosition(emptyTileElement, emptyTile.row, emptyTile.col);
-    
+
             // Update the tiles array
             const emptyTileIndex = tiles.findIndex(t => t.num === 0);
             const movedTileIndex = tiles.findIndex(t => t === tile);
             [tiles[emptyTileIndex], tiles[movedTileIndex]] = [tiles[movedTileIndex], tiles[emptyTileIndex]];
-    
+
             if (!isRandom) {
                 moves++;
                 moveCount.textContent = moves;
@@ -131,11 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 randomMovesDone++;
                 randomMoveCount.textContent = randomMovesDone;
             }
-    
+
             updateStats();
-    
-            if (!isRandom && checkWin()) {
-                overlay.style.display = 'flex';
+
+            if (!isRandom && moves > 0 && checkWin()) {
+                showCongratulations();
             }
         }
     }
@@ -146,12 +149,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function checkWin() {
+        console.log("Checking win condition");
+        console.log("Current tile arrangement:", tiles);
         const gridSize = Math.sqrt(puzzleSize + 1);
         for (let i = 0; i < tiles.length; i++) {
-            if (tiles[i].num !== i + 1 || tiles[i].row !== Math.floor(i / gridSize) || tiles[i].col !== i % gridSize) {
+            const expectedNum = (i + 1) % tiles.length;
+            const expectedRow = Math.floor(i / gridSize);
+            const expectedCol = i % gridSize;
+            console.log(`Tile ${i}: Expected ${expectedNum} at (${expectedRow}, ${expectedCol}), Found ${tiles[i].num} at (${tiles[i].row}, ${tiles[i].col})`);
+            if (tiles[i].num !== expectedNum || tiles[i].row !== expectedRow || tiles[i].col !== expectedCol) {
+                console.log("Win condition not met");
                 return false;
             }
         }
+        console.log("Win condition met");
         return true;
     }
 
@@ -160,33 +171,91 @@ document.addEventListener('DOMContentLoaded', () => {
         constructor() {
             this.elements = [];
         }
-    
+
         enqueue(element, priority) {
-            this.elements.push({element, priority});
+            this.elements.push({ element, priority });
             this.elements.sort((a, b) => a.priority - b.priority);
         }
-    
+
         dequeue() {
             return this.elements.shift().element;
         }
-    
+
         isEmpty() {
             return this.elements.length === 0;
         }
-    
+
         contains(element) {
             return this.elements.some(e => e.element === element);
         }
-    
+
         size() {
             return this.elements.length;
         }
-    
+
         peek() {
             return this.elements[0]?.element;
         }
-    }    
-        
+    }
+
+    function linearConflict(state, goalState, gridSize) {
+        let conflicts = 0;
+        for (let i = 0; i < gridSize; i++) {
+            conflicts += countRowConflicts(state, goalState, i, gridSize);
+            conflicts += countColumnConflicts(state, goalState, i, gridSize);
+        }
+        return conflicts * 2; // Each conflict requires 2 additional moves
+    }
+
+    function countRowConflicts(state, goalState, row, gridSize) {
+        let conflicts = 0;
+        for (let i = 0; i < gridSize - 1; i++) {
+            for (let j = i + 1; j < gridSize; j++) {
+                const tile1 = state[row * gridSize + i];
+                const tile2 = state[row * gridSize + j];
+                if (tile1 !== 0 && tile2 !== 0) {
+                    const goalRow1 = Math.floor((tile1 - 1) / gridSize);
+                    const goalRow2 = Math.floor((tile2 - 1) / gridSize);
+                    if (goalRow1 === goalRow2 && goalRow1 === row && tile1 > tile2) {
+                        conflicts++;
+                    }
+                }
+            }
+        }
+        return conflicts;
+    }
+
+    function countColumnConflicts(state, goalState, col, gridSize) {
+        let conflicts = 0;
+        for (let i = 0; i < gridSize - 1; i++) {
+            for (let j = i + 1; j < gridSize; j++) {
+                const tile1 = state[i * gridSize + col];
+                const tile2 = state[j * gridSize + col];
+                if (tile1 !== 0 && tile2 !== 0) {
+                    const goalCol1 = (tile1 - 1) % gridSize;
+                    const goalCol2 = (tile2 - 1) % gridSize;
+                    if (goalCol1 === goalCol2 && goalCol1 === col && tile1 > tile2) {
+                        conflicts++;
+                    }
+                }
+            }
+        }
+        return conflicts;
+    }
+
+    function reconstructPath(cameFrom, currentState) {
+        const path = [currentState];
+        while (cameFrom.has(currentState)) {
+            currentState = cameFrom.get(currentState);
+            path.unshift(currentState);
+        }
+        return path;
+    }
+
+    function improvedHeuristic(state, goalState, gridSize) {
+        return manhattanDistance(state, goalState, gridSize) + linearConflict(state, goalState, gridSize);
+    }
+
     // Helper function to calculate Manhattan distance
     function manhattanDistance(state, goalState, gridSize) {
         let distance = 0;
@@ -202,25 +271,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return Math.floor(distance); // Ensure it's an integer
     }
-    
+
     function getPossibleMoves(state, gridSize) {
         // console.log("getPossibleMoves - Input state:", state);
         // console.log("getPossibleMoves - Grid size:", gridSize);
-    
+
         const zeroIndex = state.indexOf(0);
         // console.log("getPossibleMoves - Zero index:", zeroIndex);
-    
+
         if (zeroIndex === -1) {
             console.error("No empty tile (0) found in the state");
             return [];
         }
-    
+
         const row = Math.floor(zeroIndex / gridSize);
         const col = zeroIndex % gridSize;
         // console.log("getPossibleMoves - Zero position: row", row, "col", col);
-    
+
         const moves = [];
-    
+
         if (row > 0) {
             moves.push(zeroIndex - gridSize);
             // console.log("getPossibleMoves - Can move up, adding:", zeroIndex - gridSize);
@@ -237,11 +306,11 @@ document.addEventListener('DOMContentLoaded', () => {
             moves.push(zeroIndex + 1);
             // console.log("getPossibleMoves - Can move right, adding:", zeroIndex + 1);
         }
-    
+
         // console.log("getPossibleMoves - Final possible moves:", moves);
         return moves;
     }
-    
+
     function getStateAfterMove(state, move, zeroIndex) {
         if (zeroIndex === -1 || move < 0 || move >= state.length || zeroIndex < 0 || zeroIndex >= state.length) {
             console.error("Invalid move:", move, "or zeroIndex:", zeroIndex);
@@ -251,121 +320,207 @@ document.addEventListener('DOMContentLoaded', () => {
         [newState[zeroIndex], newState[move]] = [newState[move], newState[zeroIndex]];
         return newState;
     }
-    
-    function aStarSearch(initialState, goalState, gridSize) {
-        // console.log("Initial State:", initialState);
-        // console.log("Goal State:", goalState);
-        // console.log("Grid Size:", gridSize);
-        // console.log("Initial Manhattan distance:", manhattanDistance(initialState, goalState, gridSize));
-    
+
+    function aStarSearch(initialState, goalState, gridSize, maxIterations = 200000) {
         const openSet = new PriorityQueue();
         const closedSet = new Set();
         const cameFrom = new Map();
         const gScore = new Map();
         const fScore = new Map();
-    
-        const initialStateString = initialState.join(',');
-        openSet.enqueue(initialStateString, manhattanDistance(initialState, goalState, gridSize));
-        gScore.set(initialStateString, 0);
-        fScore.set(initialStateString, manhattanDistance(initialState, goalState, gridSize));
-    
         let iterations = 0;
-        const maxIterations = 1000000;
-    
+
+        const initialStateString = initialState.join(',');
+        openSet.enqueue(initialStateString, improvedHeuristic(initialState, goalState, gridSize));
+        gScore.set(initialStateString, 0);
+        fScore.set(initialStateString, improvedHeuristic(initialState, goalState, gridSize));
+
         while (!openSet.isEmpty() && iterations < maxIterations) {
             iterations++;
             const currentStateString = openSet.dequeue();
-            const currentState = currentStateString.split(',').map(Number);
-            
-            if(iterations % 10000 == 0){
-                console.log(`Iteration ${iterations}:`, currentState);
-                console.log("Current Manhattan distance:", manhattanDistance(currentState, goalState, gridSize));
-            }
-    
             if (currentStateString === goalState.join(',')) {
-                // console.log("Solution found!");
                 return reconstructPath(cameFrom, currentStateString);
             }
-    
+
             closedSet.add(currentStateString);
-    
+
+            const currentState = currentStateString.split(',').map(Number);
             const zeroIndex = currentState.indexOf(0);
-            // console.log("Calling getPossibleMoves with:", currentState, gridSize);
             const possibleMoves = getPossibleMoves(currentState, gridSize);
-    
-            // console.log("Possible moves returned:", possibleMoves);
-    
+
             for (const move of possibleMoves) {
                 const newState = getStateAfterMove(currentState, move, zeroIndex);
                 const newStateString = newState.join(',');
-    
-                // console.log("New state after move:", newState);
-    
+
                 if (closedSet.has(newStateString)) continue;
-    
+
                 const tentativeGScore = gScore.get(currentStateString) + 1;
-    
+
                 if (!gScore.has(newStateString) || tentativeGScore < gScore.get(newStateString)) {
                     cameFrom.set(newStateString, currentStateString);
                     gScore.set(newStateString, tentativeGScore);
-                    const f = tentativeGScore + manhattanDistance(newState, goalState, gridSize);
+                    const f = tentativeGScore + improvedHeuristic(newState, goalState, gridSize);
                     fScore.set(newStateString, f);
-    
+
                     if (!openSet.contains(newStateString)) {
                         openSet.enqueue(newStateString, f);
                     }
                 }
             }
-    
-            // console.log("Open set size:", openSet.size());
-            // console.log("Closed set size:", closedSet.size);
         }
+
+        return null; // No solution found
+    }
+
+    function idaStar(initialState, goalState, gridSize, maxIterations = 200000) {
+        let iterations = 0;
+        let threshold = improvedHeuristic(initialState, goalState, gridSize);
     
-        // console.log("No solution found after", iterations, "iterations");
-        // console.log("Final state:", openSet.peek());
-        return null;
-    }    
-    
-    // Helper function to reconstruct the path
-    function reconstructPath(cameFrom, currentState) {
-        const path = [currentState];
-        while (cameFrom.has(currentState)) {
-            currentState = cameFrom.get(currentState);
-            path.unshift(currentState);
+        for (let iteration = 0; iteration < maxIterations; iteration++) {
+            const result = search(initialState, goalState, 0, threshold, gridSize, []);
+            if (Array.isArray(result)) {
+                // Convert the solution to the same format as aStarSearch
+                return result.map(state => state.join(','));
+            }
+            if (result === Infinity) {
+                return null; // No solution
+            }
+            threshold = result; // New threshold for next iteration
         }
-        return path;
+        return null; // No solution found within iteration limit
+    }
+    
+    function search(state, goalState, g, threshold, gridSize, path) {
+        const f = g + improvedHeuristic(state, goalState, gridSize);
+        if (f > threshold) {
+            return f;
+        }
+        if (state.join(',') === goalState.join(',')) {
+            return path.concat([state]);
+        }
+        let min = Infinity;
+        const zeroIndex = state.indexOf(0);
+        const possibleMoves = getPossibleMoves(state, gridSize);
+    
+        for (const move of possibleMoves) {
+            const newState = getStateAfterMove(state, move, zeroIndex);
+            if (!path.some(s => s.join(',') === newState.join(','))) {
+                const result = search(newState, goalState, g + 1, threshold, gridSize, path.concat([state]));
+                if (Array.isArray(result)) {
+                    return result;
+                }
+                if (result < min) {
+                    min = result;
+                }
+            }
+        }
+        return min;
     }
 
     // Function to solve the puzzle
-    function solvePuzzle() {
-        // Create a 2D array to represent the current state
+    async function solvePuzzle() {
         const gridSize = Math.sqrt(tiles.length);
         let currentState = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
     
-        // Fill the 2D array with the current tile positions
         tiles.forEach(tile => {
             currentState[tile.row][tile.col] = tile.num || 0;
         });
     
-        // Flatten the 2D array to 1D for the A* algorithm
         currentState = currentState.flat();
-    
-        const goalState = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+        const goalState = Array.from({length: tiles.length}, (_, i) => (i + 1) % tiles.length);
+        const maxIterations = 1000000; // Adjust as needed
     
         console.log("Solving puzzle:");
         console.log("Current state:", currentState);
         console.log("Goal state:", goalState);
         console.log("Grid size:", gridSize);
     
-        const solution = aStarSearch(currentState, goalState, gridSize);
+        if (gridSize === 4) {
+            const continueSearch = await showAlert(getMessage('warning15Puzzle'));
+            if (!continueSearch) return;
+        }
+    
+        solveBtn.textContent = getMessage('thinking');
+        solveBtn.onclick = interruptSearch;
+    
+        let searchInterrupted = false;
+        const solution = await new Promise(resolve => {
+            setTimeout(() => {
+                const result = idaStar(currentState, goalState, gridSize, maxIterations);
+                if (searchInterrupted) {
+                    resolve(null);
+                } else {
+                    resolve(result);
+                }
+            }, 0);
+        });
+    
+        solveBtn.textContent = getMessage('solve');
+        solveBtn.onclick = solvePuzzle;
+    
         if (solution) {
             console.log("Solution found:", solution);
             animateSolution(solution);
-        } else {
-            console.log("No solution found");
+        } else if (!searchInterrupted) {
+            showGivingUpOverlay(maxIterations);
         }
     }
-        
+    
+    function showCongratulations() {
+        console.log("Showing congratulations overlay");
+        overlay.style.display = 'flex';
+    }
+    
+    // Add this function to hide the overlay
+    function hideCongratulations() {
+        console.log("Hiding congratulations overlay");
+        overlay.style.display = 'none';
+    }
+    
+    // Modify the event listener for the overlay
+    overlay.addEventListener('click', hideCongratulations);
+    
+    function interruptSearch() {
+        searchInterrupted = true;
+        solveBtn.textContent = getMessage('solve');
+        solveBtn.onclick = solvePuzzle;
+    }
+    
+    function showGivingUpOverlay(iterations) {
+        const overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        overlay.innerHTML = `<div class="message">${getMessage('computerGivingUp').replace('{n}', iterations)}</div>`;
+        overlay.onclick = () => document.body.removeChild(overlay);
+        document.body.appendChild(overlay);
+    }
+    
+    function showAlert(message) {
+        return new Promise(resolve => {
+            const alertBox = document.createElement('div');
+            alertBox.className = 'alert-box';
+            alertBox.innerHTML = `
+                <div class="message">${message}</div>
+                <button class="yes">${getMessage('yes')}</button>
+                <button class="no">${getMessage('no')}</button>
+            `;
+    
+            function removeAlertBox() {
+                document.body.removeChild(alertBox);
+            }
+    
+            alertBox.querySelector('.yes').onclick = () => {
+                removeAlertBox();
+                resolve(true);
+            };
+    
+            alertBox.querySelector('.no').onclick = () => {
+                removeAlertBox();
+                resolve(false);
+            };
+    
+            document.body.appendChild(alertBox);
+        });
+    }
+
     // Function to animate the solution
     function animateSolution(solution) {
         let index = 0;
@@ -391,7 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // console.log('adjacentTiles:',adjacentTiles);
         if (adjacentTiles.length > 0) {
             let randomTile = adjacentTiles[Math.floor(Math.random() * adjacentTiles.length)];
-            while (randomTile.num === 0 || randomTile === lastShuffledTile){
+            while (randomTile.num === 0 || randomTile === lastShuffledTile) {
                 randomTile = adjacentTiles[Math.floor(Math.random() * adjacentTiles.length)];
             }
             // console.log('moving ',randomTile);
