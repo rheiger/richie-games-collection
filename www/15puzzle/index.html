@@ -19,16 +19,25 @@
     <div class="container">
         <script src="../js/common.js"></script>
         <h1 id="title" data-i18n="title">15 Puzzle Challenge</h1>
-        <div id="game-board"></div>
+        <div id="gameBoard"></div>
         <div class="controls">
-            <select id="puzzle-type">
+            <select id="puzzleType">
                 <option value="8">8 Puzzle (3x3)</option>
                 <option value="15">15 Puzzle (4x4)</option>
             </select>
-            <button id="new-game-btn" data-i18n="newGame">New Game</button>
-            <button id="solve-btn" data-i18n="solve">Solve</button>
+            <button id="shuffleResetBtn" data-i18n="shuffle">Shuffle</button>
+            <button id="solveBtn" data-i18n="solve">Solve</button>
         </div>
-        <div id="moves">Moves: <span id="move-count">0</span></div>
+        <div id="stats">
+            <span>
+                <span data-i18n="randomMoves">Random Moves</span>:
+                <span id="randomMoveCount">0</span>
+            </span>
+            <span>
+                <span data-i18n="moves">Moves</span>:
+                <span id="moveCount">0</span>
+            </span>
+        </div>
         <div id="message"></div>
     </div>
     <div id="overlay" class="overlay">
@@ -55,7 +64,7 @@
         }
 
         releaseInfo = {
-            version: "Release: v2.2.3",
+            version: "Release: v2.2.4",
             notes: "15-Puzzle",
             features: [
                 "15-Puzzle Game",
@@ -65,12 +74,11 @@
         };
     </script>
     <div id="release-tag" class="release-tag">
-        Release: v2.2.3
+        Release: v2.2.4
     </div>
     <div id="release-notes" class="release-notes">
         <!-- Release notes content will be inserted here -->
     </div>
-    <script src="./game.js"></script>
 </body>
-
+<script src="./game.js"></script>
 </html>
