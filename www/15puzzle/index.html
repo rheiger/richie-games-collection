@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,12 +14,17 @@
     <style>
     </style>
 </head>
+
 <body>
     <div class="container">
         <script src="../js/common.js"></script>
         <h1 id="title" data-i18n="title">15 Puzzle Challenge</h1>
         <div id="game-board"></div>
         <div class="controls">
+            <select id="puzzle-type">
+                <option value="8">8 Puzzle (3x3)</option>
+                <option value="15">15 Puzzle (4x4)</option>
+            </select>
             <button id="new-game-btn" data-i18n="newGame">New Game</button>
             <button id="solve-btn" data-i18n="solve">Solve</button>
         </div>
@@ -49,19 +55,22 @@
         }
 
         releaseInfo = {
-            version: "Release: v2.2.2",
+            version: "Release: v2.2.3",
             notes: "15-Puzzle",
             features: [
                 "15-Puzzle Game",
+                "Option for 8-Puzzle Game",
                 "Moving tiles"
             ]
         };
     </script>
     <div id="release-tag" class="release-tag">
-        Release: v2.2.2
+        Release: v2.2.3
     </div>
     <div id="release-notes" class="release-notes">
         <!-- Release notes content will be inserted here -->
     </div>
-    <script src="./game.js"></script></body>
+    <script src="./game.js"></script>
+</body>
+
 </html>

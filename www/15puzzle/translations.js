@@ -1,7 +1,8 @@
 const translations = {
     'en': {
-        title: 'Connect Four',
+        title: '15-Puzzle',
         newGame: 'New Game',
+        solve: 'Solve',
         yourTurn: 'Your turn',
         computerTurn: 'Computer\'s turn',
         youWin: 'You win!',

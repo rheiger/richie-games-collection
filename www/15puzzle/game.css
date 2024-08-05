@@ -14,14 +14,22 @@ body {
 
 #game-board {
     position: relative;
-    width: 320px;
-    height: 320px;
     margin: 20px auto;
     background-color: #f0f0f0;
     border: 2px solid #3498db;
     border-radius: 5px;
     padding: 5px;
     box-sizing: border-box;
+}
+
+#game-board.puzzle-8 {
+    width: 240px;
+    height: 240px;
+}
+
+#game-board.puzzle-15 {
+    width: 320px;
+    height: 320px;
 }
 
 .tile {
@@ -35,10 +43,20 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     position: absolute;
-    width: 72px; /* Slightly reduced to fit within the border */
-    height: 72px; /* Slightly reduced to fit within the border */
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 72px;
+    height: 72px;
+}
+
+.puzzle-8 .tile {
+    width: 72px;
+    height: 72px;
+}
+
+.puzzle-15 .tile {
+    width: 72px;
+    height: 72px;
 }
 
 .tile:hover {
