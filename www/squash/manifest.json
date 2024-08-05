@@ -1,11 +1,11 @@
 {
-    "name": "Mastermind",
-    "short_name": "Mastermind",
+    "name": "Squash",
+    "short_name": "Squash",
     "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#ecf0f1",
     "theme_color": "#3498db",
-    "description": "Play Mastermind with adjustable difficulty levels!",
+    "description": "Play simple Squash game",
     "icons": [
         {
             "src": "icon-192x192.png",

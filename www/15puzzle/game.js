@@ -8,15 +8,14 @@ const overlay = document.getElementById('overlay');
 let tiles = [];
 let emptyTile = { row: 3, col: 3 };
 let moves = 0;
+let canMove = true;
 
 function createTile(num, row, col) {
     const tile = document.createElement('div');
     tile.className = 'tile';
     tile.textContent = num;
-    tile.style.gridRow = row + 1;
-    tile.style.gridColumn = col + 1;
+    setTilePosition(tile, row, col);
     
-    // Instead of passing row and col directly, we'll pass the tile object
     tile.addEventListener('click', () => {
         const currentTile = tiles.find(t => t.element === tile);
         if (currentTile) {
@@ -25,6 +24,15 @@ function createTile(num, row, col) {
     });
     
     return tile;
+}
+
+function setTilePosition(element, row, col) {
+    const gap = 6; // Increased gap slightly for better spacing
+    const tileSize = 72; // Match the CSS tile size
+    const top = row * (tileSize + gap) + gap;
+    const left = col * (tileSize + gap) + gap;
+    element.style.top = `${top}px`;
+    element.style.left = `${left}px`;
 }
 
 function initializeGame() {
@@ -42,8 +50,7 @@ function initializeGame() {
             if (i === 3 && j === 3) {
                 const emptyTileElement = document.createElement('div');
                 emptyTileElement.className = 'tile empty';
-                emptyTileElement.style.gridRow = 4;
-                emptyTileElement.style.gridColumn = 4;
+                setTilePosition(emptyTileElement, 3, 3);
                 gameBoard.appendChild(emptyTileElement);
             } else {
                 const num = numbers.pop();
@@ -69,7 +76,9 @@ function updateTilePosition(element, row, col) {
 }
 
 function moveTile(tile) {
+    if (!canMove) return;
     if (isAdjacent(tile.row, tile.col, emptyTile.row, emptyTile.col)) {
+        canMove = false;
         const emptyTileElement = gameBoard.querySelector('.empty');
         if (!emptyTileElement) {
             console.error('Empty tile element not found');
@@ -79,16 +88,19 @@ function moveTile(tile) {
         // Swap positions in the game state
         [tile.row, tile.col, emptyTile.row, emptyTile.col] = [emptyTile.row, emptyTile.col, tile.row, tile.col];
 
-        // Update tile positions in the grid
-        updateTilePosition(tile.element, tile.row, tile.col);
-        updateTilePosition(emptyTileElement, emptyTile.row, emptyTile.col);
+        // Animate tile movement
+        setTilePosition(tile.element, tile.row, tile.col);
+        setTilePosition(emptyTileElement, emptyTile.row, emptyTile.col);
 
         moves++;
         moveCount.textContent = moves;
 
-        if (checkWin()) {
-            overlay.style.display = 'flex';
-        }
+        setTimeout(() => {
+            canMove = true;
+            if (checkWin()) {
+                overlay.style.display = 'flex';
+            }
+        }, 300); // This should match the transition duration in CSS
     }
 }
 

@@ -1,11 +1,11 @@
 {
-    "name": "Connect Four",
-    "short_name": "Connect4",
+    "name": "Game Of Life",
+    "short_name": "Game Of Life",
     "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#f0f0f0",
     "theme_color": "#3498db",
-    "description": "Play Connect Four against a challenging AI opponent!",
+    "description": "Demo for Game Of Life",
     "icons": [
         {
             "src": "icon-192x192.png",

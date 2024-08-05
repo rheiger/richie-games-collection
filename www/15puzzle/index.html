@@ -3,11 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>15 Puzzle Challenge</title>
-    <link rel="stylesheet" href="game.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="./game.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Richie's Game Collection">
+    <meta name="theme-color" content="#3498db">
+    <title data-i18n="title">15 Puzzle Challenge</title>
+    <style>
+    </style>
 </head>
 <body>
     <div class="container">
+        <script src="../js/common.js"></script>
         <h1 id="title" data-i18n="title">15 Puzzle Challenge</h1>
         <div id="game-board"></div>
         <div class="controls">
@@ -23,6 +31,37 @@
             <p data-i18n="puzzleSolved">You solved the puzzle!</p>
         </div>
     </div>
-    <script src="game.js"></script>
-</body>
+    <script src="./translations.js"></script>
+    <script>
+        const initialLanguage = detectLanguage();
+        setLanguage(initialLanguage);
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        releaseInfo = {
+            version: "Release: v2.2.2",
+            notes: "15-Puzzle",
+            features: [
+                "15-Puzzle Game",
+                "Moving tiles"
+            ]
+        };
+    </script>
+    <div id="release-tag" class="release-tag">
+        Release: v2.2.2
+    </div>
+    <div id="release-notes" class="release-notes">
+        <!-- Release notes content will be inserted here -->
+    </div>
+    <script src="./game.js"></script></body>
 </html>
