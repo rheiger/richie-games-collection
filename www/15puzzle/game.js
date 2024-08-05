@@ -15,7 +15,15 @@ function createTile(num, row, col) {
     tile.textContent = num;
     tile.style.gridRow = row + 1;
     tile.style.gridColumn = col + 1;
-    tile.addEventListener('click', () => moveTile(row, col));
+    
+    // Instead of passing row and col directly, we'll pass the tile object
+    tile.addEventListener('click', () => {
+        const currentTile = tiles.find(t => t.element === tile);
+        if (currentTile) {
+            moveTile(currentTile);
+        }
+    });
+    
     return tile;
 }
 
@@ -39,32 +47,41 @@ function initializeGame() {
                 gameBoard.appendChild(emptyTileElement);
             } else {
                 const num = numbers.pop();
-                const tile = createTile(num, i, j);
-                gameBoard.appendChild(tile);
-                tiles.push({ num, row: i, col: j, element: tile });
+                const tileElement = createTile(num, i, j);
+                gameBoard.appendChild(tileElement);
+                tiles.push({ num, row: i, col: j, element: tileElement });
             }
         }
     }
 }
 
-function moveTile(row, col) {
-    if (isAdjacent(row, col, emptyTile.row, emptyTile.col)) {
-        const tileIndex = tiles.findIndex(t => t.row === row && t.col === col);
-        const tile = tiles[tileIndex];
+function isValidPosition(row, col) {
+    return row >= 0 && row < 4 && col >= 0 && col < 4;
+}
 
-        // Find the empty tile element
+function updateTilePosition(element, row, col) {
+    if (row < 0 || row > 3 || col < 0 || col > 3) {
+        console.error(`Invalid position: row ${row}, col ${col}`);
+        return;
+    }
+    element.style.gridRow = `${row + 1}`;
+    element.style.gridColumn = `${col + 1}`;
+}
+
+function moveTile(tile) {
+    if (isAdjacent(tile.row, tile.col, emptyTile.row, emptyTile.col)) {
         const emptyTileElement = gameBoard.querySelector('.empty');
+        if (!emptyTileElement) {
+            console.error('Empty tile element not found');
+            return;
+        }
 
         // Swap positions in the game state
         [tile.row, tile.col, emptyTile.row, emptyTile.col] = [emptyTile.row, emptyTile.col, tile.row, tile.col];
 
-        // Update tile position in the grid
-        tile.element.style.gridRow = tile.row + 1;
-        tile.element.style.gridColumn = tile.col + 1;
-
-        // Update empty tile position in the grid
-        emptyTileElement.style.gridRow = emptyTile.row + 1;
-        emptyTileElement.style.gridColumn = emptyTile.col + 1;
+        // Update tile positions in the grid
+        updateTilePosition(tile.element, tile.row, tile.col);
+        updateTilePosition(emptyTileElement, emptyTile.row, emptyTile.col);
 
         moves++;
         moveCount.textContent = moves;
