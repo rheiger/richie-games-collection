@@ -8,7 +8,7 @@ const translations = {
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
         conwaysBtn: 'Conway\'s Life 💻 📱',
-        puzzle15Btn: 'Schiebepuzzle 💻 📱',
+        puzzle15Btn: 'Sliding Puzzle 💻 📱',
         pwaInfo: 'Each game can also be installed as a Progressive Web App on Apple or Android devices, making them offline-capable',
         comingSoon: 'Check back soon for more exciting games!',
         footer: 'Created with ❤️ by me, Richie with great help from Claude.ai. Challenge your mind daily!'
@@ -21,7 +21,7 @@ const translations = {
         mastermindBtn: 'Mastermind spielen 💻 (📱)',
         squashBtn: 'Squash 💻 (📱)',
         breakoutBtn: 'Breakout 💻 (📱)',
-        puzzle15Btn: 'Sliding Puzzle 💻 📱',
+        puzzle15Btn: 'Schiebepuzzle 💻 📱',
         conwaysBtn: 'Conway\'s Life 💻 📱',
         pwaInfo: 'Jedes Spiel kann auch als Progressive Web App auf Apple- oder Android-Geräten installiert werden, wodurch sie offline nutzbar sind',
         comingSoon: 'Schauen Sie bald wieder vorbei für weitere spannende Spiele!',

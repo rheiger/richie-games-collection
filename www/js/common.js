@@ -27,7 +27,7 @@ function createLanguageButtons() {
 
 function setLanguage(lang) {
     console.log('setting language to ',lang);
-    currentLanguage = lang;
+    // currentLanguage = lang;
     localStorage.setItem('preferredLanguage', lang);
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');

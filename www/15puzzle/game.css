@@ -101,13 +101,6 @@ button:hover {
     text-align: center;
 }
 
-#stats {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    font-size: 16px;
-}
-
 #shuffleResetBtn {
     transition: background-color 0.3s;
 }
@@ -250,4 +243,30 @@ button:disabled {
     background-color: #cccccc;
     color: #666666;
     cursor: not-allowed;
+}
+
+#stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem; /* Adjust the gap value as needed */
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    margin-right: 1rem; /* Adjust the margin value as needed */
+}
+
+/* Optional: Ensure the stats are evenly distributed */
+#stats {
+    justify-content: space-between;
+}
+
+/* Optional: Add some padding to the container */
+#stats {
+    padding: 1rem;
 }

@@ -29,15 +29,15 @@
             <button id="solveBtn" data-i18n="solve">Solve</button>
         </div>
         <div id="stats">
-            <span>
+            <span class="stat-item">
                 <span data-i18n="randomMoves">Random Moves</span>:
                 <span id="randomMoveCount">0</span>
             </span>
-            <span>
+            <span class="stat-item">
                 <span data-i18n="moves">Moves</span>:
                 <span id="moveCount">0</span>
             </span>
-            <span>
+            <span class="stat-item">
                 <span data-i18n="computerMoves">Computer Moves</span>:
                 <span id="computerMoveCount">0</span>
             </span>
@@ -52,9 +52,9 @@
     </div>
     <script src="./translations.js"></script>
     <script>
-        const initialLanguage = detectLanguage();
-        setLanguage(initialLanguage);
-
+        currentLanguage = detectLanguage();
+        setLanguage(currentLanguage);
+        console.log('Language is set to:',currentLanguage);
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
@@ -68,17 +68,18 @@
         }
 
         releaseInfo = {
-            version: "Release: v2.2.7",
+            version: "Release: v2.2.8",
             notes: "15-Puzzle",
             features: [
                 "15-Puzzle Game",
                 "Option for 8-Puzzle Game",
-                "Moving tiles"
+                "Moving tiles",
+                "Computer solves puzzle on request"
             ]
         };
     </script>
     <div id="release-tag" class="release-tag">
-        Release: v2.2.7
+        Release: v2.2.8
     </div>
     <div id="release-notes" class="release-notes">
         <!-- Release notes content will be inserted here -->

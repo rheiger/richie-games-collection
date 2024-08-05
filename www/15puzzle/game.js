@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastShuffledTile;
     let computerMoves = 0;
     let computerSolved = false;
+    let currentLanguage = detectLanguage();
 
     function createTile(num, row, col) {
         const tile = document.createElement('div');
@@ -81,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        shuffleResetBtn.textContent = getMessage('shuffle');
+        shuffleResetBtn.textContent = getMessage('shuffle',currentLanguage);
         shuffleResetBtn.dataset.action = 'shuffle';
         updateStats();
         hideCongratulations();
@@ -95,9 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('computerMoveCount').textContent = computerMoves;
     
         // Update labels if language has changed
-        document.querySelector('[data-i18n="randomMoves"]').textContent = getMessage('randomMoves');
-        document.querySelector('[data-i18n="moves"]').textContent = getMessage('moves');
-        document.querySelector('[data-i18n="computerMoves"]').textContent = getMessage('computerMoves');
+        document.querySelector('[data-i18n="randomMoves"]').textContent = getMessage('randomMoves',currentLanguage);
+        document.querySelector('[data-i18n="moves"]').textContent = getMessage('moves',currentLanguage);
+        document.querySelector('[data-i18n="computerMoves"]').textContent = getMessage('computerMoves',currentLanguage);
     }
 
     function moveTile(tile, isRandom = false, isComputer = false) {
@@ -267,11 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getPossibleMoves(state, gridSize) {
-        // console.log("getPossibleMoves - Input state:", state);
-        // console.log("getPossibleMoves - Grid size:", gridSize);
-
         const zeroIndex = state.indexOf(0);
-        // console.log("getPossibleMoves - Zero index:", zeroIndex);
 
         if (zeroIndex === -1) {
             console.error("No empty tile (0) found in the state");
@@ -280,28 +277,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const row = Math.floor(zeroIndex / gridSize);
         const col = zeroIndex % gridSize;
-        // console.log("getPossibleMoves - Zero position: row", row, "col", col);
 
         const moves = [];
 
         if (row > 0) {
             moves.push(zeroIndex - gridSize);
-            // console.log("getPossibleMoves - Can move up, adding:", zeroIndex - gridSize);
         }
         if (row < gridSize - 1) {
             moves.push(zeroIndex + gridSize);
-            // console.log("getPossibleMoves - Can move down, adding:", zeroIndex + gridSize);
         }
         if (col > 0) {
             moves.push(zeroIndex - 1);
-            // console.log("getPossibleMoves - Can move left, adding:", zeroIndex - 1);
         }
         if (col < gridSize - 1) {
             moves.push(zeroIndex + 1);
-            // console.log("getPossibleMoves - Can move right, adding:", zeroIndex + 1);
         }
 
-        // console.log("getPossibleMoves - Final possible moves:", moves);
         return moves;
     }
 
@@ -410,7 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return min;
     }
 
-    // Function to solve the puzzle
     async function solvePuzzle() {
         const gridSize = Math.sqrt(tiles.length);
         let currentState = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
@@ -423,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const goalState = Array.from({ length: tiles.length }, (_, i) => (i + 1) % tiles.length);
         const maxIterations = 50000; // Adjust as needed
 
-        solveBtn.textContent = getMessage('thinking');
+        solveBtn.textContent = getMessage('thinking',currentLanguage);
         solveBtn.onclick = interruptSearch;
 
         let searchInterrupted = false;
@@ -438,11 +428,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 0);
         });
 
-        solveBtn.textContent = getMessage('solve');
+        solveBtn.textContent = getMessage('solve',currentLanguage);
         solveBtn.onclick = solvePuzzle;
 
         if (solution) {
-            // console.log("Solution found:", solution);
             animateSolution(solution);
         } else /*if (!searchInterrupted)*/ {
             showGivingUpOverlay(maxIterations);
@@ -450,66 +439,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showCongratulations() {
-        // console.log("Showing congratulations overlay");
         overlay.style.display = 'flex';
     }
 
-    // Add this function to hide the overlay
     function hideCongratulations() {
-        // console.log("Hiding congratulations overlay");
         overlay.style.display = 'none';
     }
 
-    // Modify the event listener for the overlay
     overlay.addEventListener('click', hideCongratulations);
 
     function interruptSearch() {
         searchInterrupted = true;
-        solveBtn.textContent = getMessage('solve');
+        solveBtn.textContent = getMessage('solve',currentLanguage);
         solveBtn.onclick = solvePuzzle;
     }
 
     function showGivingUpOverlay(iterations) {
         const overlay = document.createElement('div');
         overlay.className = 'overlay';
-        overlay.innerHTML = `<div class="message">${getMessage('computerGivingUp').replace('{n}', iterations)}</div>`;
+        overlay.innerHTML = `<div class="message">${getMessage('computerGivingUp',currentLanguage).replace('{n}', iterations)}</div>`;
         overlay.onclick = () => document.body.removeChild(overlay);
         document.body.appendChild(overlay);
     }
-
-    function showAlert(message) {
-        return new Promise(resolve => {
-            const alertBox = document.createElement('div');
-            alertBox.className = 'alert-box';
-            alertBox.innerHTML = `
-                <div class="message">${message}</div>
-                <button class="yes">${getMessage('yes')}</button>
-                <button class="no">${getMessage('no')}</button>
-            `;
-
-            function removeAlertBox() {
-                document.body.removeChild(alertBox);
-                console.log('AlertBox should be removed now by this function');
-            }
-
-            alertBox.querySelector('.yes').onclick = () => {
-                removeAlertBox();
-                console.log('AlertBox should be removed now from yes');
-                resolve(true);
-            };
-
-            alertBox.querySelector('.no').onclick = () => {
-                removeAlertBox();
-                console.log('AlertBox should be removed now from no');
-                resolve(false);
-            };
-
-            document.body.appendChild(alertBox);
-            console.log('AlertBox should visible now');
-        });
-    }
-
-    // Function to animate the solution
 
     function animateSolution(solution) {
         let index = 0;
@@ -553,8 +504,6 @@ document.addEventListener('DOMContentLoaded', () => {
             shuffleResetBtn.textContent = 'Reset';
             shuffleResetBtn.dataset.action = 'reset';
         }
-        // Don't reset the tiles array here
-        // console.log('Shuffling stopped');
     }
 
     function startShuffling(isAutomatic = false) {
@@ -563,7 +512,6 @@ document.addEventListener('DOMContentLoaded', () => {
         shuffleInterval = setInterval(() => {
             shufflePuzzle();
             if ((isAutomatic && randomMovesDone >= 50) || (!isAutomatic && !isLongPress)) {
-                // console.log('Stopping shuffling');
                 stopShuffling();
             }
             solveBtn.disabled = false; // Enable the solve button during shuffling
@@ -571,35 +519,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     shuffleResetBtn.addEventListener('mousedown', () => {
-        // console.log('shuffling button clicked');
         if (shuffleResetBtn.dataset.action === 'shuffle') {
             isLongPress = false;
             shuffleTimeout = setTimeout(() => {
                 isLongPress = true;
-                // console.log('Shuffling is long press');
                 startShuffling();
             }, 500); // Long press threshold
         }
     });
 
     shuffleResetBtn.addEventListener('mouseup', () => {
-        // console.log('Detected button mouseUp');
         if (shuffleResetBtn.dataset.action === 'shuffle') {
-            // console.log('We are in shuffle mode');
             clearTimeout(shuffleTimeout);
             if (!isLongPress) {
-                // Short click detected, start automatic shuffling
-                // console.log('Need to shuffle automatically');
                 startShuffling(true);
             } else {
-                // console.log('We need to stop shuffling on mouseUp');
                 stopShuffling();
             }
         }
     });
 
     shuffleResetBtn.addEventListener('mouseleave', () => {
-        // console.log('mouseLeave event');
         if (isShuffling) {
             stopShuffling();
         }
@@ -607,7 +547,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     shuffleResetBtn.addEventListener('click', (e) => {
-        // console.log('Click event during ',shuffleResetBtn.dataset.action);
         if (shuffleResetBtn.dataset.action === 'reset') {
             initializeGame();
         } else {
@@ -616,7 +555,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Touch event listeners
     shuffleResetBtn.addEventListener('touchstart', (e) => {
         e.preventDefault();
         if (shuffleResetBtn.dataset.action === 'shuffle') {
