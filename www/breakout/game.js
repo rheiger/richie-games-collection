@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     let usingDeviceOrientation = false;
+    let currentLanguage = detectLanguage();
 
     // Canvas dimensions
     canvas.width = 400;

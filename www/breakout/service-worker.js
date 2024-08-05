@@ -7,8 +7,8 @@ const urlsToCache = [
     '../js/common.js',
     './index.html',
     './translations.js',
-    '.game.js',
-    'game.css',
+    './game.js',
+    './game.css',
     './icon-192x192.png',
     './icon-512x512.png',
     './favicon.ico'
