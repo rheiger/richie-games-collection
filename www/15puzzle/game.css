@@ -245,3 +245,9 @@ button:hover {
     background-color: #f44336;
     color: white;
 }
+
+button:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}

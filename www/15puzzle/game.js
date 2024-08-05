@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let shuffleTimeout;
     let isLongPress = false;
     let lastShuffledTile;
+    let computerMoves = 0;
+    let computerSolved = false;
 
     function createTile(num, row, col) {
         const tile = document.createElement('div');
@@ -47,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initializeGame() {
-        console.log("Initializing game");
+        // console.log("Initializing game");
         puzzleSize = parseInt(puzzleTypeSelect.value);
         gameBoard.className = `puzzle-${puzzleSize}`;
         gameBoard.innerHTML = '';
@@ -56,8 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
         emptyTile = { row: gridSize - 1, col: gridSize - 1 };
         moves = 0;
         randomMovesDone = 0;
+        computerMoves = 0;
         moveCount.textContent = moves;
         randomMoveCount.textContent = randomMovesDone;
+        solveBtn.disabled = true;
+        updateStats();
 
         for (let i = 0; i < gridSize; i++) {
             for (let j = 0; j < gridSize; j++) {
@@ -80,33 +85,22 @@ document.addEventListener('DOMContentLoaded', () => {
         shuffleResetBtn.dataset.action = 'shuffle';
         updateStats();
         hideCongratulations();
-        console.log("Game initialized");
+        computerSolved = false;
+        // console.log("Game initialized");
     }
 
     function updateStats() {
-        const randomMovesElement = document.getElementById('randomMoveCount');
-        const movesElement = document.getElementById('moveCount');
-
-        if (randomMovesElement) {
-            randomMovesElement.textContent = randomMovesDone;
-        }
-        if (movesElement) {
-            movesElement.textContent = moves;
-        }
-
-        // Update the labels if needed
-        const randomMovesLabel = document.querySelector('[data-i18n="randomMoves"]');
-        const movesLabel = document.querySelector('[data-i18n="moves"]');
-
-        if (randomMovesLabel) {
-            randomMovesLabel.textContent = getMessage('randomMoves');
-        }
-        if (movesLabel) {
-            movesLabel.textContent = getMessage('moves');
-        }
+        document.getElementById('randomMoveCount').textContent = randomMovesDone;
+        document.getElementById('moveCount').textContent = moves;
+        document.getElementById('computerMoveCount').textContent = computerMoves;
+    
+        // Update labels if language has changed
+        document.querySelector('[data-i18n="randomMoves"]').textContent = getMessage('randomMoves');
+        document.querySelector('[data-i18n="moves"]').textContent = getMessage('moves');
+        document.querySelector('[data-i18n="computerMoves"]').textContent = getMessage('computerMoves');
     }
 
-    function moveTile(tile, isRandom = false) {
+    function moveTile(tile, isRandom = false, isComputer = false) {
         if (!canMove) return;
         if (isAdjacent(tile.row, tile.col, emptyTile.row, emptyTile.col)) {
             const emptyTileElement = gameBoard.querySelector('.empty');
@@ -127,17 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const movedTileIndex = tiles.findIndex(t => t === tile);
             [tiles[emptyTileIndex], tiles[movedTileIndex]] = [tiles[movedTileIndex], tiles[emptyTileIndex]];
 
-            if (!isRandom) {
-                moves++;
-                moveCount.textContent = moves;
-            } else {
+            if (isRandom) {
                 randomMovesDone++;
-                randomMoveCount.textContent = randomMovesDone;
+            } else if(isComputer){
+                computerMoves++;
+            } else {
+                moves++;
             }
 
             updateStats();
 
-            if (!isRandom && moves > 0 && checkWin()) {
+            if (!isRandom && !isComputer && moves > 0 && checkWin()) {
                 showCongratulations();
             }
         }
@@ -149,20 +143,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function checkWin() {
-        console.log("Checking win condition");
-        console.log("Current tile arrangement:", tiles);
+        // console.log("Checking win condition");
+        // console.log("Current tile arrangement:", tiles);
         const gridSize = Math.sqrt(puzzleSize + 1);
         for (let i = 0; i < tiles.length; i++) {
             const expectedNum = (i + 1) % tiles.length;
             const expectedRow = Math.floor(i / gridSize);
             const expectedCol = i % gridSize;
-            console.log(`Tile ${i}: Expected ${expectedNum} at (${expectedRow}, ${expectedCol}), Found ${tiles[i].num} at (${tiles[i].row}, ${tiles[i].col})`);
+            // console.log(`Tile ${i}: Expected ${expectedNum} at (${expectedRow}, ${expectedCol}), Found ${tiles[i].num} at (${tiles[i].row}, ${tiles[i].col})`);
             if (tiles[i].num !== expectedNum || tiles[i].row !== expectedRow || tiles[i].col !== expectedCol) {
-                console.log("Win condition not met");
+                // console.log("Win condition not met");
                 return false;
             }
         }
-        console.log("Win condition met");
+        // console.log("Win condition met");
         return true;
     }
 
@@ -374,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function idaStar(initialState, goalState, gridSize, maxIterations = 200000) {
         let iterations = 0;
         let threshold = improvedHeuristic(initialState, goalState, gridSize);
-    
+
         for (let iteration = 0; iteration < maxIterations; iteration++) {
             const result = search(initialState, goalState, 0, threshold, gridSize, []);
             if (Array.isArray(result)) {
@@ -388,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return null; // No solution found within iteration limit
     }
-    
+
     function search(state, goalState, g, threshold, gridSize, path) {
         const f = g + improvedHeuristic(state, goalState, gridSize);
         if (f > threshold) {
@@ -400,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let min = Infinity;
         const zeroIndex = state.indexOf(0);
         const possibleMoves = getPossibleMoves(state, gridSize);
-    
+
         for (const move of possibleMoves) {
             const newState = getStateAfterMove(state, move, zeroIndex);
             if (!path.some(s => s.join(',') === newState.join(','))) {
@@ -420,28 +414,18 @@ document.addEventListener('DOMContentLoaded', () => {
     async function solvePuzzle() {
         const gridSize = Math.sqrt(tiles.length);
         let currentState = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
-    
+
         tiles.forEach(tile => {
             currentState[tile.row][tile.col] = tile.num || 0;
         });
-    
+
         currentState = currentState.flat();
-        const goalState = Array.from({length: tiles.length}, (_, i) => (i + 1) % tiles.length);
-        const maxIterations = 1000000; // Adjust as needed
-    
-        console.log("Solving puzzle:");
-        console.log("Current state:", currentState);
-        console.log("Goal state:", goalState);
-        console.log("Grid size:", gridSize);
-    
-        if (gridSize === 4) {
-            const continueSearch = await showAlert(getMessage('warning15Puzzle'));
-            if (!continueSearch) return;
-        }
-    
+        const goalState = Array.from({ length: tiles.length }, (_, i) => (i + 1) % tiles.length);
+        const maxIterations = 50000; // Adjust as needed
+
         solveBtn.textContent = getMessage('thinking');
         solveBtn.onclick = interruptSearch;
-    
+
         let searchInterrupted = false;
         const solution = await new Promise(resolve => {
             setTimeout(() => {
@@ -453,38 +437,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }, 0);
         });
-    
+
         solveBtn.textContent = getMessage('solve');
         solveBtn.onclick = solvePuzzle;
-    
+
         if (solution) {
-            console.log("Solution found:", solution);
+            // console.log("Solution found:", solution);
             animateSolution(solution);
-        } else if (!searchInterrupted) {
+        } else /*if (!searchInterrupted)*/ {
             showGivingUpOverlay(maxIterations);
         }
     }
-    
+
     function showCongratulations() {
-        console.log("Showing congratulations overlay");
+        // console.log("Showing congratulations overlay");
         overlay.style.display = 'flex';
     }
-    
+
     // Add this function to hide the overlay
     function hideCongratulations() {
-        console.log("Hiding congratulations overlay");
+        // console.log("Hiding congratulations overlay");
         overlay.style.display = 'none';
     }
-    
+
     // Modify the event listener for the overlay
     overlay.addEventListener('click', hideCongratulations);
-    
+
     function interruptSearch() {
         searchInterrupted = true;
         solveBtn.textContent = getMessage('solve');
         solveBtn.onclick = solvePuzzle;
     }
-    
+
     function showGivingUpOverlay(iterations) {
         const overlay = document.createElement('div');
         overlay.className = 'overlay';
@@ -492,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.onclick = () => document.body.removeChild(overlay);
         document.body.appendChild(overlay);
     }
-    
+
     function showAlert(message) {
         return new Promise(resolve => {
             const alertBox = document.createElement('div');
@@ -502,40 +486,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="yes">${getMessage('yes')}</button>
                 <button class="no">${getMessage('no')}</button>
             `;
-    
+
             function removeAlertBox() {
                 document.body.removeChild(alertBox);
+                console.log('AlertBox should be removed now by this function');
             }
-    
+
             alertBox.querySelector('.yes').onclick = () => {
                 removeAlertBox();
+                console.log('AlertBox should be removed now from yes');
                 resolve(true);
             };
-    
+
             alertBox.querySelector('.no').onclick = () => {
                 removeAlertBox();
+                console.log('AlertBox should be removed now from no');
                 resolve(false);
             };
-    
+
             document.body.appendChild(alertBox);
+            console.log('AlertBox should visible now');
         });
     }
 
     // Function to animate the solution
+
     function animateSolution(solution) {
         let index = 0;
+        computerMoves = 0;
         const interval = setInterval(() => {
             if (index < solution.length - 1) {
                 const currentState = solution[index].split(',').map(Number);
                 const nextState = solution[index + 1].split(',').map(Number);
                 const movedTileIndex = currentState.findIndex((num, i) => num !== nextState[i] && num !== 0);
                 const movedTile = tiles.find(tile => tile.num === currentState[movedTileIndex]);
-                moveTile(movedTile, true);
+                moveTile(movedTile, false, true);
+                computerMoves++;
+                updateStats();
                 index++;
             } else {
                 clearInterval(interval);
             }
-        }, 300); // Adjust this value to change the speed of the animation
+        }, 300);
     }
 
     function shufflePuzzle() {
@@ -543,58 +535,71 @@ document.addEventListener('DOMContentLoaded', () => {
         const adjacentTiles = tiles.filter(tile =>
             isAdjacent(tile.row, tile.col, emptyTile.row, emptyTile.col) && tile.num !== 0
         );
-        // console.log('adjacentTiles:',adjacentTiles);
         if (adjacentTiles.length > 0) {
             let randomTile = adjacentTiles[Math.floor(Math.random() * adjacentTiles.length)];
             while (randomTile.num === 0 || randomTile === lastShuffledTile) {
                 randomTile = adjacentTiles[Math.floor(Math.random() * adjacentTiles.length)];
             }
-            // console.log('moving ',randomTile);
-            moveTile(randomTile, true);
+            moveTile(randomTile, true, false);
             lastShuffledTile = randomTile;
+            solveBtn.disabled = false; // Enable the solve button after shuffling
         }
-    }
-
-    function startShuffling(isAutomatic = false) {
-        isShuffling = true;
-        shuffleInterval = setInterval(() => {
-            shufflePuzzle();
-            if ((isAutomatic && randomMovesDone >= 50) || (!isAutomatic && !isLongPress)) {
-                stopShuffling();
-            }
-        }, 100);
     }
 
     function stopShuffling() {
         isShuffling = false;
         clearInterval(shuffleInterval);
-        shuffleResetBtn.textContent = 'Reset';
-        shuffleResetBtn.dataset.action = 'reset';
+        if(!isLongPress){
+            shuffleResetBtn.textContent = 'Reset';
+            shuffleResetBtn.dataset.action = 'reset';
+        }
+        // Don't reset the tiles array here
+        // console.log('Shuffling stopped');
+    }
+
+    function startShuffling(isAutomatic = false) {
+        isShuffling = true;
+        shuffleResetBtn.dataset.action = 'shuffle';
+        shuffleInterval = setInterval(() => {
+            shufflePuzzle();
+            if ((isAutomatic && randomMovesDone >= 50) || (!isAutomatic && !isLongPress)) {
+                // console.log('Stopping shuffling');
+                stopShuffling();
+            }
+            solveBtn.disabled = false; // Enable the solve button during shuffling
+        }, 100);
     }
 
     shuffleResetBtn.addEventListener('mousedown', () => {
+        // console.log('shuffling button clicked');
         if (shuffleResetBtn.dataset.action === 'shuffle') {
             isLongPress = false;
             shuffleTimeout = setTimeout(() => {
                 isLongPress = true;
+                // console.log('Shuffling is long press');
                 startShuffling();
             }, 500); // Long press threshold
         }
     });
 
     shuffleResetBtn.addEventListener('mouseup', () => {
+        // console.log('Detected button mouseUp');
         if (shuffleResetBtn.dataset.action === 'shuffle') {
+            // console.log('We are in shuffle mode');
             clearTimeout(shuffleTimeout);
             if (!isLongPress) {
                 // Short click detected, start automatic shuffling
+                // console.log('Need to shuffle automatically');
                 startShuffling(true);
             } else {
+                // console.log('We need to stop shuffling on mouseUp');
                 stopShuffling();
             }
         }
     });
 
     shuffleResetBtn.addEventListener('mouseleave', () => {
+        // console.log('mouseLeave event');
         if (isShuffling) {
             stopShuffling();
         }
@@ -602,6 +607,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     shuffleResetBtn.addEventListener('click', (e) => {
+        // console.log('Click event during ',shuffleResetBtn.dataset.action);
         if (shuffleResetBtn.dataset.action === 'reset') {
             initializeGame();
         } else {
