@@ -17,7 +17,6 @@
 
 <body>
     <div class="container">
-        <script src="../js/common.js"></script>
         <h1 id="title" data-i18n="title">15 Puzzle Challenge</h1>
         <div id="gameBoard"></div>
         <div class="controls">
@@ -30,7 +29,7 @@
         </div>
         <div id="stats">
             <span class="stat-item">
-                <span data-i18n="randomMoves">Random Moves</span>:
+                <span data-i18n="shuffleMoves">Random Moves</span>:
                 <span id="randomMoveCount">0</span>
             </span>
             <span class="stat-item">
@@ -50,11 +49,10 @@
             <p data-i18n="puzzleSolved">You solved the puzzle!</p>
         </div>
     </div>
-    <script src="./translations.js"></script>
     <script>
         currentLanguage = detectLanguage();
         setLanguage(currentLanguage);
-        console.log('Language is set to:',currentLanguage);
+        console.log('Language is set to:', currentLanguage);
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
@@ -68,7 +66,7 @@
         }
 
         releaseInfo = {
-            version: "Release: v2.2.9",
+            version: "Release: v2.2.10",
             notes: "15-Puzzle",
             features: [
                 "15-Puzzle Game",
@@ -79,11 +77,14 @@
         };
     </script>
     <div id="release-tag" class="release-tag">
-        Release: v2.2.9
+        Release: v2.2.10
     </div>
     <div id="release-notes" class="release-notes">
         <!-- Release notes content will be inserted here -->
     </div>
+    <script src="../js/common.js"></script>
+    <script src="./translations.js"></script>
+    <script src="./game.js"></script>
 </body>
-<script src="./game.js"></script>
+
 </html>

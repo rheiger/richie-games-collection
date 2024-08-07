@@ -26,8 +26,6 @@ function createLanguageButtons() {
 }
 
 function setLanguage(lang) {
-    console.log('In common.js setting language to ',lang);
-    // currentLanguage = lang;
     localStorage.setItem('preferredLanguage', lang);
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
@@ -48,6 +46,10 @@ function setLanguage(lang) {
     document.querySelectorAll('.language-btn').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
+
+    // Dispatch a custom event to notify the game of language change
+    const event = new CustomEvent('languageChanged', { detail: { language: lang } });
+    document.dispatchEvent(event);
 }
 
 function detectLanguage() {
@@ -111,5 +113,7 @@ document.addEventListener('click', function (event) {
 // Run initialization when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initReleaseNotes);
 
-// Export the functions if using modules
-// export { detectLanguage, createLanguageButtons, toggleReleaseNotes, populateReleaseNotes, initReleaseNotes };
+// Make these functions global
+window.detectLanguage = detectLanguage;
+window.getMessage = getMessage;
+window.setLanguage = setLanguage;
