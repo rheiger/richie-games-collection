@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let dx = 2;
     let dy = -2;
     let initialSpeed = 2;
-    let maxSpeed = 8;
+    let maxSpeed = 12;
     let speedIncreaseFactor = 1.0005;
 
     // Paddle properties

@@ -1,9 +1,21 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 50px;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
 #gameCanvas {
     border: 2px solid var(--primary-color);
     background-color: #fff;
     max-width: 100%;
     height: auto;
     margin-top: 20px;
+    position: relative;
 }
 
 #startButton {

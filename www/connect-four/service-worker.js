@@ -11,7 +11,8 @@ const urlsToCache = [
     './game.css',
     './icon-192x192.png',
     './icon-512x512.png',
-    './favicon.ico'
+    './favicon.ico',
+    './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {

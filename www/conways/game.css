@@ -1,3 +1,14 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 50px;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
 #canvasContainer {
     display: flex;
     position: relative;
@@ -60,7 +71,7 @@
     align-items: center;
     align-content: center;
     justify-content: center;
-    margin: 20px;
+    margin: 20px auto;
     width: 100%;
     max-width: 800px; /* or whatever maximum width you prefer */
     position: relative;

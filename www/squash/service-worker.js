@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mastermind-v1';
+const CACHE_NAME = 'squash-v1';
 const urlsToCache = [
     './',
     './game.js',
@@ -11,7 +11,8 @@ const urlsToCache = [
     './index.html',
     './icon-192x192.png',
     './icon-512x512.png',
-    './favicon.ico'
+    './favicon.ico',
+    './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
