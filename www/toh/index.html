@@ -17,24 +17,26 @@
 
 <body>
     <div class="container">
-        <h1>Towers of Hanoi</h1>
+        <h1 data-i18n="title">Towers of Hanoi</h1>
         <div class="controls">
-            <label for="discCount">Number of discs:</label>
+            <label for="discCount" data-i18n="discCount">Number of discs:</label>
             <select id="discCount">
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
                 <option value="6">6</option>
             </select>
-            <button id="resetBtn">Reset</button>
-            <button id="solveBtn">Solve</button>
+            <button id="resetBtn" data-i18n="reset">Reset</button>
+            <button id="solveBtn" data-i18n="solve">Solve</button>
         </div>
         <div id="gameBoard">
             <div class="tower" id="tower1"></div>
             <div class="tower" id="tower2"></div>
             <div class="tower" id="tower3"></div>
         </div>
-        <div id="moveCounter">Moves: <span id="currentMoves">0</span> / <span id="minMoves">7</span></div>
+        <div id="moveCounter">
+            <span data-i18n="moves">Moves:</span> <span id="currentMoves">0</span> / <span id="minMoves">7</span>
+        </div>
         <div id="message"></div>
     </div>
     <script>
@@ -54,7 +56,7 @@
         }
 
         releaseInfo = {
-            version: "Release: v2.3.0",
+            version: "Release: v2.3.2",
             notes: "Towers Of Hanoi",
             features: [
                 "Initial implementation",
@@ -63,7 +65,7 @@
         };
     </script>
     <div id="release-tag" class="release-tag">
-        Release: v2.3.0
+        Release: v2.3.2
     </div>
     <div id="release-notes" class="release-notes">
         <!-- Release notes content will be inserted here -->

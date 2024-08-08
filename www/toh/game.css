@@ -24,6 +24,8 @@ h1 {
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
+    height: 220px;
+    position: relative;
 }
 
 .tower {
@@ -49,8 +51,9 @@ h1 {
 .disc {
     height: 20px;
     border-radius: 10px;
-    margin-bottom: 5px;
-    transition: transform 0.3s ease;
+    position: absolute;
+    bottom: 0;
+    transition: transform 0.5s ease, left 0.5s ease;
 }
 
 #moveCounter {
