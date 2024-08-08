@@ -95,12 +95,9 @@ async function moveDisc(from, to) {
     const toTower = document.getElementById(`tower${to + 1}`);
     const discElement = fromTower.lastElementChild;
     
-    const startPos = {
-        x: parseFloat(discElement.style.left),
-        y: parseFloat(discElement.style.bottom)
-    };
+    const startPos = getCurrentPosition(discElement);
     const endPos = {
-        x: (TOWER_WIDTH - (disc * 20 + 20)) / 2,
+        x: parseFloat(toTower.style.left) + (TOWER_WIDTH - discElement.offsetWidth) / 2,
         y: towers[to].length * DISC_HEIGHT
     };
 
@@ -108,29 +105,23 @@ async function moveDisc(from, to) {
     console.log(`End position: x=${endPos.x}, y=${endPos.y}`);
 
     // Step 1: Move up vertically
-    const verticalMoveDistance = CLEAR_HEIGHT - startPos.y;
-    console.log(`Step 1: Moving up by ${verticalMoveDistance}px`);
+    console.log("Step 1: Moving up");
     await animateStep(discElement, { x: startPos.x, y: CLEAR_HEIGHT });
-    
     logPosition(discElement, "After Step 1");
-    await new Promise(resolve => setTimeout(resolve, 350));
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Step 2: Move horizontally
-    console.log(`disc.style="${parseFloat(discElement.style.width)}"`);
-    const horizontalMove = toTower.offsetLeft - fromTower.offsetLeft + parseFloat(discElement.style.width)/2;
-    console.log(`Step 2: Moving horizontally by ${horizontalMove}px`);
-    await animateStep(discElement, { x: startPos.x + horizontalMove, y: CLEAR_HEIGHT });
-    
+    console.log("Step 2: Moving horizontally");
+    await animateStep(discElement, { x: endPos.x, y: CLEAR_HEIGHT });
     logPosition(discElement, "After Step 2");
-    await new Promise(resolve => setTimeout(resolve, 350));
 
     // Step 3: Move down vertically
-    console.log(`Step 3: Moving down to final y-position ${endPos.y}`);
-    await animateStep(discElement, { x: startPos.x + horizontalMove, y: endPos.y });
+    console.log("Step 3: Moving down");
+    await animateStep(discElement, { x: endPos.x, y: endPos.y });
 
     // Update the disc's final position
     discElement.style.transform = '';
-    discElement.style.left = `${endPos.x}px`;
+    discElement.style.left = `${(TOWER_WIDTH - discElement.offsetWidth) / 2}px`;
     discElement.style.bottom = `${endPos.y}px`;
 
     towers[to].push(disc);
@@ -145,13 +136,13 @@ async function moveDisc(from, to) {
 }
 
 function animateStep(element, endPos) {
-    const animationDuration = 150; // milliseconds per step
-    const startTime = performance.now();
-    const startPos = getCurrentPosition(element);
-
-    console.log(`Animation step: from (${startPos.x}, ${startPos.y}) to (${endPos.x}, ${endPos.y})`);
-
     return new Promise(resolve => {
+        const animationDuration = 300; // milliseconds per step
+        const startTime = performance.now();
+        const startPos = getCurrentPosition(element);
+
+        console.log(`Animation step: from (${startPos.x}, ${startPos.y}) to (${endPos.x}, ${endPos.y})`);
+
         function step(currentTime) {
             const elapsedTime = currentTime - startTime;
             const progress = Math.min(elapsedTime / animationDuration, 1);
@@ -177,21 +168,19 @@ function animateStep(element, endPos) {
 
 function getCurrentPosition(element) {
     const rect = element.getBoundingClientRect();
-    const left = parseFloat(element.style.left);
-    const bottom = parseFloat(element.style.bottom);
-    const transform = element.style.transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/) || ['', '0', '0'];
-    const translateX = parseFloat(transform[1]);
-    const translateY = parseFloat(transform[2]);
+    const gameBoard = document.getElementById('gameBoard');
+    const gameBoardRect = gameBoard.getBoundingClientRect();
 
     return {
-        x: left + translateX,
-        y: bottom - translateY
+        x: rect.left - gameBoardRect.left,
+        y: gameBoardRect.bottom - rect.bottom
     };
 }
 
 function logPosition(element, label) {
     const pos = getCurrentPosition(element);
-    console.log(`${label} - Position: x=${pos.x}, y=${pos.y}, left=${element.style.left}, bottom=${element.style.bottom}, transform=${element.style.transform}`);
+    const rect = element.getBoundingClientRect();
+    console.log(`${label} - Position: x=${pos.x}, y=${pos.y}, left=${element.style.left}, bottom=${element.style.bottom}, transform=${element.style.transform}, BoundingClientRect: left=${rect.left}, top=${rect.top}`);
 }
 
 function checkWin() {
