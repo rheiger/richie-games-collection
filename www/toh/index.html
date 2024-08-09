@@ -24,7 +24,7 @@
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
-                <option value="6">6</option>
+                <option value="6" selected>6</option>
             </select>
             <button id="resetBtn" data-i18n="reset">Reset</button>
             <button id="solveBtn" data-i18n="solve">Solve</button>
@@ -40,9 +40,7 @@
         <div id="message"></div>
     </div>
     <script>
-        currentLanguage = detectLanguage();
-        setLanguage(currentLanguage);
-        console.log('Language is set to:', currentLanguage);
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
@@ -56,16 +54,17 @@
         }
 
         releaseInfo = {
-            version: "Release: v2.3.3",
+            version: "Release: v2.3.4",
             notes: "Towers Of Hanoi",
             features: [
                 "Initial implementation",
+                "Animated disc movement",
                 "Computer solves puzzle on request"
             ]
         };
     </script>
     <div id="release-tag" class="release-tag">
-        Release: v2.3.3
+        Release: v2.3.4
     </div>
     <div id="release-notes" class="release-notes">
         <!-- Release notes content will be inserted here -->

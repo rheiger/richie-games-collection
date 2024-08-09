@@ -18,7 +18,7 @@ const messageDiv = document.getElementById('message');
 const TOWER_HEIGHT = 200;
 const TOWER_WIDTH = 20;
 const DISC_HEIGHT = 22;
-const CLEAR_HEIGHT = TOWER_HEIGHT + 50; // Raise disc 50px above the tower
+const CLEAR_HEIGHT = TOWER_HEIGHT + 20; // 20px above the tower height
 
 console.log(`Constants: TOWER_HEIGHT=${TOWER_HEIGHT}, TOWER_WIDTH=${TOWER_WIDTH}, DISC_HEIGHT=${DISC_HEIGHT}, CLEAR_HEIGHT=${CLEAR_HEIGHT}`);
 
@@ -38,7 +38,6 @@ function initGame() {
         towers[0].push(i);
     }
     drawTowers();
-    updateLanguage();
     console.log(`Game initialized with ${discCount} discs`);
 }
 
@@ -167,7 +166,7 @@ function animateStep(element, endPos) {
                 requestAnimationFrame(step);
             } else {
                 console.log(`Animation step completed: final position (${currentX}, ${currentY})`);
-                resolve();
+            resolve();
             }
         }
 
@@ -225,33 +224,15 @@ async function solveTowers(n, from, to, aux) {
     await solveTowers(n - 1, aux, to, from);
 }
 
-function updateLanguage() {
-    document.querySelectorAll('[data-i18n]').forEach(element => {
-        const key = element.getAttribute('data-i18n');
-        element.textContent = getMessage(key, currentLanguage);
-    });
-    document.title = getMessage('title', currentLanguage);
-}
-
-function initializeLanguage() {
-    currentLanguage = window.detectLanguage();
-    window.createLanguageButtons();
-    window.setLanguage(currentLanguage);
-}
 
 discCountSelect.addEventListener('change', initGame);
 resetBtn.addEventListener('click', initGame);
 solveBtn.addEventListener('click', solve);
 
 window.addEventListener('DOMContentLoaded', () => {
-    initializeLanguage();
+    currentLanguage = detectLanguage();
+    window.setLanguage(currentLanguage);
     initGame();
 });
 
 window.addEventListener('resize', drawTowers);
-
-// Make setLanguage function available globally
-window.setLanguage = (lang) => {
-    currentLanguage = lang;
-    updateLanguage();
-};
