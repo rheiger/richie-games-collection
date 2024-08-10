@@ -44,14 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setTilePosition(element, row, col) {
         const gridSize = Math.sqrt(puzzleSize + 1);
-        const gap = 6;
-        const tileSize = (puzzleSize === 8 ? 72 : 72);
-        const top = row * (tileSize + gap) + gap;
-        const left = col * (tileSize + gap) + gap;
-        element.style.top = `${top}px`;
-        element.style.left = `${left}px`;
+        const gap = 2;
+        const tileSize = `calc((76.5vmin - ${(gridSize + 1) * gap}px) / ${gridSize})`;
+        const top = `calc(${row} * (${tileSize} + ${gap}px) + ${gap}px)`;
+        const left = `calc(${col} * (${tileSize} + ${gap}px) + ${gap}px)`;
+        element.style.top = top;
+        element.style.left = left;
     }
-
+        
     function initializeGame() {
         puzzleSize = parseInt(puzzleTypeSelect.value);
         gameBoard.className = `puzzle-${puzzleSize}`;

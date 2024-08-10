@@ -25,6 +25,9 @@ const messageDiv = document.getElementById('message');
 
 function initGame() {
     resetGameState();
+    if (window.innerWidth <= 430) {
+        discCountSelect.value = Math.min(parseInt(discCountSelect.value), 4);
+    }
     updateUI();
     createDiscs();
     drawTowers();
@@ -86,7 +89,8 @@ function createTowerElement(index, towerSpacing) {
 function createDiscElement(disc, discIndex, towerHeight) {
     const discDiv = document.createElement('div');
     discDiv.className = 'disc';
-    const discWidth = disc * 20 + 20;
+    const maxWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-disc-width') || '200');
+    const discWidth = Math.min(disc * 20 + 20, maxWidth);
     discDiv.style.width = `${discWidth}px`;
     discDiv.style.backgroundColor = `hsl(${disc * 30}, 70%, 50%)`;
     discDiv.style.bottom = `${discIndex * DISC_HEIGHT}px`;

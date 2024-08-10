@@ -24,20 +24,20 @@ body {
 }
 
 #gameBoard.puzzle-8 {
-    width: 240px;
-    height: 240px;
+    width: 76.5vmin;
+    height: 76.5vmin;
 }
 
 #gameBoard.puzzle-15 {
-    width: 320px;
-    height: 320px;
+    width: 76.5vmin;
+    height: 76.5vmin;
 }
 
 .tile {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 24px;
+    font-size: calc(4vmin + 8px);
     font-weight: bold;
     background-color: #3498db;
     color: white;
@@ -46,18 +46,20 @@ body {
     position: absolute;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 72px;
-    height: 72px;
+    width: calc((76.5vmin - 30px) / 4);
+    height: calc((76.5vmin - 30px) / 4);
 }
 
 .puzzle-8 .tile {
-    width: 72px;
-    height: 72px;
+    width: calc((76.5vmin - 24px) / 3);
+    height: calc((76.5vmin - 24px) / 3);
+    font-size: calc(5vmin + 10px);
 }
 
 .puzzle-15 .tile {
-    width: 72px;
-    height: 72px;
+    width: calc((76.5vmin - 30px) / 4);
+    height: calc((76.5vmin - 30px) / 4);
+    font-size: calc(4vmin + 8px);
 }
 
 .tile:hover {

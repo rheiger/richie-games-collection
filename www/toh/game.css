@@ -123,6 +123,12 @@ select {
         --tower-width: 12px;
         --tower-height: 180px;
         --disc-height: 20px;
+        --max-disc-width: 120px
+    }
+
+    #discCount option[value="5"],
+    #discCount option[value="6"] {
+        display: none;
     }
 
     .container {
