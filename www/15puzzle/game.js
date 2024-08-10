@@ -45,13 +45,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function setTilePosition(element, row, col) {
         const gridSize = Math.sqrt(puzzleSize + 1);
         const gap = 2;
-        const tileSize = `calc((76.5vmin - ${(gridSize + 1) * gap}px) / ${gridSize})`;
-        const top = `calc(${row} * (${tileSize} + ${gap}px) + ${gap}px)`;
-        const left = `calc(${col} * (${tileSize} + ${gap}px) + ${gap}px)`;
+        const maxSize = puzzleSize === 8 ? 450 : 600;
+        const vminSize = puzzleSize === 8 ? 57.375 : 76.5;
+        const tileSize = `min(calc((${vminSize}vmin - ${(gridSize + 1) * gap}px) / ${gridSize}), calc((${maxSize}px - ${(gridSize + 1) * gap}px) / ${gridSize}))`;
+        const top = `min(calc(${row} * (${tileSize} + ${gap}px) + ${gap}px), calc(${row} * ((${maxSize}px - ${(gridSize + 1) * gap}px) / ${gridSize} + ${gap}px) + ${gap}px))`;
+        const left = `min(calc(${col} * (${tileSize} + ${gap}px) + ${gap}px), calc(${col} * ((${maxSize}px - ${(gridSize + 1) * gap}px) / ${gridSize} + ${gap}px) + ${gap}px))`;
         element.style.top = top;
         element.style.left = left;
     }
-        
+                    
     function initializeGame() {
         puzzleSize = parseInt(puzzleTypeSelect.value);
         gameBoard.className = `puzzle-${puzzleSize}`;

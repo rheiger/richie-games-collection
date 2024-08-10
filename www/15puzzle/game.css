@@ -1,3 +1,9 @@
+:root {
+    --base-font-size: 16px;
+    --scale-factor: 1;
+    --max-width: 1200px;
+  }
+  
 body {
     font-family: Arial, sans-serif;
     display: flex;
@@ -5,7 +11,10 @@ body {
     align-items: center;
     padding-top: 50px;
     height: 100vh;
-    margin: 0;
+    font-size: var(--base-font-size);
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 20px;
     background-color: #f0f0f0;
 }
 
@@ -21,11 +30,17 @@ body {
     border-radius: 5px;
     padding: 5px;
     box-sizing: border-box;
+    width: 76.5vmin;
+    height: 76.5vmin;
+    max-width: 600px;
+    max-height: 600px;
 }
 
 #gameBoard.puzzle-8 {
-    width: 76.5vmin;
-    height: 76.5vmin;
+    width: 57.375vmin;  /* 75% of 76.5vmin */
+    height: 57.375vmin;
+    max-width: 450px;   /* 75% of 600px */
+    max-height: 450px;
 }
 
 #gameBoard.puzzle-15 {
@@ -48,12 +63,16 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     width: calc((76.5vmin - 30px) / 4);
     height: calc((76.5vmin - 30px) / 4);
+    max-width: calc((600px - 30px) / 4);
+    max-height: calc((600px - 30px) / 4);
 }
 
 .puzzle-8 .tile {
-    width: calc((76.5vmin - 24px) / 3);
-    height: calc((76.5vmin - 24px) / 3);
-    font-size: calc(5vmin + 10px);
+    width: calc((57.375vmin - 18px) / 3);
+    height: calc((57.375vmin - 18px) / 3);
+    font-size: calc(5vmin + 8px);
+    max-width: calc((450px - 18px) / 3);
+    max-height: calc((450px - 18px) / 3);
 }
 
 .puzzle-15 .tile {
@@ -255,3 +274,41 @@ button:disabled {
 #stats {
     padding: 1rem;
 }
+
+h1 {
+    font-size: calc(2.5rem * var(--scale-factor));
+    max-font-size: 3.5rem;
+  }
+  
+  h2 {
+    font-size: calc(2rem * var(--scale-factor));
+    max-font-size: 2.75rem;
+  }
+  
+  h3 {
+    font-size: calc(1.75rem * var(--scale-factor));
+    max-font-size: 2.25rem;
+  }
+  
+  p, li {
+    font-size: calc(1rem * var(--scale-factor));
+    max-font-size: 1.25rem;
+  }
+  
+  @media (max-width: 768px) {
+    :root {
+      --scale-factor: 0.9;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    :root {
+      --scale-factor: 0.8;
+    }
+  }
+  
+  @media (min-width: 1201px) {
+    body {
+      font-size: calc(var(--base-font-size) * 1.1);
+    }
+  }

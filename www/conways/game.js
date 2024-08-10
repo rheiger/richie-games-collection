@@ -69,9 +69,9 @@ function initializeGrid() {
         - gameContainer.offsetTop
         - controls.offsetHeight
         - generationCounter.offsetHeight
-        - 40; // Additional margin
+        - 140; // Additional margin
 
-    const availableWidth = window.innerWidth - 40; // 20px margin on each side
+    const availableWidth = window.innerWidth - 50; // 20px margin on each side
 
     // Use the smaller of the two to ensure it fits on screen
     const maxSize = Math.min(availableHeight, availableWidth);
@@ -330,8 +330,14 @@ function randomizeGrid(patternType = 'random') {
     } else {
         const patternList = patterns[patternType];
         const selectedPattern = patternList[Math.floor(Math.random() * patternList.length)];
-        const startX = Math.floor(Math.random() * (cols - 40)); // Increased margin for larger patterns
-        const startY = Math.floor(Math.random() * (rows - 40));
+        
+        // Calculate the maximum possible starting positions
+        const maxStartX = Math.max(0, cols - 40);
+        const maxStartY = Math.max(0, rows - 40);
+        
+        // Ensure startX and startY are always non-negative
+        const startX = Math.floor(Math.random() * (maxStartX + 1));
+        const startY = Math.floor(Math.random() * (maxStartY + 1));
 
         selectedPattern.pattern.forEach(([x, y]) => {
             if (startX + x < cols && startY + y < rows) {
@@ -344,6 +350,9 @@ function randomizeGrid(patternType = 'random') {
 }
 
 function handlePatternSelection(event) {
+    if (!event || !event.target || !event.target.value) {
+        return; // Exit early if event or target or value is not present
+    }
     const patternType = event.target.value;
     if (patternType === 'keep') {
         return; // Do nothing, keep the current grid
@@ -354,8 +363,14 @@ function handlePatternSelection(event) {
     }
 }
 
-document.getElementById('patternSelect').addEventListener('change', handlePatternSelection);
-
+const patternSelect = document.getElementById('patternSelect');
+patternSelect.addEventListener('change', handlePatternSelection);
+patternSelect.addEventListener('input', handlePatternSelection);
+patternSelect.addEventListener('blur', handlePatternSelection);
+patternSelect.addEventListener('touchstart', function() {
+    setTimeout(handlePatternSelection, 100);
+  });
+  
 
 window.addEventListener('resize', () => {
     initializeGrid();
