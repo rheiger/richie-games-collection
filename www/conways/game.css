@@ -121,6 +121,7 @@ button:hover {
     box-sizing: border-box;
     margin: 10px;
     z-index: 10; /* Ensure it is on top of other content if needed */
+    display: none;
 }
 
 .language-selector {

@@ -339,11 +339,12 @@ function randomizeGrid(patternType = 'random') {
 
 function showPatternSelection() {
     const patternTypes = ['random', 'stillLife', 'oscillator', 'spaceship', 'infinite'];
-    const buttons = patternTypes.map((type, index) => 
-        `<button onclick="selectPattern(${index})">${translations[currentLanguage][type]}</button>`
+    const buttons = patternTypes.map(type => 
+        `<button class="pattern-button" data-type="${type}">${translations[currentLanguage][type]}</button>`
     ).join('');
 
     const modal = document.createElement('div');
+    modal.id = 'pattern-modal';
     modal.style.cssText = `
         position: fixed; top: 0; left: 0; right: 0; bottom: 0;
         background: rgba(0,0,0,0.7); display: flex; 
@@ -357,11 +358,23 @@ function showPatternSelection() {
     `;
     document.body.appendChild(modal);
 
-    window.selectPattern = function(index) {
-        randomizeGrid(patternTypes[index]);
-        document.body.removeChild(modal);
-    };
+    modal.addEventListener('click', handlePatternSelection);
+    modal.addEventListener('touchend', handlePatternSelection);
 }
+
+function handlePatternSelection(event) {
+    event.preventDefault(); // Prevent default touch behavior
+
+    const target = event.target;
+    if (target.classList.contains('pattern-button')) {
+        const patternType = target.getAttribute('data-type');
+        randomizeGrid(patternType);
+        document.body.removeChild(document.getElementById('pattern-modal'));
+    }
+}
+
+// Update the event listener for the 'random' button
+document.getElementById('random').addEventListener('click', showPatternSelection);
 
 window.addEventListener('resize', () => {
     initializeGrid();
@@ -370,7 +383,6 @@ window.addEventListener('resize', () => {
 
 document.getElementById('startStop').addEventListener('click', startStop);
 document.getElementById('clear').addEventListener('click', clearGrid);
-document.getElementById('random').addEventListener('click', showPatternSelection);
 document.getElementById('explain').addEventListener('click', function(event) {
     event.stopPropagation(); // Prevent this click from immediately hiding the explanation
     showExplanation();
