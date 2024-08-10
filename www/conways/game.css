@@ -127,3 +127,18 @@ button:hover {
 .language-selector {
     margin-bottom: 20px;
 }
+
+#patternSelect {
+    margin: 0 5px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#patternSelect:hover {
+    background-color: #45a049;
+}
