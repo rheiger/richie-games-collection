@@ -11,6 +11,7 @@ services:
       - RATE_LIMIT_REQUESTS=${RATE_LIMIT_REQUESTS:-10r/s}
       - RATE_LIMIT_BURST=${RATE_LIMIT_BURST:-20}
       - CONTAINER_NAME=web-1
+      - TZ=${TIMEZONE:-Europe/Zurich}
     volumes:
       # Static content - configurable between www and www-red
       - ./${CONTENT_DIR_1:-www}:/usr/share/nginx/html:ro
@@ -52,6 +53,7 @@ services:
       - RATE_LIMIT_REQUESTS=${RATE_LIMIT_REQUESTS:-10r/s}
       - RATE_LIMIT_BURST=${RATE_LIMIT_BURST:-20}
       - CONTAINER_NAME=web-2
+      - TZ=${TIMEZONE:-Europe/Zurich}
     volumes:
       # Static content - configurable between www and www-red
       - ./${CONTENT_DIR_2:-www}:/usr/share/nginx/html:ro
