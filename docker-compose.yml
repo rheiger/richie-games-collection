@@ -71,8 +71,12 @@ services:
           memory: ${MEMORY_RESERVATION:-64M}
     ports:
       - "${INTERNAL_PORT_2:-11889}:80"
-    # Note: Traefik labels are only on the first service to avoid conflicts
-    # Both containers will be included in the same load balancer service
+    labels:
+      # Traefik configuration - both containers need these labels for load balancing
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME:-minis}.loadbalancer.server.port=80"
+      # Note: Router labels (rule, entrypoints, tls) are only on container 1 to avoid conflicts
 
 networks:
   traefik_public:
