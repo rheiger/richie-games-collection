@@ -132,7 +132,7 @@ traefik_public network
 
 - **Single External Network**: Only Traefik-accessible
 - **No Internal Network**: Unnecessary for static content serving
-- **Port Exposure**: Configurable via `INTERNAL_PORT`
+- **Port Exposure**: Configurable via `INTERNAL_PORT_1` and `INTERNAL_PORT_2`
 - **SSL Termination**: Handled by Traefik (not containers)
 
 ## 🔒 Security Model

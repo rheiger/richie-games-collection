@@ -28,6 +28,8 @@ services:
         reservations:
           cpus: '${CPU_RESERVATION:-0.1}'
           memory: ${MEMORY_RESERVATION:-64M}
+    ports:
+      - "${INTERNAL_PORT_1:-11888}:80"
     labels:
       # Traefik configuration
       - "traefik.enable=true"
@@ -35,7 +37,7 @@ services:
       - "traefik.http.services.${COMPOSE_PROJECT_NAME:-minis}.loadbalancer.server.port=80"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.rule=Host(`${DOMAIN:-minis.richie.ch}`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.entrypoints=websecure"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.tls.certresolver=${CERT_RESOLVER:-myresolver}"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.service=${COMPOSE_PROJECT_NAME:-minis}"
 
   games-web-2:
@@ -67,6 +69,8 @@ services:
         reservations:
           cpus: '${CPU_RESERVATION:-0.1}'
           memory: ${MEMORY_RESERVATION:-64M}
+    ports:
+      - "${INTERNAL_PORT_2:-11889}:80"
     # Note: Traefik labels are only on the first service to avoid conflicts
     # Both containers will be included in the same load balancer service
 

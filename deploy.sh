@@ -136,12 +136,13 @@ show_status() {
 
     # Show configured domain
     DOMAIN=$(grep "^DOMAIN=" .env 2>/dev/null | cut -d'=' -f2 || echo "minis.richie.ch")
-    PORT=$(grep "^INTERNAL_PORT=" .env 2>/dev/null | cut -d'=' -f2 || echo "11888")
+    PORT1=$(grep "^INTERNAL_PORT_1=" .env 2>/dev/null | cut -d'=' -f2 || echo "11888")
+    PORT2=$(grep "^INTERNAL_PORT_2=" .env 2>/dev/null | cut -d'=' -f2 || echo "11889")
 
     print_success "Your games are accessible at:"
     echo "  🌐 External URL: https://${DOMAIN}"
     echo "  🔧 Health Check: https://${DOMAIN}/health"
-    echo "  📊 Internal Port: ${PORT}"
+    echo "  📊 Internal Ports: ${PORT1}, ${PORT2}"
     echo ""
 
     print_status "Useful commands:"

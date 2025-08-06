@@ -217,7 +217,7 @@ The setup automatically configures Traefik labels for:
 ### Required Traefik Configuration
 
 Your Traefik instance should have:
-- `letsencrypt` certificate resolver configured
+- Certificate resolver configured (e.g., `myresolver`, `letsencrypt`)
 - `traefik_public` network available
 - HTTP and HTTPS entrypoints defined
 
