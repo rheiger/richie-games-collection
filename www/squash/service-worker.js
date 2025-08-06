@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mastermind-v1';
+const CACHE_NAME = 'squash-v1';
 const urlsToCache = [
     './',
     './game.js',

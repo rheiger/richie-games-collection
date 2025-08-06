@@ -1,10 +1,18 @@
 const CACHE_NAME = 'connect-four-v1';
 const urlsToCache = [
     './',
+    '../css/',
+    '../css/common.css',
+    '../js/',
+    '../js/common.js',
     './index.html',
+    './translations.js',
+    './game.js',
+    './game.css',
     './icon-192x192.png',
     './icon-512x512.png',
-    './favicon.ico'
+    './favicon.ico',
+    './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {

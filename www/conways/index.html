@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="./game.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Richie's Game Collection">
+    <meta name="theme-color" content="#3498db">
+    <title data-i18n="title">Conway's Game of Life</title>
+    <style>
+    </style>
+</head>
+
+<body>
+    <script src="../js/common.js"></script>
+    <div id="gameContainer">
+        <h1 data-i18n="title">Conway's Game of Life</h1>
+        <div id="generationCounter" data-i18n="generation">Generation: 0</div>
+        <div id="canvasContainer">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+        <div id="controls">
+            <button id="startStop" data-i18n="start">Start</button>
+            <select id="patternSelect">
+                <option value="keep" data-i18n="keep" selected></option>
+                <option value="clear" data-i18n="clear"></option>
+                <option value="random" data-i18n="random"></option>
+                <option value="stillLife" data-i18n="stillLife"></option>
+                <option value="oscillator" data-i18n="oscillator"></option>
+                <option value="spaceship" data-i18n="spaceship"></option>
+                <option value="infinite" data-i18n="infinite"></option>
+            </select>
+            <button id="explain" data-i18n="explain">Explain</button>
+        </div>
+        <div id="explanation" class="explanation-overlay">
+            <div class="explanation-content">
+                <h2 data-i18n="explanationTitle">How it Works</h2>
+                <p data-i18n="explanation"></p>
+                <h3 data-i18n="rulesTitle">Rules</h3>
+                <ul>
+                    <li data-i18n="rule1"></li>
+                    <li data-i18n="rule2"></li>
+                    <li data-i18n="rule3"></li>
+                    <li data-i18n="rule4"></li>
+                </ul>
+                <p data-i18n="clickToStart"></p>
+            </div>
+        </div>
+    </div>
+    <script src="./translations.js"></script>
+    <script>
+        const initialLanguage = detectLanguage();
+        setLanguage(initialLanguage);
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        releaseInfo = {
+            version: "Release: V1.0.0",
+            notes: "Demo Conway's Game Of Life",
+            features: [
+                "Simple page",
+                "Colorful appearance"
+            ]
+        };
+    </script>
+    <div id="release-tag" class="release-tag">
+        Release: V1.0.0
+    </div>
+    <div id="release-notes" class="release-notes">
+        <!-- Release notes content will be inserted here -->
+    </div>
+    <script src="./game.js"></script>
+</body>
+
+</html>

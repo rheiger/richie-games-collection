@@ -1,0 +1,145 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 50px;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+#canvasContainer {
+    display: flex;
+    position: relative;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 20px auto;
+}
+
+.explanation-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5); /* White with 50% opacity */
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.explanation-content {
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--background-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.explanation-content h2, .explanation-content h3 {
+    color: var(--primary-color);
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.explanation-content p {
+    margin-bottom: 0.5em;
+}
+
+.explanation-content ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.explanation-content li {
+    padding-left: 5px;
+    margin-bottom: 0.3em;
+    text-align: left;
+}
+
+#gameContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 800px; /* or whatever maximum width you prefer */
+    position: relative;
+}
+
+#generationCounter {
+    margin-bottom: 5px;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+#gameCanvas {
+    border: 1px solid #333;
+    background-color: white;
+}
+
+#controls {
+    margin-top: 10px;
+}
+
+button {
+    margin: 0 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#explanation {
+    position: absolute; /* Absolute positioning within the parent */
+    bottom: 20px; /* Adjust as needed */
+    background-color: rgba(64, 64, 64, 0.3);
+    color: var(--primary-color);
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 100%; /* Maximum width relative to the parent */
+    max-height: 100%; /* Maximum height relative to the parent */
+    overflow: auto; /* Add scrollbar if content exceeds max height */
+    text-align: center;
+    box-sizing: border-box;
+    margin: 10px;
+    z-index: 10; /* Ensure it is on top of other content if needed */
+    display: none;
+}
+
+.language-selector {
+    margin-bottom: 20px;
+}
+
+#patternSelect {
+    margin: 0 5px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#patternSelect:hover {
+    background-color: #45a049;
+}

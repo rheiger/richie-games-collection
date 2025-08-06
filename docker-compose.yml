@@ -1,0 +1,75 @@
+services:
+  games-web-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${COMPOSE_PROJECT_NAME:-minis}-web-1
+    restart: unless-stopped
+    environment:
+      - NGINX_WORKER_PROCESSES=${NGINX_WORKER_PROCESSES:-auto}
+      - NGINX_WORKER_CONNECTIONS=${NGINX_WORKER_CONNECTIONS:-1024}
+      - RATE_LIMIT_REQUESTS=${RATE_LIMIT_REQUESTS:-10r/s}
+      - RATE_LIMIT_BURST=${RATE_LIMIT_BURST:-20}
+      - CONTAINER_NAME=web-1
+    volumes:
+      # Static content - configurable between www and www-red
+      - ./${CONTENT_DIR_1:-www}:/usr/share/nginx/html:ro
+      # Logs with rotation
+      - ./logs/web-1:/var/log/nginx
+      # Nginx configuration
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - traefik_public
+    deploy:
+      resources:
+        limits:
+          cpus: '${CPU_LIMIT:-0.5}'
+          memory: ${MEMORY_LIMIT:-256M}
+        reservations:
+          cpus: '${CPU_RESERVATION:-0.1}'
+          memory: ${MEMORY_RESERVATION:-64M}
+    labels:
+      # Traefik configuration
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME:-minis}.loadbalancer.server.port=80"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.rule=Host(`${DOMAIN:-minis.richie.ch}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.service=${COMPOSE_PROJECT_NAME:-minis}"
+
+  games-web-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${COMPOSE_PROJECT_NAME:-minis}-web-2
+    restart: unless-stopped
+    environment:
+      - NGINX_WORKER_PROCESSES=${NGINX_WORKER_PROCESSES:-auto}
+      - NGINX_WORKER_CONNECTIONS=${NGINX_WORKER_CONNECTIONS:-1024}
+      - RATE_LIMIT_REQUESTS=${RATE_LIMIT_REQUESTS:-10r/s}
+      - RATE_LIMIT_BURST=${RATE_LIMIT_BURST:-20}
+      - CONTAINER_NAME=web-2
+    volumes:
+      # Static content - configurable between www and www-red
+      - ./${CONTENT_DIR_2:-www}:/usr/share/nginx/html:ro
+      # Logs with rotation
+      - ./logs/web-2:/var/log/nginx
+      # Nginx configuration
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - traefik_public
+    deploy:
+      resources:
+        limits:
+          cpus: '${CPU_LIMIT:-0.5}'
+          memory: ${MEMORY_LIMIT:-256M}
+        reservations:
+          cpus: '${CPU_RESERVATION:-0.1}'
+          memory: ${MEMORY_RESERVATION:-64M}
+    # Note: Traefik labels are only on the first service to avoid conflicts
+    # Both containers will be included in the same load balancer service
+
+networks:
+  traefik_public:
+    external: true

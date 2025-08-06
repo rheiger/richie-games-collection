@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="./game.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TEMPLATE">
+    <meta name="theme-color" content="#3498db">
+    <title data-i18n="title">TEMPLATE</title>
+    <style>
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 id="title" data-i18n="title">TEMPLATE</h1>
+        <div id="gameBoard"></div>
+        <div class="controls">
+            <select id="puzzleType">
+                <option value="8">8 Puzzle (3x3)</option>
+                <option value="15">15 Puzzle (4x4)</option>
+            </select>
+            <button id="shuffleResetBtn" data-i18n="shuffle">Shuffle</button>
+            <button id="solveBtn" data-i18n="solve">Solve</button>
+        </div>
+        <div id="message" data-i18n="message"></div>
+    </div>
+    <div id="overlay" class="overlay">
+        <div class="congratulations">
+            <h2 data-i18n="congratulations">Congratulations!</h2>
+            <p data-i18n="puzzleSolved">You solved the puzzle!</p>
+        </div>
+    </div>
+    <script>
+        currentLanguage = detectLanguage();
+        setLanguage(currentLanguage);
+        console.log('Language is set to:', currentLanguage);
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        releaseInfo = {
+            version: "Release: V1.0.0",
+            notes: "TEMPLATE",
+            features: [
+                "TEMPLATE-FEATURE1",
+                "TEMPLATE-FEATURE2",
+                "TEMPLATE-Moving tiles",
+                "TEMPLATE-Computer solves puzzle on request"
+            ]
+        };
+    </script>
+    <div id="release-tag" class="release-tag">
+        Release: V1.0.0
+    </div>
+    <div id="release-notes" class="release-notes">
+        <!-- Release notes content will be inserted here -->
+    </div>
+    <script src="../js/common.js"></script>
+    <script src="./translations.js"></script>
+    <script src="./game.js"></script>
+</body>
+
+</html>

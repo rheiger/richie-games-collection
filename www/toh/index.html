@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="./game.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Towers">
+    <meta name="theme-color" content="#3498db">
+    <title data-i18n="title">Towers Of Hanoi</title>
+    <style>
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 data-i18n="title">Towers of Hanoi</h1>
+        <div class="controls">
+            <label for="discCount" data-i18n="discCount">Number of discs:</label>
+            <select id="discCount">
+                <option value="3">3</option>
+                <option value="4" selected>4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+            <button id="resetBtn" data-i18n="reset">Reset</button>
+            <button id="solveBtn" data-i18n="solve">Solve</button>
+        </div>
+        <div id="game-board">
+            <div class="tower" id="tower1"></div>
+            <div class="tower" id="tower2"></div>
+            <div class="tower" id="tower3"></div>
+        </div>
+        <div id="moveCounter">
+            <span data-i18n="moves">Moves:</span> <span id="currentMoves">0</span> / <span id="minMoves">7</span>
+        </div>
+        <div id="message"></div>
+    </div>
+    <script>
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        releaseInfo = {
+            version: "Release: V1.0.0",
+            notes: "Towers Of Hanoi",
+            features: [
+                "Initial implementation",
+                "Animated disc movement",
+                "Computer solves puzzle on request"
+            ]
+        };
+    </script>
+    <div id="release-tag" class="release-tag">
+        Release: V1.0.0
+    </div>
+    <div id="release-notes" class="release-notes">
+        <!-- Release notes content will be inserted here -->
+    </div>
+    <script src="../js/common.js"></script>
+    <script src="./translations.js"></script>
+    <script src="./game.js"></script>
+</body>
+
+</html>

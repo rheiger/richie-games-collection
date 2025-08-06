@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sudoku-pwa-v1';
+const CACHE_NAME = 'toh-v1';
 const urlsToCache = [
   './',
   '../css/',

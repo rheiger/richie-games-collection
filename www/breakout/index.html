@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- This is the index.html of breakout -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touchicon" href="icon-192x192.png">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="./game.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sudoku">
+    <meta name="theme-color" content="#3498db">
+    <title>Breakout</title>
+</head>
+
+<body>
+    <script src="../js/common.js"></script>
+    <div class="container">
+        <h1 id="title" data-i18n="title">Squash Challenge</h1>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+         <div>
+            <button id="startButton" data-i18n="startGame">Start Game</button>
+        </div>
+    </div>
+
+    <div id="release-tag" class="release-tag">
+        Release: V1.0.0
+    </div>
+
+    <div id="release-notes" class="release-notes"></div>
+
+    <script src="./translations.js"></script>
+
+    <script>
+        currentLanguage = detectLanguage();
+        setLanguage(currentLanguage);
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then((reg) => console.log('Service worker registered.', reg))
+                    .catch((err) => console.log('Service worker registration failed:', err));
+            });
+        }
+
+        const releaseInfo = {
+            version: "Release: V1.0.0",
+            notes: "Final Breakout Game",
+            features: [
+                "Improved breakout game",
+                "Controllable with cursor keys or better with mouse movement",
+                "Improved with adding spin and speed increase",
+                "Added support for mobile devices, even moving paddle by position"
+            ]
+        };
+    </script>
+    <script src="./game.js"></script>
+</body>
+
+</html>
