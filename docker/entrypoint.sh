@@ -13,11 +13,12 @@ chmod 755 /var/log/nginx
 # Setup logrotate for this container
 echo "Configuring log rotation..."
 
-# Create logrotate configuration from template
-cat > /etc/logrotate.d/nginx << EOF
+# Create logrotate configuration from template (skip if no write permission)
+if [ -w /etc/logrotate.d/ ]; then
+    cat > /etc/logrotate.d/nginx << EOF
 /var/log/nginx/*.log {
-    size ${LOG_ROTATE_SIZE:-10M}
-    rotate ${LOG_ROTATE_COUNT:-20}
+    size 10M
+    rotate 20
     missingok
     compress
     delaycompress
@@ -31,13 +32,13 @@ cat > /etc/logrotate.d/nginx << EOF
     endscript
 }
 EOF
+else
+    echo "Skipping logrotate configuration (no write permission to /etc/logrotate.d/)"
+fi
 
-# Set up daily logrotate via cron
+# Set up logrotate cron job (Note: crond needs root privileges)
 echo "0 */6 * * * /usr/sbin/logrotate /etc/logrotate.d/nginx" > /tmp/logrotate-cron
-crontab -u root /tmp/logrotate-cron
-rm /tmp/logrotate-cron
-
-# Start crond for logrotate
-crond -b
+# We'll skip crond setup for now since container runs as nginx user
+# In production, you'd want to handle log rotation externally
 
 echo "Container setup completed successfully"

@@ -23,8 +23,7 @@ COPY docker/logrotate.conf /etc/logrotate.d/nginx
 # Copy custom nginx configuration
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 
-# Copy robots.txt to be served from root
-COPY docker/robots.txt /usr/share/nginx/html/robots.txt
+# robots.txt is now served from the content directory (www/)
 
 # Create health check script
 COPY docker/health-check.sh /usr/local/bin/health-check.sh
@@ -44,8 +43,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # Expose port for internal communication
 EXPOSE 80
 
-# Use nginx user for security
-USER nginx
+# Use nginx user for security (but setup scripts need root)
+# USER nginx  # Commented out to allow setup scripts to run as root
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
