@@ -1,0 +1,48 @@
+# Robots.txt for Richie's Game Collection
+# Allow crawling of public game pages but limit crawling rate
+
+User-agent: *
+Allow: /
+Allow: /sudoku/
+Allow: /connect-four/
+Allow: /mastermind/
+Allow: /15puzzle/
+Allow: /toh/
+Allow: /squash/
+Allow: /breakout/
+Allow: /conways/
+
+# Disallow sensitive or non-content paths
+Disallow: /health
+Disallow: /*.log
+Disallow: /docker/
+Disallow: /.env
+
+# Be polite - don't crawl too frequently
+Crawl-delay: 1
+
+# Allow common crawlers with standard behavior
+User-agent: Googlebot
+Crawl-delay: 0.5
+
+User-agent: Bingbot
+Crawl-delay: 1
+
+User-agent: Slurp
+Crawl-delay: 1
+
+# Block aggressive crawlers and scrapers
+User-agent: ia_archiver
+Disallow: /
+
+User-agent: Wayback
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /

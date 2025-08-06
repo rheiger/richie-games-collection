@@ -1,0 +1,103 @@
+# =================================================================
+# Docker Ignore - Exclude files from build context
+# =================================================================
+
+# Version control
+.git
+.gitignore
+.gitattributes
+.hintrc
+
+# Documentation (not needed in container)
+README.md
+*.md
+docs/
+LICENSE
+CHANGELOG*
+
+# Environment files (use env.example as template instead)
+.env
+.env.*
+
+# Runtime logs (will be mounted as volumes)
+logs/
+*.log
+
+# Development and build artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+.npm
+.cache/
+dist/
+build/
+coverage/
+.nyc_output/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker artifacts
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Temporary and backup files
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+
+# Test and development files
+test/
+tests/
+spec/
+__tests__/
+jest.config.*
+.eslintrc*
+.prettierrc*
+.editorconfig
+
+# Deployment scripts (not needed in container)
+deploy.sh
+scripts/
+.github/
+
+# Other runtime directories that will be mounted
+www-red/
+# Keep www/ as it may be needed for default content
+
+# Local overrides
+*.local
+.local/
+
+# Certificate files (managed by Traefik)
+*.crt
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Backup files
+backup/
+backups/
+*.sql
+*.dump
