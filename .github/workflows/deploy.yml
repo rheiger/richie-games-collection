@@ -1,0 +1,116 @@
+name: Deploy to Internal System
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
+  workflow_dispatch: # Manual trigger
+
+env:
+  COMPOSE_PROJECT_NAME: minis
+  DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+  DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+  DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: 🧪 Test Build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test Docker build
+        run: |
+          docker-compose build --no-cache
+          docker-compose config
+
+      - name: Test nginx configuration
+        run: |
+          docker-compose up -d
+          sleep 10
+          
+          # Test health endpoint
+          curl -f http://localhost:11888/health || exit 1
+          curl -f http://localhost:11889/health || exit 1
+          
+          # Test main pages
+          curl -f http://localhost:11888/ || exit 1
+          curl -f http://localhost:11889/ || exit 1
+          
+          # Check logs for errors
+          docker-compose logs games-web-1 | grep -i error && exit 1 || true
+          docker-compose logs games-web-2 | grep -i error && exit 1 || true
+          
+          docker-compose down
+
+  deploy:
+    needs: test
+    runs-on: self-hosted # Use your internal runner
+    name: 🚀 Deploy to Internal System
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create deployment directory
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          
+          # Test SSH connection
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
+            "mkdir -p ${{ env.DEPLOY_PATH }}"
+
+      - name: Sync code to internal system
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            ./ ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }}:${{ env.DEPLOY_PATH }}/
+          
+          # Exclude sensitive files
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
+            "cd ${{ env.DEPLOY_PATH }} && rm -f .env"
+
+      - name: Deploy on internal system
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
+            "cd ${{ env.DEPLOY_PATH }} && \
+             cp env.example .env && \
+             ./scripts/deploy.sh --automated"
+
+      - name: Health check after deployment
+        run: |
+          sleep 15 # Allow containers to start
+          
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
+            "cd ${{ env.DEPLOY_PATH }} && ./scripts/health-check.sh"
+
+      - name: Notify deployment status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: 'Deployment to internal system: ${{ job.status }}'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  rollback:
+    runs-on: self-hosted
+    name: 🔄 Rollback (Manual Trigger)
+    if: github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Rollback deployment
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
+            "cd ${{ env.DEPLOY_PATH }} && ./scripts/rollback.sh"
