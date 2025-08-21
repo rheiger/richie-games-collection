@@ -22,14 +22,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Test Docker build
         run: |
-          docker-compose build --no-cache
-          docker-compose config
+          docker compose build --no-cache
+          docker compose config
 
       - name: Test nginx configuration
         run: |
-          docker-compose up -d
+          docker compose up -d
           sleep 10
           
           # Test health endpoint
@@ -41,10 +44,10 @@ jobs:
           curl -f http://localhost:11889/ || exit 1
           
           # Check logs for errors
-          docker-compose logs games-web-1 | grep -i error && exit 1 || true
-          docker-compose logs games-web-2 | grep -i error && exit 1 || true
+          docker compose logs games-web-1 | grep -i error && exit 1 || true
+          docker compose logs games-web-2 | grep -i error && exit 1 || true
           
-          docker-compose down
+          docker compose down
 
   deploy:
     needs: test
