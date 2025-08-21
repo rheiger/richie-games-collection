@@ -116,7 +116,7 @@ sudo systemctl status webhook-deploy
 1. Go to GitHub Repository → Settings → Webhooks
 2. Click "Add webhook"
 3. Configure:
-   - **Payload URL**: `https://webhook.minis.richie.ch/webhook`
+   - **Payload URL**: `https://webhook.games.example.com/webhook`
    - **Content type**: `application/json`
    - **Secret**: Use the generated secret from setup
    - **Events**: Just the push event
@@ -125,7 +125,7 @@ sudo systemctl status webhook-deploy
 #### 3. Test Webhook
 ```bash
 # Check webhook status
-curl https://webhook.minis.richie.ch/status
+curl https://webhook.games.example.com/status
 
 # Test deployment (will trigger on next push to main)
 git commit --allow-empty -m "Test webhook deployment"

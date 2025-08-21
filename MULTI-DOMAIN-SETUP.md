@@ -6,17 +6,17 @@ This guide explains how to set up and use the enhanced multi-domain capabilities
 ## 🎯 **What You Get**
 
 ### **Production Domains (Load Balanced)**
-- **Primary**: `https://minis.richie.ch` - Your main domain
-- **Alias 1**: `https://eiger.software` - Additional brand domain
-- **Alias 2**: `https://www.eiger.software` - WWW subdomain
+- **Primary**: `https://games.example.com` - Your main domain
+- **Alias 1**: `https://play.example.com` - Additional brand domain
+- **Alias 2**: `https://www.play.example.com` - WWW subdomain
 
 All these domains automatically load balance traffic across both containers.
 
 ### **Test Domains (Direct Container Access)**
 These domains bypass load balancing and route directly to specific containers:
 
-- **Container 1**: `https://test1.minis.eiger.software` → Direct access to `games-web-1`
-- **Container 2**: `https://test2.minis.eiger.software` → Direct access to `games-web-2`
+- **Container 1**: `https://test1.games.example.com` → Direct access to `games-web-1`
+- **Container 2**: `https://test2.games.example.com` → Direct access to `games-web-2`
 
 ## 🚀 **Quick Setup**
 
@@ -26,13 +26,13 @@ Edit your `.env` file:
 
 ```bash
 # Production domains (load balanced)
-DOMAIN=minis.richie.ch
-DOMAIN_ALIAS_1=eiger.software
-DOMAIN_ALIAS_2=www.eiger.software
+DOMAIN=games.example.com
+DOMAIN_ALIAS_1=play.example.com
+DOMAIN_ALIAS_2=www.play.example.com
 
 # Test domains (direct container access)
-TEST_DOMAIN_1=test1.minis.eiger.software
-TEST_DOMAIN_2=test2.minis.eiger.software
+TEST_DOMAIN_1=test1.games.example.com
+TEST_DOMAIN_2=test2.games.example.com
 ```
 
 ### **2. DNS Configuration**
@@ -41,11 +41,11 @@ Ensure all domains point to your server:
 
 ```bash
 # A records for all domains
-minis.richie.ch.        IN A YOUR_SERVER_IP
-eiger.software.         IN A YOUR_SERVER_IP
-www.eiger.software.     IN A YOUR_SERVER_IP
-test1.minis.eiger.software.  IN A YOUR_SERVER_IP
-test2.minis.eiger.software.  IN A YOUR_SERVER_IP
+games.example.com.        IN A YOUR_SERVER_IP
+play.example.com.         IN A YOUR_SERVER_IP
+www.play.example.com.     IN A YOUR_SERVER_IP
+test1.games.example.com.  IN A YOUR_SERVER_IP
+test2.games.example.com.  IN A YOUR_SERVER_IP
 ```
 
 ### **3. Deploy and Test**
@@ -68,18 +68,18 @@ CONTENT_DIR_1=www
 CONTENT_DIR_2=www
 
 # All production domains load balance:
-# - minis.richie.ch
-# - eiger.software
-# - www.eiger.software
+# - games.example.com
+# - play.example.com
+# - www.play.example.com
 ```
 
 **Result**: High availability with automatic failover.
 
 ### **Scenario 2: Staged Testing**
 ```bash
-# Production domains: minis.richie.ch, eiger.software → Load balanced production content
-# Test domain: test2.minis.eiger.software → New features only
-# Test domain: test1.minis.eiger.software → Production content only
+# Production domains: games.example.com, play.example.com → Load balanced production content
+# Test domain: test2.games.example.com → New features only
+# Test domain: test1.games.example.com → Production content only
 ```
 
 **Result**: Test new features without affecting production users.
@@ -116,17 +116,17 @@ CONTENT_DIR_2=www-red
 ### **Manual Testing Commands**
 ```bash
 # Test production domains (should load balance)
-curl -I https://minis.richie.ch
-curl -I https://eiger.software
-curl -I https://www.eiger.software
+curl -I https://games.example.com
+curl -I https://play.example.com
+curl -I https://www.play.example.com
 
 # Test direct container access
-curl -s https://test1.minis.eiger.software | grep "container="
-curl -s https://test2.minis.eiger.software | grep "container="
+curl -s https://test1.games.example.com | grep "container="
+curl -s https://test2.games.example.com | grep "container="
 
 # Verify load balancing
 for i in {1..10}; do
-    curl -s https://minis.richie.ch/health | grep "container="
+    curl -s https://games.example.com/health | grep "container="
     sleep 1
 done
 ```
@@ -163,8 +163,8 @@ docker exec minis-web-1 ping traefik
 ### **Load Balancing Not Working**
 ```bash
 # 1. Check both containers are healthy
-curl -s https://test1.minis.eiger.software/health
-curl -s https://test2.minis.eiger.software/health
+curl -s https://test1.games.example.com/health
+curl -s https://test2.games.example.com/health
 
 # 2. Verify service definition
 docker exec traefik traefik healthcheck
@@ -195,7 +195,7 @@ openssl s_client -connect your-domain.com:443 -servername your-domain.com
 CONTENT_DIR_1=www      # Production
 CONTENT_DIR_2=www-red  # New features
 
-# 3. Test new features at test2.minis.eiger.software
+# 3. Test new features at test2.games.example.com
 # 4. Production users still get stable content via load balancing
 # 5. When ready, switch both containers to www-red
 # 6. After testing, switch back to www for production
@@ -286,8 +286,8 @@ Test your setup under load:
 sudo apt-get install apache2-utils
 
 # Test load balancing
-ab -n 1000 -c 10 https://minis.richie.ch/
-ab -n 1000 -c 10 https://eiger.software/
+ab -n 1000 -c 10 https://games.example.com/
+ab -n 1000 -c 10 https://play.example.com/
 ```
 
 ## 🎯 **Next Steps**

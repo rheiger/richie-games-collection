@@ -29,7 +29,7 @@ This repository contains a collection of browser-based games containerized for h
 
 - Docker and Docker Compose installed
 - Traefik running on the `traefik_public` network
-- DNS record pointing `minis.richie.ch` to your server
+- DNS record pointing `games.example.com` to your server
 
 ### Initial Setup
 
@@ -52,8 +52,8 @@ This repository contains a collection of browser-based games containerized for h
    ```
 
 4. **Access the games:**
-   - Production: https://minis.richie.ch
-   - Health check: https://minis.richie.ch/health
+   - Production: https://games.example.com
+   - Health check: https://games.example.com/health
 
 ## ⚙️ Configuration
 

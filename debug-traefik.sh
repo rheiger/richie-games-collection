@@ -37,7 +37,7 @@ if [ -f ".env" ]; then
 else
     print_warning ".env file not found, using defaults"
     COMPOSE_PROJECT_NAME=minis
-    DOMAIN=minis.richie.ch
+    DOMAIN=games.example.com
     CERT_RESOLVER=myresolver
 fi
 
@@ -135,6 +135,6 @@ echo "  - Review Traefik logs for ACME errors"
 echo ""
 print_status "🎯 Current Configuration Summary:"
 echo "  Domain: ${DOMAIN}"
-echo "  Project: ${COMPOSE_PROJECT_NAME}" 
+echo "  Project: ${COMPOSE_PROJECT_NAME}"
 echo "  Cert Resolver: ${CERT_RESOLVER}"
 echo "  Container Ports: ${INTERNAL_PORT_1:-11888}, ${INTERNAL_PORT_2:-11889}"

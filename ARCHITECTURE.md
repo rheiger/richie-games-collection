@@ -40,16 +40,16 @@ The system supports multiple domains with different routing strategies:
 #### **Production Domains (Load Balanced)**
 ```yaml
 # All these domains load balance across both containers
-- Primary: ${DOMAIN:-minis.richie.ch}
-- Alias 1: ${DOMAIN_ALIAS_1:-eiger.software}
-- Alias 2: ${DOMAIN_ALIAS_2:-www.eiger.software}
+- Primary: ${DOMAIN:-games.example.com}
+- Alias 1: ${DOMAIN_ALIAS_1:-play.example.com}
+- Alias 2: ${DOMAIN_ALIAS_2:-www.play.example.com}
 ```
 
 #### **Test Domains (Direct Container Access)**
 ```yaml
 # These domains bypass load balancing for direct testing
-- Container 1: ${TEST_DOMAIN_1:-test1.minis.richie.ch}
-- Container 2: ${TEST_DOMAIN_2:-test2.minis.richie.ch}
+- Container 1: ${TEST_DOMAIN_1:-test1.games.example.com}
+- Container 2: ${TEST_DOMAIN_2:-test2.games.example.com}
 ```
 
 ### Traefik Label Structure
@@ -108,9 +108,9 @@ Both containers serve identical content for high availability.
 CONTENT_DIR_1=www      # Production traffic
 CONTENT_DIR_2=www-red  # Limited testing
 ```
-- **Production domains**: `minis.richie.ch`, `eiger.software` → Load balanced production content
-- **Test domain**: `test2.minis.richie.ch` → New features only
-- **Test domain**: `test1.minis.richie.ch` → Production content only
+- **Production domains**: `games.example.com`, `play.example.com` → Load balanced production content
+- **Test domain**: `test2.games.example.com` → New features only
+- **Test domain**: `test1.games.example.com` → Production content only
 
 #### 3. Full Staging
 ```env
@@ -129,9 +129,9 @@ graph TD
     C --> E[Container 2: www-red]
 
     D --> F[Production Domains]
-    D --> G[test1.minis.richie.ch]
+    D --> G[test1.games.example.com]
     E --> F
-    E --> H[test2.minis.richie.ch]
+    E --> H[test2.games.example.com]
 
     F --> I[Load Balanced Production]
     G --> J[Direct Container 1]

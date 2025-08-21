@@ -62,17 +62,17 @@ error() {
 # Health check functions
 check_containers() {
     log "Checking container status..."
-    
+
     local containers_up=0
     local containers_total=0
-    
+
     while IFS= read -r line; do
         if [[ "$line" =~ ^[[:space:]]*$ ]]; then
             continue
         fi
-        
+
         containers_total=$((containers_total + 1))
-        
+
         if echo "$line" | grep -q "Up.*healthy"; then
             containers_up=$((containers_up + 1))
             if [[ "$VERBOSE" == "true" ]]; then
@@ -85,7 +85,7 @@ check_containers() {
             error "Container is not running: $(echo "$line" | awk '{print $1}')"
         fi
     done < <(docker-compose ps 2>/dev/null | tail -n +3)
-    
+
     if [[ $containers_up -eq $containers_total && $containers_total -gt 0 ]]; then
         success "All $containers_total containers are healthy"
         return 0
@@ -97,11 +97,11 @@ check_containers() {
 
 check_ports() {
     log "Checking port accessibility..."
-    
+
     local port1="${INTERNAL_PORT_1:-11888}"
     local port2="${INTERNAL_PORT_2:-11889}"
     local ports_ok=0
-    
+
     for port in "$port1" "$port2"; do
         if nc -z localhost "$port" 2>/dev/null; then
             success "Port $port is accessible"
@@ -110,7 +110,7 @@ check_ports() {
             error "Port $port is not accessible"
         fi
     done
-    
+
     if [[ $ports_ok -eq 2 ]]; then
         return 0
     else
@@ -120,11 +120,11 @@ check_ports() {
 
 check_health_endpoints() {
     log "Checking health endpoints..."
-    
+
     local port1="${INTERNAL_PORT_1:-11888}"
     local port2="${INTERNAL_PORT_2:-11889}"
     local endpoints_ok=0
-    
+
     for port in "$port1" "$port2"; do
         if curl -sf "http://localhost:$port/health" >/dev/null 2>&1; then
             success "Health endpoint on port $port is responding"
@@ -133,7 +133,7 @@ check_health_endpoints() {
             error "Health endpoint on port $port is not responding"
         fi
     done
-    
+
     if [[ $endpoints_ok -eq 2 ]]; then
         return 0
     else
@@ -143,16 +143,16 @@ check_health_endpoints() {
 
 check_main_pages() {
     log "Checking main pages..."
-    
+
     local port1="${INTERNAL_PORT_1:-11888}"
     local port2="${INTERNAL_PORT_2:-11889}"
     local pages_ok=0
-    
+
     for port in "$port1" "$port2"; do
         local response
         response=$(curl -s -w "%{http_code}" "http://localhost:$port/" 2>/dev/null)
         local http_code="${response: -3}"
-        
+
         if [[ "$http_code" == "200" ]]; then
             success "Main page on port $port is responding (HTTP $http_code)"
             pages_ok=$((pages_ok + 1))
@@ -160,7 +160,7 @@ check_main_pages() {
             error "Main page on port $port returned HTTP $http_code"
         fi
     done
-    
+
     if [[ $pages_ok -eq 2 ]]; then
         return 0
     else
@@ -170,10 +170,10 @@ check_main_pages() {
 
 check_logs_for_errors() {
     log "Checking recent logs for errors..."
-    
+
     local error_count=0
     local log_lines=50
-    
+
     # Check for common error patterns in logs
     local error_patterns=(
         "ERROR"
@@ -187,10 +187,10 @@ check_logs_for_errors() {
         "503"
         "504"
     )
-    
+
     local recent_logs
     recent_logs=$(docker-compose logs --tail=$log_lines 2>/dev/null || echo "")
-    
+
     if [[ -n "$recent_logs" ]]; then
         for pattern in "${error_patterns[@]}"; do
             local count
@@ -200,7 +200,7 @@ check_logs_for_errors() {
                 error_count=$((error_count + count))
             fi
         done
-        
+
         if [[ $error_count -eq 0 ]]; then
             success "No critical errors found in recent logs"
             return 0
@@ -220,11 +220,11 @@ check_logs_for_errors() {
 
 check_traefik_connectivity() {
     log "Checking Traefik connectivity..."
-    
+
     # Try to check if Traefik can reach the containers
     local domain
-    domain=$(grep -E "^DOMAIN=" .env 2>/dev/null | cut -d= -f2 || echo "minis.richie.ch")
-    
+    domain=$(grep -E "^DOMAIN=" .env 2>/dev/null | cut -d= -f2 || echo "games.example.com")
+
     # Check if domain resolves locally (useful for testing)
     if command -v dig &>/dev/null; then
         if dig +short "$domain" >/dev/null 2>&1; then
@@ -233,13 +233,13 @@ check_traefik_connectivity() {
             warning "Domain $domain does not resolve (normal for internal testing)"
         fi
     fi
-    
+
     # Check if containers are on traefik network
     local traefik_network="${TRAEFIK_NETWORK:-traefik_public}"
     if docker network ls | grep -q "$traefik_network"; then
         local containers_on_network
         containers_on_network=$(docker network inspect "$traefik_network" --format '{{range .Containers}}{{.Name}} {{end}}' 2>/dev/null || echo "")
-        
+
         if echo "$containers_on_network" | grep -q "$PROJECT_NAME"; then
             success "Containers are connected to $traefik_network network"
             return 0
@@ -256,10 +256,10 @@ check_traefik_connectivity() {
 # Resource usage check
 check_resources() {
     log "Checking resource usage..."
-    
+
     local stats
     stats=$(docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}" 2>/dev/null | grep "$PROJECT_NAME" || echo "")
-    
+
     if [[ -n "$stats" ]]; then
         success "Resource usage:"
         echo "$stats"
@@ -274,36 +274,36 @@ check_resources() {
 main() {
     echo -e "${BLUE}🏥 Health Check for $PROJECT_NAME${NC}"
     echo "=================================="
-    
+
     local start_time
     start_time=$(date +%s)
-    
+
     local checks_passed=0
     local total_checks=0
-    
+
     # Define health checks
     local health_checks=(
         "check_containers:Container Status"
-        "check_ports:Port Accessibility" 
+        "check_ports:Port Accessibility"
         "check_health_endpoints:Health Endpoints"
         "check_main_pages:Main Pages"
         "check_logs_for_errors:Log Analysis"
         "check_traefik_connectivity:Traefik Connectivity"
     )
-    
+
     # Add resource check if verbose
     if [[ "$VERBOSE" == "true" ]]; then
         health_checks+=("check_resources:Resource Usage")
     fi
-    
+
     # Run health checks
     for check_def in "${health_checks[@]}"; do
         IFS=':' read -r check_func check_name <<< "$check_def"
         total_checks=$((total_checks + 1))
-        
+
         echo ""
         echo -e "${BLUE}Checking: $check_name${NC}"
-        
+
         if timeout "$TIMEOUT" bash -c "declare -f $check_func > /dev/null && $check_func"; then
             checks_passed=$((checks_passed + 1))
         else
@@ -313,27 +313,27 @@ main() {
             fi
         fi
     done
-    
+
     # Final report
     echo ""
     echo "=================================="
     local end_time
     end_time=$(date +%s)
     local duration=$((end_time - start_time))
-    
+
     if [[ $checks_passed -eq $total_checks ]]; then
         success "🎉 All health checks passed ($checks_passed/$total_checks) in ${duration}s"
         exit 0
     else
         error "❌ Health check failed ($checks_passed/$total_checks checks passed) in ${duration}s"
-        
+
         echo ""
         echo "Troubleshooting:"
         echo "  • Check container logs: docker-compose logs"
         echo "  • Check container status: docker-compose ps"
         echo "  • Restart containers: docker-compose restart"
         echo "  • Full restart: docker-compose down && docker-compose up -d"
-        
+
         exit 1
     fi
 }

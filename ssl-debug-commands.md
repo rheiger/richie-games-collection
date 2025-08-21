@@ -15,21 +15,21 @@ docker logs traefik-container-name | grep -i acme
 
 ```bash
 # Check DNS resolution
-nslookup minis.richie.ch
+nslookup games.example.com
 
 # Test if domain reaches your server
-curl -I http://minis.richie.ch
+curl -I http://games.example.com
 ```
 
 ## 3. Certificate Analysis
 
 ```bash
 # Check current certificate details
-openssl s_client -connect minis.richie.ch:443 -servername minis.richie.ch \
+openssl s_client -connect games.example.com:443 -servername games.example.com \
   | openssl x509 -noout -text | head -20
 
 # Check certificate issuer (should NOT be self-signed)
-echo | openssl s_client -connect minis.richie.ch:443 -servername minis.richie.ch \
+echo | openssl s_client -connect games.example.com:443 -servername games.example.com \
   | openssl x509 -noout -issuer
 ```
 
@@ -69,7 +69,7 @@ certificatesResolvers:
 **Test**:
 ```bash
 # This should reach your server and return Traefik response
-curl -v http://minis.richie.ch/.well-known/acme-challenge/test
+curl -v http://games.example.com/.well-known/acme-challenge/test
 ```
 
 ### Issue 3: Wrong Entrypoint Configuration
@@ -90,7 +90,7 @@ entryPoints:
 **Check**:
 ```bash
 # Should return your server's public IP
-dig +short minis.richie.ch
+dig +short games.example.com
 ```
 
 ## 6. Traefik Container Labels Verification
@@ -121,5 +121,5 @@ docker start traefik-container
 Let's Encrypt has rate limits:
 ```bash
 # Check if you've hit rate limits
-curl "https://crt.sh/?q=minis.richie.ch&output=json" | jq -r '.[] | .not_before' | sort | tail -10
+curl "https://crt.sh/?q=games.example.com&output=json" | jq -r '.[] | .not_before' | sort | tail -10
 ```

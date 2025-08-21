@@ -135,7 +135,7 @@ show_status() {
     echo ""
 
     # Show configured domain
-    DOMAIN=$(grep "^DOMAIN=" .env 2>/dev/null | cut -d'=' -f2 || echo "minis.richie.ch")
+    DOMAIN=$(grep "^DOMAIN=" .env 2>/dev/null | cut -d'=' -f2 || echo "games.example.com")
     PORT1=$(grep "^INTERNAL_PORT_1=" .env 2>/dev/null | cut -d'=' -f2 || echo "11888")
     PORT2=$(grep "^INTERNAL_PORT_2=" .env 2>/dev/null | cut -d'=' -f2 || echo "11889")
 

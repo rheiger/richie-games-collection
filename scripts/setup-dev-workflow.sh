@@ -49,30 +49,30 @@ detect_platform() {
 # Setup for MacBook (Development)
 setup_macos() {
     log "Setting up MacBook development environment..."
-    
+
     # Create local development config
     if [[ ! -f .env.local ]]; then
         log "Creating local development configuration..."
         cp env.example .env.local
-        
+
         # Adjust for local development
         sed -i '' 's/COMPOSE_PROJECT_NAME=minis/COMPOSE_PROJECT_NAME=minis-dev/' .env.local
-        sed -i '' 's/DOMAIN=minis.richie.ch/DOMAIN=localhost/' .env.local
+        sed -i '' 's/DOMAIN=games.example.com/DOMAIN=localhost/' .env.local
         sed -i '' 's/TIMEZONE=Europe\/Zurich/TIMEZONE=Europe\/Zurich/' .env.local
-        
+
         success "Created .env.local for MacBook development"
     fi
-    
+
     # Create useful aliases
     log "Setting up development aliases..."
-    
+
     local shell_config=""
     if [[ "$SHELL" == *"zsh"* ]]; then
         shell_config="$HOME/.zshrc"
     elif [[ "$SHELL" == *"bash"* ]]; then
         shell_config="$HOME/.bashrc"
     fi
-    
+
     if [[ -n "$shell_config" ]]; then
         echo "" >> "$shell_config"
         echo "# Richie's Games Collection aliases" >> "$shell_config"
@@ -82,15 +82,15 @@ setup_macos() {
         echo "# Add your Linux server details here:" >> "$shell_config"
         echo "# alias games-check='ssh rheiger@YOUR_SERVER \"cd /path/to/minis && ./scripts/health-check.sh\"'" >> "$shell_config"
         echo "# alias games-logs='ssh rheiger@YOUR_SERVER \"cd /path/to/minis && docker-compose logs -f\"'" >> "$shell_config"
-        
+
         success "Added development aliases to $shell_config"
         warning "Restart your terminal or run 'source $shell_config' to activate aliases"
     fi
-    
+
     # Setup Git hooks (optional)
     log "Setting up Git hooks..."
     mkdir -p .git/hooks
-    
+
     cat > .git/hooks/pre-commit << 'EOF'
 #!/bin/bash
 # Pre-commit hook to validate docker-compose configuration
@@ -101,15 +101,15 @@ if ! docker-compose -f docker-compose.yml config > /dev/null 2>&1; then
 fi
 echo "✅ docker-compose configuration is valid"
 EOF
-    
+
     chmod +x .git/hooks/pre-commit
     success "Git pre-commit hook installed"
-    
+
     # VS Code settings (if VS Code is installed)
     if command -v code &> /dev/null; then
         log "Configuring VS Code settings..."
         mkdir -p .vscode
-        
+
         cat > .vscode/settings.json << 'EOF'
 {
     "files.associations": {
@@ -129,7 +129,7 @@ EOF
     }
 }
 EOF
-        
+
         cat > .vscode/extensions.json << 'EOF'
 {
     "recommendations": [
@@ -140,10 +140,10 @@ EOF
     ]
 }
 EOF
-        
+
         success "VS Code configuration created"
     fi
-    
+
     echo ""
     echo -e "${BLUE}🎉 MacBook Development Setup Complete!${NC}"
     echo ""
@@ -158,13 +158,13 @@ EOF
 # Setup for Linux Server (Production)
 setup_linux() {
     log "Setting up Linux server environment..."
-    
+
     # Check if running on the target server
     if [[ ! -f /etc/os-release ]]; then
         error "This doesn't appear to be a Linux system"
         exit 1
     fi
-    
+
     # Create production config if it doesn't exist
     if [[ ! -f .env ]]; then
         log "Creating production configuration..."
@@ -172,7 +172,7 @@ setup_linux() {
         success "Created .env for Linux production"
         warning "Please edit .env with your production settings!"
     fi
-    
+
     # Offer CI/CD setup
     echo ""
     echo -e "${YELLOW}Choose your CI/CD approach:${NC}"
@@ -181,7 +181,7 @@ setup_linux() {
     echo "3. Manual deployment only"
     echo -n "Enter choice [1-3]: "
     read -r choice
-    
+
     case $choice in
         1)
             log "Setting up GitHub Actions..."
@@ -206,7 +206,7 @@ setup_linux() {
             warning "Invalid choice, skipping CI/CD setup"
             ;;
     esac
-    
+
     # Create monitoring script
     log "Setting up monitoring..."
     if [[ -f "scripts/health-check.sh" ]]; then
@@ -216,7 +216,7 @@ setup_linux() {
         crontab -
         success "Health monitoring cron job installed (runs every 5 minutes)"
     fi
-    
+
     echo ""
     echo -e "${BLUE}🎉 Linux Server Setup Complete!${NC}"
     echo ""
@@ -231,9 +231,9 @@ setup_linux() {
 # Generate SSH key pair for deployment
 generate_ssh_keys() {
     log "Generating SSH key pair for deployment..."
-    
+
     local key_path="$HOME/.ssh/deploy_games"
-    
+
     if [[ -f "$key_path" ]]; then
         warning "SSH key already exists: $key_path"
         echo -n "Regenerate? [y/N]: "
@@ -242,9 +242,9 @@ generate_ssh_keys() {
             return
         fi
     fi
-    
+
     ssh-keygen -t ed25519 -f "$key_path" -N "" -C "games-deployment-$(date +%Y%m%d)"
-    
+
     success "SSH key pair generated:"
     echo "Private key: $key_path"
     echo "Public key: $key_path.pub"
@@ -264,16 +264,16 @@ main() {
     echo -e "${BLUE}🚀 Development Workflow Setup${NC}"
     echo "================================"
     echo ""
-    
+
     local platform
     platform=$(detect_platform)
-    
+
     case "$platform" in
         macos)
             echo -e "${GREEN}Detected: macOS (Development Machine)${NC}"
             echo ""
             setup_macos
-            
+
             echo -e "${YELLOW}SSH Key Setup:${NC}"
             echo -n "Generate SSH keys for deployment? [y/N]: "
             read -r response
@@ -292,7 +292,7 @@ main() {
             exit 1
             ;;
     esac
-    
+
     echo ""
     echo -e "${BLUE}📚 Additional Resources:${NC}"
     echo "• Development Guide: DEVELOPMENT.md"

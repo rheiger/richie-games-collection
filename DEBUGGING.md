@@ -202,7 +202,7 @@ docker-compose exec games-web-1 crontab -l
 ### Rate Limiting
 ```bash
 # Test rate limiting (be careful not to DoS yourself)
-for i in {1..25}; do curl -I https://minis.richie.ch/ && sleep 0.1; done
+for i in {1..25}; do curl -I https://games.example.com/ && sleep 0.1; done
 
 # Check rate limit logs
 docker-compose exec games-web-1 grep "limiting requests" /var/log/nginx/error.log
@@ -211,10 +211,10 @@ docker-compose exec games-web-1 grep "limiting requests" /var/log/nginx/error.lo
 ### Security Headers
 ```bash
 # Check security headers
-curl -I https://minis.richie.ch/
+curl -I https://games.example.com/
 
 # Test with specific user agents
-curl -H "User-Agent: BadBot/1.0" -I https://minis.richie.ch/robots.txt
+curl -H "User-Agent: BadBot/1.0" -I https://games.example.com/robots.txt
 ```
 
 ## 📝 Useful Debugging Scripts

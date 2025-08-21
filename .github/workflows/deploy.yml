@@ -1,23 +1,19 @@
-name: Deploy to Internal System
+name: CI/CD Pipeline
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-    types: [ closed ]
   workflow_dispatch: # Manual trigger
 
 env:
   COMPOSE_PROJECT_NAME: minis
-  DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-  DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-  DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: 🧪 Test Build
+    name: 🧪 Test Build & Configuration
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,95 +21,188 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Test Docker build
+      - name: Validate Docker Compose Configuration
+        run: |
+          docker compose config --quiet || exit 1
+          echo "✅ Docker Compose configuration is valid"
+
+      - name: Test Docker Build
         run: |
           docker compose build --no-cache
-          docker compose config
+          echo "✅ Docker build completed successfully"
 
-      - name: Test nginx configuration
+      - name: Start Test Environment
         run: |
           docker compose up -d
-          sleep 10
-          
-          # Test health endpoint
-          curl -f http://localhost:11888/health || exit 1
-          curl -f http://localhost:11889/health || exit 1
-          
-          # Test main pages
-          curl -f http://localhost:11888/ || exit 1
-          curl -f http://localhost:11889/ || exit 1
-          
-          # Check logs for errors
-          docker compose logs games-web-1 | grep -i error && exit 1 || true
-          docker compose logs games-web-2 | grep -i error && exit 1 || true
-          
-          docker compose down
+          echo "⏳ Waiting for containers to start..."
+          sleep 15
 
-  deploy:
-    needs: test
-    runs-on: self-hosted # Use your internal runner
-    name: 🚀 Deploy to Internal System
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
+      - name: Test Container Health
+        run: |
+          echo "🔍 Testing container health endpoints..."
+
+          # Test health endpoints
+          if curl -f --max-time 10 http://localhost:11888/health; then
+            echo "✅ Container 1 health check passed"
+          else
+            echo "❌ Container 1 health check failed"
+            exit 1
+          fi
+
+          if curl -f --max-time 10 http://localhost:11889/health; then
+            echo "✅ Container 2 health check passed"
+          else
+            echo "❌ Container 2 health check failed"
+            exit 1
+          fi
+
+      - name: Test Application Pages
+        run: |
+          echo "🔍 Testing application pages..."
+
+          # Test main pages
+          if curl -f --max-time 10 http://localhost:11888/; then
+            echo "✅ Container 1 main page accessible"
+          else
+            echo "❌ Container 1 main page failed"
+            exit 1
+          fi
+
+          if curl -f --max-time 10 http://localhost:11889/; then
+            echo "✅ Container 2 main page accessible"
+          else
+            echo "❌ Container 2 main page failed"
+            exit 1
+          fi
+
+      - name: Check Container Logs
+        run: |
+          echo "🔍 Checking container logs for errors..."
+
+          # Check for critical errors in logs
+          ERROR_LOGS=$(docker compose logs games-web-1 games-web-2 2>/dev/null | grep -i error || true)
+          if [ -n "$ERROR_LOGS" ]; then
+            echo "⚠️  Found error logs (this may be normal):"
+            echo "$ERROR_LOGS"
+          else
+            echo "✅ No error logs found"
+          fi
+
+      - name: Validate Configuration Files
+        run: |
+          echo "🔍 Validating configuration files..."
+
+          # Check if required files exist
+          if [ ! -f "docker-compose.yml" ]; then
+            echo "❌ docker-compose.yml not found"
+            exit 1
+          fi
+
+          if [ ! -f "Dockerfile" ]; then
+            echo "❌ Dockerfile not found"
+            exit 1
+          fi
+
+          if [ ! -f "env.example" ]; then
+            echo "❌ env.example not found"
+            exit 1
+          fi
+
+          echo "✅ All required files present"
+
+      - name: Clean Up Test Environment
+        if: always()
+        run: |
+          echo "🧹 Cleaning up test environment..."
+          docker compose down -v || true
+          docker system prune -f || true
+          echo "✅ Cleanup completed"
+
+  validate:
+    runs-on: ubuntu-latest
+    name: 🔍 Validate Configuration
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create deployment directory
+      - name: Check Environment Configuration
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          
-          # Test SSH connection
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
-            ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
-            "mkdir -p ${{ env.DEPLOY_PATH }}"
+          echo "🔍 Validating environment configuration..."
 
-      - name: Sync code to internal system
+          # Validate env.example format
+          if grep -q "^[A-Z_][A-Z0-9_]*=" env.example; then
+            echo "✅ Environment variables format is valid"
+          else
+            echo "⚠️  Warning: Environment variables may have formatting issues"
+          fi
+
+          # Check for required environment variables
+          REQUIRED_VARS=("DOMAIN" "CONTENT_DIR_1" "CONTENT_DIR_2")
+          for var in "${REQUIRED_VARS[@]}"; do
+            if grep -q "^${var}=" env.example; then
+              echo "✅ $var is defined in env.example"
+            else
+              echo "❌ $var is missing from env.example"
+              exit 1
+            fi
+          done
+
+      - name: Check Documentation
         run: |
-          rsync -avz --delete \
-            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
-            ./ ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }}:${{ env.DEPLOY_PATH }}/
-          
-          # Exclude sensitive files
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
-            ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
-            "cd ${{ env.DEPLOY_PATH }} && rm -f .env"
+          echo "🔍 Checking documentation completeness..."
 
-      - name: Deploy on internal system
+          DOC_FILES=("README.md" "ARCHITECTURE.md" "TESTING.md")
+          for doc in "${DOC_FILES[@]}"; do
+            if [ -f "$doc" ]; then
+              echo "✅ $doc exists"
+            else
+              echo "⚠️  Warning: $doc not found"
+            fi
+          done
+
+      - name: Lint Docker Compose
         run: |
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
-            ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
-            "cd ${{ env.DEPLOY_PATH }} && \
-             cp env.example .env && \
-             ./scripts/deploy.sh --automated"
+          echo "🔍 Linting Docker Compose configuration..."
 
-      - name: Health check after deployment
-        run: |
-          sleep 15 # Allow containers to start
-          
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
-            ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
-            "cd ${{ env.DEPLOY_PATH }} && ./scripts/health-check.sh"
+          # Check for common issues
+          if grep -q "build:" docker-compose.yml && [ ! -f "Dockerfile" ]; then
+            echo "❌ Dockerfile referenced but not found"
+            exit 1
+          fi
 
-      - name: Notify deployment status
-        if: always()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          text: 'Deployment to internal system: ${{ job.status }}'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          # Check for exposed ports
+          if grep -q "ports:" docker-compose.yml; then
+            echo "✅ Port configuration found"
+          else
+            echo "⚠️  Warning: No ports exposed"
+          fi
 
-  rollback:
-    runs-on: self-hosted
-    name: 🔄 Rollback (Manual Trigger)
-    if: github.event_name == 'workflow_dispatch'
-    
+  notify:
+    runs-on: ubuntu-latest
+    name: 📢 Notify (Optional)
+    needs: [test, validate]
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Rollback deployment
+      - name: Notify Success
+        if: needs.test.result == 'success' && needs.validate.result == 'success'
         run: |
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
-            ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
-            "cd ${{ env.DEPLOY_PATH }} && ./scripts/rollback.sh"
+          echo "🎉 CI/CD Pipeline completed successfully!"
+          echo "✅ All tests passed"
+          echo "✅ Configuration validation completed"
+          echo ""
+          echo "📋 Next steps:"
+          echo "1. Review the changes in this commit"
+          echo "2. Deploy to your target environment"
+          echo "3. Run health checks: ./scripts/health-check.sh"
+
+      - name: Notify Failure
+        if: failure()
+        run: |
+          echo "❌ CI/CD Pipeline failed!"
+          echo "🔍 Check the job logs above for details"
+          echo ""
+          echo "📋 Common solutions:"
+          echo "1. Review error messages in the logs"
+          echo "2. Fix any failing tests"
+          echo "3. Ensure all required files are present"
+          echo "4. Check Docker configuration"

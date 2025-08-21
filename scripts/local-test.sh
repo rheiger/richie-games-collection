@@ -76,34 +76,34 @@ stop_local() {
 # Start local environment
 start_local() {
     log "Starting local test environment..."
-    
+
     # Check if env file exists
     if [[ ! -f "$ENV_FILE" ]]; then
         warning "$ENV_FILE not found, creating from template..."
         cp env.example "$ENV_FILE"
-        
+
         # Adjust for local development
         sed -i '' 's/COMPOSE_PROJECT_NAME=minis/COMPOSE_PROJECT_NAME=minis-local/' "$ENV_FILE" || true
-        sed -i '' 's/DOMAIN=minis.richie.ch/DOMAIN=localhost/' "$ENV_FILE" || true
-        
+        sed -i '' 's/DOMAIN=games.example.com/DOMAIN=localhost/' "$ENV_FILE" || true
+
         success "Created $ENV_FILE for local testing"
     fi
-    
+
     # Build if requested or if images don't exist
     if [[ "$BUILD" == "true" ]]; then
         log "Building Docker images..."
         docker-compose $COMPOSE_FILES --env-file="$ENV_FILE" build --no-cache
         success "Images built"
     fi
-    
+
     # Start containers
     log "Starting containers..."
     docker-compose $COMPOSE_FILES --env-file="$ENV_FILE" up -d
-    
+
     # Wait for containers to be ready
     log "Waiting for containers to start..."
     sleep 5
-    
+
     # Check container status
     local containers_up=0
     for i in {1..30}; do
@@ -113,7 +113,7 @@ start_local() {
         fi
         sleep 1
     done
-    
+
     if [[ $containers_up -eq 1 ]]; then
         success "Containers are running"
     else
@@ -126,9 +126,9 @@ start_local() {
 # Run health checks
 run_health_checks() {
     log "Running health checks..."
-    
+
     local health_passed=true
-    
+
     # Check if ports are accessible
     for port in 11888 11889; do
         if curl -sf "http://localhost:$port/health" > /dev/null 2>&1; then
@@ -138,12 +138,12 @@ run_health_checks() {
             health_passed=false
         fi
     done
-    
+
     # Check main pages
     for port in 11888 11889; do
         local response_code
         response_code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:$port/" 2>/dev/null || echo "000")
-        
+
         if [[ "$response_code" == "200" ]]; then
             success "Port $port main page check passed (HTTP $response_code)"
         else
@@ -151,7 +151,7 @@ run_health_checks() {
             health_passed=false
         fi
     done
-    
+
     if [[ "$health_passed" == "true" ]]; then
         success "All health checks passed!"
         return 0
@@ -191,33 +191,33 @@ show_logs() {
 main() {
     echo -e "${BLUE}🧪 Local Testing Environment${NC}"
     echo "============================="
-    
+
     # Handle stop command
     if [[ "$STOP" == "true" ]]; then
         stop_local
         return 0
     fi
-    
+
     # Check if Docker is running
     if ! docker ps > /dev/null 2>&1; then
         error "Docker is not running or not accessible"
         echo "Please start Docker Desktop and try again"
         exit 1
     fi
-    
+
     # Start local environment
     start_local
-    
+
     # Run health checks
     if run_health_checks; then
         show_access_info
         show_logs
-        
+
         echo -e "${YELLOW}Testing Notes:${NC}"
         echo "• This is local testing on macOS - production builds happen on Linux server"
         echo "• Push to main branch will trigger automatic deployment to production"
         echo "• Use Ctrl+C to stop log viewing, containers keep running"
-        
+
         if [[ "$SHOW_LOGS" == "true" ]]; then
             echo ""
             log "Following logs (Ctrl+C to exit)..."
