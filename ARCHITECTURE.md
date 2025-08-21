@@ -59,12 +59,12 @@ The system supports multiple domains with different routing strategies:
 labels:
   # Load balancing service (shared with container 2)
   - "traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80"
-  
+
   # Production domain routers (load balanced)
   - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${DOMAIN}`)"
   - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-eiger.rule=Host(`${DOMAIN_ALIAS_1}`)"
   - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-www-eiger.rule=Host(`${DOMAIN_ALIAS_2}`)"
-  
+
   # Direct access router (container 1 only)
   - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-test-1.service=${COMPOSE_PROJECT_NAME}-test-1"
   - "traefik.http.services.${COMPOSE_PROJECT_NAME}-test-1.loadbalancer.server.port=80"
@@ -73,7 +73,7 @@ labels:
 labels:
   # Load balancing service (shared with container 1)
   - "traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80"
-  
+
   # Direct access router (container 2 only)
   - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-test-2.service=${COMPOSE_PROJECT_NAME}-test-2"
   - "traefik.http.services.${COMPOSE_PROJECT_NAME}-test-2.loadbalancer.server.port=80"
@@ -127,16 +127,16 @@ graph TD
     B --> C[CI/CD Deployment]
     C --> D[Container 1: www]
     C --> E[Container 2: www-red]
-    
+
     D --> F[Production Domains]
     D --> G[test1.minis.richie.ch]
     E --> F
     E --> H[test2.minis.richie.ch]
-    
+
     F --> I[Load Balanced Production]
     G --> J[Direct Container 1]
     H --> K[Direct Container 2]
-    
+
     style F fill:#90EE90
     style G fill:#FFB6C1
     style H fill:#87CEEB

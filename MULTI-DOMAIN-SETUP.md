@@ -69,7 +69,7 @@ CONTENT_DIR_2=www
 
 # All production domains load balance:
 # - minis.richie.ch
-# - eiger.software  
+# - eiger.software
 # - www.eiger.software
 ```
 
@@ -252,7 +252,7 @@ CONTENT_DIR_2=www-red  # New features
 # Container 1: Version A
 CONTENT_DIR_1=www-version-a
 
-# Container 2: Version B  
+# Container 2: Version B
 CONTENT_DIR_2=www-version-b
 
 # Production domains: Load balanced (mix of A and B)

@@ -47,7 +47,7 @@ Test each container directly to verify they're working independently:
 curl -I https://test1.minis.richie.ch
 curl -s https://test1.minis.richie.ch | grep "container=web-1"
 
-# Test container 2 directly  
+# Test container 2 directly
 curl -I https://test2.minis.richie.ch
 curl -s https://test2.minis.richie.ch | grep "container=web-2"
 ```
@@ -158,7 +158,7 @@ docker exec traefik traefik healthcheck
 # Check container 1 logs
 docker logs minis-web-1 --tail=20
 
-# Check container 2 logs  
+# Check container 2 logs
 docker logs minis-web-2 --tail=20
 
 # Check Nginx logs
