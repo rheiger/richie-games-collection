@@ -19,7 +19,6 @@ The implementation uses **volume mounts** rather than copying content into conta
 
 # Configuration volumes (read-only)
 - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
-- ./docker/robots.txt:/usr/share/nginx/html/robots.txt:ro
 ```
 
 ### Benefits of Volume Mounting
@@ -32,20 +31,68 @@ The implementation uses **volume mounts** rather than copying content into conta
 | **Backup** | ✅ Host filesystem | ❌ Container specific |
 | **Performance** | ✅ Direct access | ⚠️ Layer overhead |
 
+## 🌐 Domain Routing Architecture
+
+### Multi-Domain Support
+
+The system supports multiple domains with different routing strategies:
+
+#### **Production Domains (Load Balanced)**
+```yaml
+# All these domains load balance across both containers
+- Primary: ${DOMAIN:-minis.richie.ch}
+- Alias 1: ${DOMAIN_ALIAS_1:-eiger.software}
+- Alias 2: ${DOMAIN_ALIAS_2:-www.eiger.software}
+```
+
+#### **Test Domains (Direct Container Access)**
+```yaml
+# These domains bypass load balancing for direct testing
+- Container 1: ${TEST_DOMAIN_1:-test1.minis.richie.ch}
+- Container 2: ${TEST_DOMAIN_2:-test2.minis.richie.ch}
+```
+
+### Traefik Label Structure
+
+```yaml
+# Container 1: Defines all production routes + test route for itself
+labels:
+  # Load balancing service (shared with container 2)
+  - "traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80"
+  
+  # Production domain routers (load balanced)
+  - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${DOMAIN}`)"
+  - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-eiger.rule=Host(`${DOMAIN_ALIAS_1}`)"
+  - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-www-eiger.rule=Host(`${DOMAIN_ALIAS_2}`)"
+  
+  # Direct access router (container 1 only)
+  - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-test-1.service=${COMPOSE_PROJECT_NAME}-test-1"
+  - "traefik.http.services.${COMPOSE_PROJECT_NAME}-test-1.loadbalancer.server.port=80"
+
+# Container 2: Joins load balancing + defines test route for itself
+labels:
+  # Load balancing service (shared with container 1)
+  - "traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80"
+  
+  # Direct access router (container 2 only)
+  - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-test-2.service=${COMPOSE_PROJECT_NAME}-test-2"
+  - "traefik.http.services.${COMPOSE_PROJECT_NAME}-test-2.loadbalancer.server.port=80"
+```
+
 ## 🔄 Load Balancing Strategy
 
 ### Traefik Integration
 
 ```yaml
-# Only Container 1 has Traefik labels to avoid conflicts
+# Both containers join the same load balancing service
 labels:
-  - "traefik.http.services.minis.loadbalancer.server.port=${INTERNAL_PORT:-11888}"
-  - "traefik.http.routers.minis.rule=Host(`${DOMAIN:-minis.richie.ch}`)"
+  - "traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80"
 ```
 
-- **Single Service Definition**: Traefik sees one service with multiple backends
-- **Automatic Discovery**: Both containers automatically join the load balancer
+- **Shared Service Definition**: Both containers automatically join the load balancer
+- **Automatic Discovery**: Traefik detects healthy containers automatically
 - **Health Checks**: Unhealthy containers are automatically excluded
+- **Multiple Routes**: Single service serves multiple domain names
 
 ### Container Distribution Scenarios
 
@@ -61,7 +108,9 @@ Both containers serve identical content for high availability.
 CONTENT_DIR_1=www      # Production traffic
 CONTENT_DIR_2=www-red  # Limited testing
 ```
-One container tests new features while the other serves production.
+- **Production domains**: `minis.richie.ch`, `eiger.software` → Load balanced production content
+- **Test domain**: `test2.minis.richie.ch` → New features only
+- **Test domain**: `test1.minis.richie.ch` → Production content only
 
 #### 3. Full Staging
 ```env
@@ -69,6 +118,29 @@ CONTENT_DIR_1=www-red
 CONTENT_DIR_2=www-red
 ```
 Both containers test new features before production deployment.
+
+### Testing Workflow
+
+```mermaid
+graph TD
+    A[Development on MacBook] --> B[Push to GitHub]
+    B --> C[CI/CD Deployment]
+    C --> D[Container 1: www]
+    C --> E[Container 2: www-red]
+    
+    D --> F[Production Domains]
+    D --> G[test1.minis.richie.ch]
+    E --> F
+    E --> H[test2.minis.richie.ch]
+    
+    F --> I[Load Balanced Production]
+    G --> J[Direct Container 1]
+    H --> K[Direct Container 2]
+    
+    style F fill:#90EE90
+    style G fill:#FFB6C1
+    style H fill:#87CEEB
+```
 
 ## 📊 Logging Architecture
 

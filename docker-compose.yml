@@ -32,14 +32,36 @@ services:
     ports:
       - "${INTERNAL_PORT_1:-11888}:80"
     labels:
-      # Traefik configuration
+      # Traefik configuration for load balancing
       - "traefik.enable=true"
       - "traefik.docker.network=traefik_public"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME:-minis}.loadbalancer.server.port=80"
+      
+      # Main domain router (load balanced)
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.rule=Host(`${DOMAIN:-minis.richie.ch}`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.entrypoints=websecure"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.tls.certresolver=${CERT_RESOLVER:-myresolver}"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}.service=${COMPOSE_PROJECT_NAME:-minis}"
+      
+      # Additional domain aliases (load balanced)
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-eiger.rule=Host(`${DOMAIN_ALIAS_1:-eiger.software}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-eiger.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-eiger.tls.certresolver=${CERT_RESOLVER:-myresolver}"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-eiger.service=${COMPOSE_PROJECT_NAME:-minis}"
+      
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-www-eiger.rule=Host(`${DOMAIN_ALIAS_2:-www.eiger.software}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-www-eiger.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-www-eiger.tls.certresolver=${CERT_RESOLVER:-myresolver}"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-www-eiger.service=${COMPOSE_PROJECT_NAME:-minis}"
+      
+      # Direct container access for testing (container 1)
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-test-1.rule=Host(`${TEST_DOMAIN_1:-test1.minis.richie.ch}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-test-1.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-test-1.tls.certresolver=${CERT_RESOLVER:-myresolver}"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-test-1.service=${COMPOSE_PROJECT_NAME:-minis}-test-1"
+      
+      # Service definition for direct container 1 access
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME:-minis}-test-1.loadbalancer.server.port=80"
 
   games-web-2:
     build:
@@ -74,11 +96,19 @@ services:
     ports:
       - "${INTERNAL_PORT_2:-11889}:80"
     labels:
-      # Traefik configuration - both containers need these labels for load balancing
+      # Traefik configuration for load balancing
       - "traefik.enable=true"
       - "traefik.docker.network=traefik_public"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME:-minis}.loadbalancer.server.port=80"
-      # Note: Router labels (rule, entrypoints, tls) are only on container 1 to avoid conflicts
+      
+      # Direct container access for testing (container 2)
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-test-2.rule=Host(`${TEST_DOMAIN_2:-test2.minis.richie.ch}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-test-2.entrypoints=websecure"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-test-2.tls.certresolver=${CERT_RESOLVER:-myresolver}"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME:-minis}-test-2.service=${COMPOSE_PROJECT_NAME:-minis}-test-2"
+      
+      # Service definition for direct container 2 access
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME:-minis}-test-2.loadbalancer.server.port=80"
 
 networks:
   traefik_public:

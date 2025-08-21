@@ -8,7 +8,7 @@ This guide covers the optimal development workflow when developing on macOS (Mac
 ```
 MacBook (Development)     →     Linux Server (Production)
 ├── Code editing             ├── Docker builds (x86)
-├── Local testing            ├── Container deployment  
+├── Local testing            ├── Container deployment
 ├── Git commits              ├── Health monitoring
 └── Push to GitHub           └── Live application serving
 ```
@@ -119,7 +119,7 @@ cp env.example .env
 richie-games-collection/
 ├── www/                    # Your game content
 │   ├── sudoku/            # Individual games
-│   ├── breakout/          
+│   ├── breakout/
 │   └── ...
 ├── scripts/               # Deployment scripts
 ├── docker/                # Docker configuration
@@ -155,7 +155,7 @@ cd /home/rheiger/DevOps/minis
 ### Production Testing (Automatic)
 The CI/CD pipeline automatically:
 - Tests Docker builds
-- Validates configurations  
+- Validates configurations
 - Checks health endpoints
 - Verifies container startup
 - Tests actual HTTP responses
