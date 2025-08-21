@@ -13,10 +13,10 @@ This guide explains how to set up and use the enhanced multi-domain capabilities
 All these domains automatically load balance traffic across both containers.
 
 ### **Test Domains (Direct Container Access)**
-- **Container 1**: `https://test1.minis.richie.ch` → Direct access to `games-web-1`
-- **Container 2**: `https://test2.minis.richie.ch` → Direct access to `games-web-2`
+These domains bypass load balancing and route directly to specific containers:
 
-These domains bypass load balancing for direct testing and debugging.
+- **Container 1**: `https://test1.minis.eiger.software` → Direct access to `games-web-1`
+- **Container 2**: `https://test2.minis.eiger.software` → Direct access to `games-web-2`
 
 ## 🚀 **Quick Setup**
 
@@ -31,8 +31,8 @@ DOMAIN_ALIAS_1=eiger.software
 DOMAIN_ALIAS_2=www.eiger.software
 
 # Test domains (direct container access)
-TEST_DOMAIN_1=test1.minis.richie.ch
-TEST_DOMAIN_2=test2.minis.richie.ch
+TEST_DOMAIN_1=test1.minis.eiger.software
+TEST_DOMAIN_2=test2.minis.eiger.software
 ```
 
 ### **2. DNS Configuration**
@@ -44,8 +44,8 @@ Ensure all domains point to your server:
 minis.richie.ch.        IN A YOUR_SERVER_IP
 eiger.software.         IN A YOUR_SERVER_IP
 www.eiger.software.     IN A YOUR_SERVER_IP
-test1.minis.richie.ch.  IN A YOUR_SERVER_IP
-test2.minis.richie.ch.  IN A YOUR_SERVER_IP
+test1.minis.eiger.software.  IN A YOUR_SERVER_IP
+test2.minis.eiger.software.  IN A YOUR_SERVER_IP
 ```
 
 ### **3. Deploy and Test**
@@ -77,19 +77,14 @@ CONTENT_DIR_2=www
 
 ### **Scenario 2: Staged Testing**
 ```bash
-# Container 1: Production content
-CONTENT_DIR_1=www
-
-# Container 2: New features for testing
-CONTENT_DIR_2=www-red
-
-# Production domains: Load balanced production content
-# Test domains: Direct access to specific containers
+# Production domains: minis.richie.ch, eiger.software → Load balanced production content
+# Test domain: test2.minis.eiger.software → New features only
+# Test domain: test1.minis.eiger.software → Production content only
 ```
 
 **Result**: Test new features without affecting production users.
 
-### **Scenario 3: Full Testing**
+#### **Scenario 3: Full Testing**
 ```bash
 # Both containers test new features
 CONTENT_DIR_1=www-red
@@ -100,47 +95,6 @@ CONTENT_DIR_2=www-red
 ```
 
 **Result**: Full testing before production deployment.
-
-## 🔧 **Advanced Configuration**
-
-### **Custom Domain Names**
-
-You can customize any domain names in your `.env`:
-
-```bash
-# Your own domain names
-DOMAIN=games.example.com
-DOMAIN_ALIAS_1=play.example.com
-DOMAIN_ALIAS_2=arcade.example.com
-TEST_DOMAIN_1=dev1.games.example.com
-TEST_DOMAIN_2=dev2.games.example.com
-```
-
-### **Multiple Alias Domains**
-
-Add more aliases by extending the docker-compose.yml:
-
-```yaml
-# In docker-compose.yml, add more alias routers
-- "traefik.http.routers.${COMPOSE_PROJECT_NAME}-alias3.rule=Host(`${DOMAIN_ALIAS_3:-games.example.com}`)"
-- "traefik.http.routers.${COMPOSE_PROJECT_NAME}-alias3.entrypoints=websecure"
-- "traefik.http.routers.${COMPOSE_PROJECT_NAME}-alias3.tls.certresolver=${CERT_RESOLVER:-myresolver}"
-- "traefik.http.routers.${COMPOSE_PROJECT_NAME}-alias3.service=${COMPOSE_PROJECT_NAME:-minis}"
-```
-
-### **Subdomain Testing**
-
-Use subdomains for different testing environments:
-
-```bash
-# Development testing
-TEST_DOMAIN_1=dev.minis.richie.ch
-TEST_DOMAIN_2=staging.minis.richie.ch
-
-# Feature testing
-TEST_DOMAIN_1=feature1.minis.richie.ch
-TEST_DOMAIN_2=feature2.minis.richie.ch
-```
 
 ## 📊 **Monitoring and Testing**
 
@@ -167,8 +121,8 @@ curl -I https://eiger.software
 curl -I https://www.eiger.software
 
 # Test direct container access
-curl -s https://test1.minis.richie.ch | grep "container="
-curl -s https://test2.minis.richie.ch | grep "container="
+curl -s https://test1.minis.eiger.software | grep "container="
+curl -s https://test2.minis.eiger.software | grep "container="
 
 # Verify load balancing
 for i in {1..10}; do
@@ -209,8 +163,8 @@ docker exec minis-web-1 ping traefik
 ### **Load Balancing Not Working**
 ```bash
 # 1. Check both containers are healthy
-curl -s https://test1.minis.richie.ch/health
-curl -s https://test2.minis.richie.ch/health
+curl -s https://test1.minis.eiger.software/health
+curl -s https://test2.minis.eiger.software/health
 
 # 2. Verify service definition
 docker exec traefik traefik healthcheck
@@ -241,7 +195,7 @@ openssl s_client -connect your-domain.com:443 -servername your-domain.com
 CONTENT_DIR_1=www      # Production
 CONTENT_DIR_2=www-red  # New features
 
-# 3. Test new features at test2.minis.richie.ch
+# 3. Test new features at test2.minis.eiger.software
 # 4. Production users still get stable content via load balancing
 # 5. When ready, switch both containers to www-red
 # 6. After testing, switch back to www for production
@@ -252,7 +206,7 @@ CONTENT_DIR_2=www-red  # New features
 # Container 1: Version A
 CONTENT_DIR_1=www-version-a
 
-# Container 2: Version B
+# Container 2: Version B  
 CONTENT_DIR_2=www-version-b
 
 # Production domains: Load balanced (mix of A and B)

@@ -15,8 +15,8 @@ All these domains will serve the same content and automatically load balance bet
 ### **Test Domains (Direct Container Access)**
 These domains bypass load balancing and route directly to specific containers:
 
-- **Container 1**: `https://test1.minis.richie.ch` → Direct access to `games-web-1`
-- **Container 2**: `https://test2.minis.richie.ch` → Direct access to `games-web-2`
+- **Container 1**: `https://test1.minis.eiger.software` → Direct access to `games-web-1`
+- **Container 2**: `https://test2.minis.eiger.software` → Direct access to `games-web-2`
 
 ## 🧪 **Testing Scenarios**
 
@@ -44,12 +44,12 @@ Test each container directly to verify they're working independently:
 
 ```bash
 # Test container 1 directly
-curl -I https://test1.minis.richie.ch
-curl -s https://test1.minis.richie.ch | grep "container=web-1"
+curl -I https://test1.minis.eiger.software
+curl -s https://test1.minis.eiger.software | grep "container=web-1"
 
 # Test container 2 directly
-curl -I https://test2.minis.richie.ch
-curl -s https://test2.minis.richie.ch | grep "container=web-2"
+curl -I https://test2.minis.eiger.software
+curl -s https://test2.minis.eiger.software | grep "container=web-2"
 ```
 
 ### **3. Staged Testing with Different Content**
@@ -77,8 +77,8 @@ curl -s https://test2.minis.richie.ch | grep "version"
 DOMAIN=minis.richie.ch
 DOMAIN_ALIAS_1=eiger.software
 DOMAIN_ALIAS_2=www.eiger.software
-TEST_DOMAIN_1=test1.minis.richie.ch
-TEST_DOMAIN_2=test2.minis.richie.ch
+TEST_DOMAIN_1=test1.minis.eiger.software
+TEST_DOMAIN_2=test2.minis.eiger.software
 ```
 
 ### **Content Distribution Scenarios**
@@ -115,7 +115,7 @@ CONTENT_DIR_2=www-red  # New features
 ### **Quick Health Check**
 ```bash
 # Check all domains are responding
-for domain in "minis.richie.ch" "eiger.software" "www.eiger.software" "test1.minis.richie.ch" "test2.minis.richie.ch"; do
+for domain in "minis.richie.ch" "eiger.software" "www.eiger.software" "test1.minis.eiger.software" "test2.minis.eiger.software"; do
     echo "Testing $domain..."
     curl -s -o /dev/null -w "%{http_code} - $domain\n" "https://$domain"
 done
@@ -135,10 +135,10 @@ done
 ```bash
 # Compare content between containers
 echo "Container 1 content:"
-curl -s "https://test1.minis.richie.ch/" | grep -E "(title|version|container)" | head -3
+curl -s "https://test1.minis.eiger.software/" | grep -E "(title|version|container)" | head -3
 
 echo "Container 2 content:"
-curl -s "https://test2.minis.richie.ch/" | grep -E "(title|version|container)" | head -3
+curl -s "https://test2.minis.eiger.software/" | grep -E "(title|version|container)" | head -3
 ```
 
 ## 🔍 **Debugging and Troubleshooting**
@@ -172,8 +172,8 @@ tail -f logs/web-2/access.log
 nslookup minis.richie.ch
 nslookup eiger.software
 nslookup www.eiger.software
-nslookup test1.minis.richie.ch
-nslookup test2.minis.richie.ch
+nslookup test1.minis.eiger.software
+nslookup test2.minis.eiger.software
 ```
 
 ### **SSL Certificate Verification**
@@ -181,7 +181,7 @@ nslookup test2.minis.richie.ch
 # Check SSL certificates for all domains
 openssl s_client -connect minis.richie.ch:443 -servername minis.richie.ch < /dev/null
 openssl s_client -connect eiger.software:443 -servername eiger.software < /dev/null
-openssl s_client -connect test1.minis.richie.ch:443 -servername test1.minis.richie.ch < /dev/null
+openssl s_client -connect test1.minis.eiger.software:443 -servername test1.minis.eiger.software < /dev/null
 ```
 
 ## 📊 **Monitoring and Metrics**
@@ -189,7 +189,7 @@ openssl s_client -connect test1.minis.richie.ch:443 -servername test1.minis.rich
 ### **Response Time Monitoring**
 ```bash
 # Monitor response times for all domains
-for domain in "minis.richie.ch" "eiger.software" "test1.minis.richie.ch" "test2.minis.richie.ch"; do
+for domain in "minis.richie.ch" "eiger.software" "test1.minis.eiger.software" "test2.minis.eiger.software"; do
     echo "Testing $domain response time..."
     curl -w "@curl-format.txt" -s -o /dev/null "https://$domain"
 done
@@ -211,8 +211,8 @@ Create `curl-format.txt`:
 ```bash
 # Simple load test with Apache Bench
 ab -n 100 -c 10 https://minis.richie.ch/
-ab -n 100 -c 10 https://test1.minis.richie.ch/
-ab -n 100 -c 10 https://test2.minis.richie.ch/
+ab -n 100 -c 10 https://test1.minis.eiger.software/
+ab -n 100 -c 10 https://test2.minis.eiger.software/
 ```
 
 ## 🎯 **Best Practices**
@@ -265,8 +265,8 @@ docker exec traefik cat /etc/traefik/traefik.yml
 docker exec traefik traefik healthcheck
 
 # Verify both containers are healthy
-curl -s https://test1.minis.richie.ch/health
-curl -s https://test2.minis.richie.ch/health
+curl -s https://test1.minis.eiger.software/health
+curl -s https://test2.minis.eiger.software/health
 ```
 
 This testing setup gives you complete control over your deployment and testing strategy! 🎮✨
